@@ -1,0 +1,40 @@
+{
+  "name": "another-graphql-ide",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Just another GraphQL IDE",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "types": "turbo run types",
+    "test:once": "turbo run test:once",
+    "test:watch": "turbo run test:watch",
+    "react:build": "pnpm --filter @another-graphql-ide/react build",
+    "react:build:workers": "pnpm --filter @another-graphql-ide/react build:workers",
+    "ladle:build": "pnpm --filter ladle build",
+    "ladle:dev": "pnpm --filter ladle dev",
+    "ladle:preview": "pnpm --filter ladle preview",
+    "ladle:serve": "pnpm --filter ladle serve",
+    "prettier:check": "pnpm prettier --check ./",
+    "prettier:write": "pnpm prettier --write ./"
+  },
+  "keywords": [
+    "graphql",
+    "ide"
+  ],
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": "22.x",
+    "pnpm": "10.x"
+  },
+  "dependencies": {
+    "@types/node": "^24.3.1",
+    "eslint": "^9.15.0",
+    "prettier": "^3.6.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "turbo": "^2.5.6",
+    "typescript": "^5.9.2"
+  }
+}
