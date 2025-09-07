@@ -38,7 +38,7 @@ export const darkTheme = createTheme(themeContract, {
     neutral2: 'color(display-p3 0.0636 0.0636 0.0636)',
     neutral3: 'color(display-p3 0.08 0.08 0.08)',
     neutral4: 'color(display-p3 0.1103 0.1103 0.1103)',
-    neutral5: 'color(display-p3 0.1362 0.1362 0.1362)',
+    neutral5: 'color(display-p3 0.1802 0.1802 0.1802)',
     neutral6: 'color(display-p3 0.5313 0.5313 0.5313)',
     neutral7: 'color(display-p3 0.8751 0.8677 0.8677)',
     neutral8: 'color(display-p3 0.9698 0.9698 0.9698)',
