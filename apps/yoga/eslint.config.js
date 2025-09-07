@@ -11,10 +11,6 @@ export default [
   },
   {
     files: ['src/**/*.ts'],
-    rules: {
-      // API-specific rules
-      'no-console': 'warn', // Maybe allow console in development
-    },
   },
   {
     ignores: ['dist/', 'node_modules/', '*.config.js'],
