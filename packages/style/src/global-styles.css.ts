@@ -16,10 +16,7 @@ globalStyle('html', {
 globalStyle('body', {
   margin: 0,
   fontFamily: themeContract.fonts.sans,
-  // fontSize: themeContract.fontSizes.md,
-  // lineHeight: themeContract.lineHeights.normal,
-  // color: themeContract.colors.foreground,
-  // backgroundColor: themeContract.colors.background,
+  backgroundColor: themeContract.colors.neutral3,
   WebkitFontSmoothing: 'antialiased',
   MozOsxFontSmoothing: 'grayscale',
 })
@@ -30,9 +27,6 @@ globalStyle('main', {
 
 globalStyle('h1, h2, h3, h4, h5, h6', {
   fontFamily: themeContract.fonts.sans,
-  // fontWeight: themeContract.fontWeights.semibold,
-  // lineHeight: themeContract.lineHeights.tight,
-  // color: themeContract.colors.foreground,
 })
 
 // globalStyle('h1', {

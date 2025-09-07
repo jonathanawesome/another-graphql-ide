@@ -35,7 +35,7 @@ export const iconClass = recipe({
   },
 })
 
-globalStyle(`${iconClass()} svg path`, {
-  // fill: themeContract.color.neutral[11],
-  transition: `all .15s ${themeContract.motion.authentic}`,
-})
+// globalStyle(`${iconClass()} svg path`, {
+//   // fill: themeContract.color.neutral[11],
+//   transition: `all .15s ${themeContract.motion.authentic}`,
+// })
