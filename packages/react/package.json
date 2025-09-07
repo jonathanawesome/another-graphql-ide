@@ -1,0 +1,17 @@
+{
+  "name": "@another-graphql-ide/react",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "graphql": "^16",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "dependencies": {
+    "@another-graphql-ide/style": "workspace:*"
+  }
+}

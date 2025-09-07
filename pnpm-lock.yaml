@@ -87,6 +87,21 @@ importers:
         specifier: ^8.15.0
         version: 8.42.0(eslint@9.35.0)(typescript@5.9.2)
 
+  packages/react:
+    dependencies:
+      '@another-graphql-ide/style':
+        specifier: workspace:*
+        version: link:../style
+      graphql:
+        specifier: ^16
+        version: 16.11.0
+      react:
+        specifier: ^19
+        version: 19.1.1
+      react-dom:
+        specifier: ^19
+        version: 19.1.1(react@19.1.1)
+
   packages/style:
     dependencies:
       '@vanilla-extract/css':
