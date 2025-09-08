@@ -1,14 +1,20 @@
-import { ComponentType } from 'react';
+import { ComponentType, ReactElement } from 'react';
 
 export interface ComponentVariant {
   name: string;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
+}
+
+export interface ComponentDemo {
+  name: string;
+  render: () => ReactElement;
 }
 
 export interface ComponentPreview {
   title: string;
-  component: ComponentType<any>;
-  variants: ComponentVariant[];
+  component: ComponentType<Record<string, unknown>>;
+  variants?: ComponentVariant[];
+  demos?: ComponentDemo[];
   category?: string;
 }
 

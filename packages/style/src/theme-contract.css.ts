@@ -3,6 +3,8 @@ import { arrayToKebabString } from './utils'
 
 export const themeContract = createGlobalThemeContract(
   {
+    //TODO: boxShadow
+
     colors: {
       // neutral scale
       neutral1: null,
@@ -18,6 +20,9 @@ export const themeContract = createGlobalThemeContract(
       textStrong: null,
       textRegular: null,
       textLight: null,
+
+      // brand
+      brand: null,
     },
 
     // px to rem scaling
@@ -45,6 +50,12 @@ export const themeContract = createGlobalThemeContract(
       24: null,
       32: null,
       40: null,
+    },
+
+    radii: {
+      small: null,
+      medium: null,
+      large: null,
     },
 
     fonts: {

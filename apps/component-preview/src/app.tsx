@@ -1,43 +1,59 @@
-import { useState, useMemo } from 'react';
-import { Layout } from './components/layout';
-import { Sidebar } from './components/sidebar';
-import { Preview } from './components/preview';
-import { discoverComponents } from './utils/discovery';
+import { useState, useMemo } from 'react'
+
+import { Layout } from './components/layout'
+import { Preview } from './components/preview'
+import { Shelf } from './components/shelf'
+import { ShelfToggle } from './components/shelf-toggle'
+import { Sidebar } from './components/sidebar'
+import { ThemeToggle } from './components/theme-toggle'
+import { discoverComponents } from './utils/discovery'
 
 export function App() {
-  const components = useMemo(() => discoverComponents(), []);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const components = useMemo(() => discoverComponents(), [])
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [selectedItem, setSelectedItem] = useState<string | null>(null)
+  const [selectedType, setSelectedType] = useState<'variant' | 'demo' | null>(null)
+  const [isShelfOpen, setIsShelfOpen] = useState(false)
 
-  const selectedComponent = components.find((c) => c.id === selectedId);
-  const preview = selectedComponent?.module.default || null;
+  const selectedComponent = components.find(c => c.id === selectedId)
+  const preview = selectedComponent?.module.default || null
 
-  const handleSelect = (id: string, variantName?: string) => {
-    setSelectedId(id);
-    setSelectedVariant(variantName || null);
-  };
+  const handleSelect = (id: string, itemName: string, type: 'variant' | 'demo') => {
+    setSelectedId(id)
+    setSelectedItem(itemName)
+    setSelectedType(type)
+  }
 
-  const handleVariantSelect = (variantName: string) => {
-    setSelectedVariant(variantName);
-  };
+  const handleToggleShelf = () => {
+    setIsShelfOpen(!isShelfOpen)
+  }
+
+  const handleCloseShelf = () => {
+    setIsShelfOpen(false)
+  }
 
   return (
-    <Layout
-      sidebar={
+    <Layout>
+      <Preview 
+        preview={preview} 
+        selectedItem={selectedItem}
+        selectedType={selectedType}
+      />
+
+      <ShelfToggle onClick={handleToggleShelf} />
+
+      <Shelf isOpen={isShelfOpen} onClose={handleCloseShelf}>
+        <div style={{ marginBottom: '24px' }}>
+          <ThemeToggle />
+        </div>
         <Sidebar
           components={components}
           selectedId={selectedId}
-          selectedVariant={selectedVariant}
+          selectedItem={selectedItem}
+          selectedType={selectedType}
           onSelect={handleSelect}
         />
-      }
-      preview={
-        <Preview 
-          preview={preview} 
-          selectedVariant={selectedVariant}
-          onVariantSelect={handleVariantSelect}
-        />
-      }
-    />
-  );
+      </Shelf>
+    </Layout>
+  )
 }

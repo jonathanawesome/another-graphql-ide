@@ -9,13 +9,13 @@ export const iconClass = recipe({
   variants: {
     rotate: {
       '90': {
-        transform: `rotate(90deg)`,
+        transform: 'rotate(90deg)',
       },
       '180': {
-        transform: `rotate(180deg)`,
+        transform: 'rotate(180deg)',
       },
       '270': {
-        transform: `rotate(270deg)`,
+        transform: 'rotate(270deg)',
       },
     },
     size: {

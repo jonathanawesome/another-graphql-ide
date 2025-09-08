@@ -1,4 +1,22 @@
-const previewModules = import.meta.glob<any>(
+import { ComponentType, ReactElement } from 'react';
+
+interface PreviewModule {
+  default: {
+    title: string;
+    component: ComponentType<Record<string, unknown>>;
+    category?: string;
+    variants?: Array<{
+      name: string;
+      props: Record<string, unknown>;
+    }>;
+    demos?: Array<{
+      name: string;
+      render: () => ReactElement;
+    }>;
+  };
+}
+
+const previewModules = import.meta.glob<PreviewModule>(
   '../../../../packages/*/src/**/*.preview.tsx',
   { eager: true }
 );
@@ -6,7 +24,7 @@ const previewModules = import.meta.glob<any>(
 export interface DiscoveredComponent {
   id: string;
   path: string;
-  module: any;
+  module: PreviewModule;
   category: string;
   name: string;
 }
@@ -14,12 +32,10 @@ export interface DiscoveredComponent {
 export function discoverComponents(): DiscoveredComponent[] {
   const components: DiscoveredComponent[] = [];
 
-  for (const [path, module] of Object.entries(previewModules)) {
+  for (const [path, previewModule] of Object.entries(previewModules)) {
     const pathParts = path.split('/');
     const packageName = pathParts[2];
     const fileName = pathParts[pathParts.length - 1].replace('.preview.tsx', '');
-    
-    const previewModule = module;
     
     components.push({
       id: `${packageName}-${fileName}`,

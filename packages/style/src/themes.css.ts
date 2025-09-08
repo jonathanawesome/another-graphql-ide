@@ -30,6 +30,12 @@ const sharedTokens = {
     40: '2.5rem',
   },
 
+  radii: {
+    small: '0.125rem',
+    medium: '0.25rem',
+    large: '0.375rem',
+  },
+
   fonts: {
     sans: '"InstrumentSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     mono: '"SF Mono", Monaco, "JetBrains Mono", Consolas, monospace',
@@ -55,6 +61,8 @@ export const lightTheme = createTheme(themeContract, {
     textLight: 'color(display-p3 0.4198 0.4198 0.4198)', // neutral6
     textRegular: 'color(display-p3 0.2199 0.2199 0.2199)', // neutral7
     textStrong: 'color(display-p3 0.0202 0.0202 0.0202)', // neutral8
+
+    brand: 'color(display-p3 0.8823 0.0003 0.5961)',
   },
 
   // Use shared tokens
@@ -76,6 +84,8 @@ export const darkTheme = createTheme(themeContract, {
     textLight: 'color(display-p3 0.5313 0.5313 0.5313)', // neutral6
     textRegular: 'color(display-p3 0.8751 0.8677 0.8677)', // neutral7
     textStrong: 'color(display-p3 0.9698 0.9698 0.9698)', // neutral8
+
+    brand: 'color(display-p3 0.8823 0.0003 0.5961)',
   },
 
   // Use shared tokens
