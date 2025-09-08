@@ -1,5 +1,6 @@
+import { IconMap } from './icon-map'
 import { iconClass } from './icon.css'
-import { IconMap, IconProps } from './icon.types'
+import { IconProps } from './icon.types'
 
 export const Icon = ({ name, rotate, size = 'small' }: IconProps) => {
   const TheIcon = IconMap[name]

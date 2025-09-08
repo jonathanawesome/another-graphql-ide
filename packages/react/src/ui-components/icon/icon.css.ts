@@ -18,24 +18,20 @@ export const iconClass = recipe({
         transform: `rotate(270deg)`,
       },
     },
-    // size: {
-    //   small: {
-    //     height: themeContract.space[12],
-    //     width: themeContract.space[12],
-    //   },
-    //   medium: {
-    //     height: themeContract.space[16],
-    //     width: themeContract.space[16],
-    //   },
-    //   large: {
-    //     height: themeContract.space[20],
-    //     width: themeContract.space[20],
-    //   },
-    // },
+    size: {
+      small: {
+        height: themeContract.px[16],
+        width: themeContract.px[16],
+      },
+      medium: {
+        height: themeContract.px[20],
+        width: themeContract.px[20],
+      },
+    },
   },
 })
 
-// globalStyle(`${iconClass()} svg path`, {
-//   // fill: themeContract.color.neutral[11],
-//   transition: `all .15s ${themeContract.motion.authentic}`,
-// })
+globalStyle(`${iconClass()} svg path`, {
+  fill: themeContract.colors.neutral6,
+  transition: `all .15s ${themeContract.motion.authentic}`,
+})
