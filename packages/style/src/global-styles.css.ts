@@ -68,13 +68,7 @@ globalStyle('h1, h2, h3, h4, h5, h6', {
 // })
 
 globalStyle('button', {
-  fontFamily: 'inherit',
-  fontSize: '100%',
-  lineHeight: 1.15,
-  margin: 0,
-  overflow: 'visible',
-  textTransform: 'none',
-  WebkitAppearance: 'button',
+  all: 'unset',
 })
 
 globalStyle('button::-moz-focus-inner', {
