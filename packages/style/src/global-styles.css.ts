@@ -16,10 +16,9 @@ globalStyle('html', {
 globalStyle('body', {
   margin: 0,
   fontFamily: themeContract.fonts.sans,
-  // fontSize: themeContract.fontSizes.md,
-  // lineHeight: themeContract.lineHeights.normal,
-  // color: themeContract.colors.foreground,
-  // backgroundColor: themeContract.colors.background,
+  fontSize: themeContract.px[14],
+  color: themeContract.colors.neutral7,
+  backgroundColor: themeContract.colors.neutral3,
   WebkitFontSmoothing: 'antialiased',
   MozOsxFontSmoothing: 'grayscale',
 })
@@ -30,9 +29,6 @@ globalStyle('main', {
 
 globalStyle('h1, h2, h3, h4, h5, h6', {
   fontFamily: themeContract.fonts.sans,
-  // fontWeight: themeContract.fontWeights.semibold,
-  // lineHeight: themeContract.lineHeights.tight,
-  // color: themeContract.colors.foreground,
 })
 
 // globalStyle('h1', {
@@ -74,13 +70,7 @@ globalStyle('h1, h2, h3, h4, h5, h6', {
 // })
 
 globalStyle('button', {
-  fontFamily: 'inherit',
-  fontSize: '100%',
-  lineHeight: 1.15,
-  margin: 0,
-  overflow: 'visible',
-  textTransform: 'none',
-  WebkitAppearance: 'button',
+  all: 'unset',
 })
 
 globalStyle('button::-moz-focus-inner', {

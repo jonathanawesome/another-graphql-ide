@@ -12,10 +12,9 @@
     "test:watch": "turbo run test:watch",
     "react:build": "pnpm --filter @another-graphql-ide/react build",
     "react:build:workers": "pnpm --filter @another-graphql-ide/react build:workers",
-    "ladle:build": "pnpm --filter ladle build",
-    "ladle:dev": "pnpm --filter ladle dev",
-    "ladle:preview": "pnpm --filter ladle preview",
-    "ladle:serve": "pnpm --filter ladle serve",
+    "preview": "pnpm --filter component-preview dev",
+    "preview:build": "pnpm --filter component-preview build",
+    "preview:serve": "pnpm --filter component-preview preview",
     "prettier:check": "pnpm prettier --check ./",
     "prettier:write": "pnpm prettier --write ./"
   },
