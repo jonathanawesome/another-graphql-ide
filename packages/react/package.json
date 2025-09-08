@@ -12,6 +12,8 @@
     "react-dom": "^19"
   },
   "dependencies": {
+    "@another-graphql-ide/eslint-config": "workspace:*",
+    "@another-graphql-ide/shared": "workspace:*",
     "@another-graphql-ide/style": "workspace:*"
   }
 }
