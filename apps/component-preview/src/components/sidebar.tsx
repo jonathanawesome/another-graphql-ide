@@ -93,11 +93,8 @@ export function Sidebar({ components }: SidebarProps) {
                         >
                           {preview.variants?.map(
                             (variant: ComponentVariant) => (
-                              <li
-                                key={variant.name}
-                                className={styles.sectionItem}
-                              >
-                                <div className={styles.treeItem}>
+                              <li key={variant.name}>
+                                <div>
                                   <Link
                                     to="/$componentId/variant/$variantName"
                                     params={{
@@ -145,8 +142,8 @@ export function Sidebar({ components }: SidebarProps) {
                           role="group"
                         >
                           {preview.demos?.map(demo => (
-                            <li key={demo.name} className={styles.sectionItem}>
-                              <div className={styles.treeItem}>
+                            <li key={demo.name}>
+                              <div>
                                 <Link
                                   to="/$componentId/demo/$demoName"
                                   params={{
