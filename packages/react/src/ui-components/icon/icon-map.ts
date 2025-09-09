@@ -11,6 +11,7 @@ import { Copy } from './icons/copy'
 import { Gear } from './icons/gear'
 import { GraphQL } from './icons/graphql'
 import { InsertCode } from './icons/insert-code'
+import { Moon } from './icons/moon'
 import { Play } from './icons/play'
 import { Plus } from './icons/plus'
 import { Prettier } from './icons/prettier'
@@ -18,6 +19,7 @@ import { Search } from './icons/search'
 import { SeparatorRound } from './icons/separator-round'
 import { SeparatorSquare } from './icons/separator-square'
 import { Settings2 } from './icons/settings-2'
+import { Sun } from './icons/sun'
 import { Tabs } from './icons/tabs'
 import { X } from './icons/x'
 
@@ -35,6 +37,7 @@ export const IconMap = {
   Gear,
   GraphQL,
   InsertCode,
+  Moon,
   Play,
   Plus,
   Prettier,
@@ -42,6 +45,7 @@ export const IconMap = {
   SeparatorRound,
   SeparatorSquare,
   Settings2,
+  Sun,
   Tabs,
   X,
 }

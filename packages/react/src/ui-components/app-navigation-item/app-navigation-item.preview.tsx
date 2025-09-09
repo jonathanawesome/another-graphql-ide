@@ -13,7 +13,7 @@ import {
 const preview = createPreview<AppNavigationItemProps>({
   title: 'AppNavigationItem',
   component: AppNavigationItem,
-  category: 'Navigation Components',
+  category: 'UI Components',
   demos: [
     {
       name: 'All Variants',

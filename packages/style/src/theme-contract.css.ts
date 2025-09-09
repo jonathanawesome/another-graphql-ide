@@ -50,6 +50,7 @@ export const themeContract = createGlobalThemeContract(
       24: null,
       32: null,
       40: null,
+      64: null,
     },
 
     radii: {
