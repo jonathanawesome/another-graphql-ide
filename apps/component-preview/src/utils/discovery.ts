@@ -34,11 +34,13 @@ export function discoverComponents(): DiscoveredComponent[] {
 
   for (const [path, previewModule] of Object.entries(previewModules)) {
     const pathParts = path.split('/');
-    const packageName = pathParts[2];
+    // Find the index of 'packages' in the path and get the next part as package name
+    const packagesIndex = pathParts.indexOf('packages');
+    const packageName = packagesIndex !== -1 ? pathParts[packagesIndex + 1] : 'unknown';
     const fileName = pathParts[pathParts.length - 1].replace('.preview.tsx', '');
     
     components.push({
-      id: `${packageName}-${fileName}`,
+      id: fileName,
       path,
       module: previewModule,
       category: previewModule.default.category || packageName,
