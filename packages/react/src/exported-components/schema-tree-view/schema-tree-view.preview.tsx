@@ -2,6 +2,7 @@ import {
   createPreview,
   enterpriseTestSchema,
   graphiqlTestSchema,
+  performanceTestSchema,
   veterinaryOfficeSchema,
 } from '@another-graphql-ide/shared'
 
@@ -33,6 +34,14 @@ const preview = createPreview<SchemaTreeViewProps>({
       render: () => (
         <div style={{ height: '600px', width: '400px' }}>
           <SchemaTreeView schema={veterinaryOfficeSchema} />
+        </div>
+      ),
+    },
+    {
+      name: 'Performance Test Schema',
+      render: () => (
+        <div style={{ height: '600px', width: '400px' }}>
+          <SchemaTreeView schema={performanceTestSchema} />
         </div>
       ),
     },
