@@ -1,8 +1,7 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { useState } from 'react'
+import { ReactElement, useState } from 'react'
 
 import { Icon } from '../../../../packages/react/src/ui-components/icon/icon'
-import { ComponentVariant } from '../types'
 import { DiscoveredComponent } from '../utils/discovery'
 
 import * as styles from './sidebar.css'
@@ -11,40 +10,10 @@ interface SidebarProps {
   components: DiscoveredComponent[]
 }
 
-const SectionHeader = ({
-  action,
-  title,
-  isExpanded,
-}: {
-  action: () => void
-  title: string
-  isExpanded: boolean
-}) => {
-  return (
-    <button
-      className={styles.sectionHeader}
-      onClick={action}
-      data-active={isExpanded}
-    >
-      <Icon
-        name="Chevron"
-        rotate={isExpanded ? '90' : undefined}
-        size="small"
-      />
-      {title}
-    </button>
-  )
-}
-
-export function Sidebar({ components }: SidebarProps) {
-  const params = useParams({ strict: false })
-  const routeComponentId = 'componentId' in params ? params.componentId : null
-  const routeVariantName = 'variantName' in params ? params.variantName : null
-  const routeDemoName = 'demoName' in params ? params.demoName : null
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set()
-  )
-
+// Custom hook for managing expanded state
+function useExpandState() {
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
+  
   const toggleExpanded = (sectionId: string) => {
     setExpandedSections(prev => {
       const newSet = new Set(prev)
@@ -56,7 +25,199 @@ export function Sidebar({ components }: SidebarProps) {
       return newSet
     })
   }
+  
+  const isExpanded = (sectionId: string) => expandedSections.has(sectionId)
+  
+  return { isExpanded, toggleExpanded }
+}
 
+// Reusable section header component
+const SectionHeader = ({
+  action,
+  title,
+  isExpanded,
+}: {
+  action: () => void
+  title: string
+  isExpanded: boolean
+}) => (
+  <button
+    className={styles.sectionHeader}
+    onClick={action}
+    data-active={isExpanded}
+  >
+    <Icon
+      name="Chevron"
+      rotate={isExpanded ? '90' : undefined}
+      size="small"
+    />
+    {title}
+  </button>
+)
+
+// Generic collapsible section component
+interface CollapsibleSectionProps {
+  title: string
+  sectionId: string
+  componentId: string
+  isExpanded: boolean
+  toggleExpanded: (id: string) => void
+  children: ReactElement
+}
+
+const CollapsibleSection = ({
+  title,
+  sectionId,
+  componentId,
+  isExpanded,
+  toggleExpanded,
+  children,
+}: CollapsibleSectionProps) => (
+  <div className={styles.section}>
+    <SectionHeader
+      action={() => toggleExpanded(sectionId)}
+      isExpanded={isExpanded}
+      title={title}
+    />
+    {isExpanded && (
+      <ul
+        className={styles.sectionList}
+        id={`${title.toLowerCase()}-list-${componentId}`}
+        role="group"
+      >
+        {children}
+      </ul>
+    )}
+  </div>
+)
+
+// Section item link component
+interface SectionItemProps {
+  to: string
+  params: Record<string, string>
+  isActive: boolean
+  name: string
+}
+
+const SectionItem = ({ to, params, isActive, name }: SectionItemProps) => (
+  <li>
+    <Link
+      to={to}
+      params={params}
+      className={styles.itemButton}
+      data-active={isActive}
+    >
+      {name}
+    </Link>
+  </li>
+)
+
+// Component item with sections
+interface ComponentItemProps {
+  component: DiscoveredComponent
+  isComponentExpanded: boolean
+  toggleExpanded: (id: string) => void
+  isExpanded: (id: string) => boolean
+  routeComponentId: string | null
+  routeVariantName: string | null
+  routeDemoName: string | null
+}
+
+const ComponentItem = ({
+  component,
+  isComponentExpanded,
+  toggleExpanded,
+  isExpanded,
+  routeComponentId,
+  routeVariantName,
+  routeDemoName,
+}: ComponentItemProps) => {
+  const hasVariants = component.variants && component.variants.length > 0
+  const hasDemos = component.demos && component.demos.length > 0
+  
+  const componentId = `${component.id}-component`
+  const variantsSectionId = `${component.id}-variants`
+  const demosSectionId = `${component.id}-demos`
+  
+  return (
+    <li className={styles.componentItem}>
+      <button
+        className={styles.componentTitle}
+        onClick={() => toggleExpanded(componentId)}
+        data-expanded={isComponentExpanded}
+      >
+        {component.name}
+      </button>
+      
+      {isComponentExpanded && hasVariants && (
+        <CollapsibleSection
+          title="Variants"
+          sectionId={variantsSectionId}
+          componentId={component.id}
+          isExpanded={isExpanded(variantsSectionId)}
+          toggleExpanded={toggleExpanded}
+        >
+          <>
+            {component.variants?.map(variant => (
+              <SectionItem
+                key={variant.name}
+                to="/$componentId/variant/$variantName"
+                params={{
+                  componentId: component.id,
+                  variantName: variant.name,
+                }}
+                isActive={
+                  routeComponentId === component.id &&
+                  routeVariantName === variant.name
+                }
+                name={variant.name}
+              />
+            ))}
+          </>
+        </CollapsibleSection>
+      )}
+      
+      {isComponentExpanded && hasDemos && (
+        <CollapsibleSection
+          title="Demos"
+          sectionId={demosSectionId}
+          componentId={component.id}
+          isExpanded={isExpanded(demosSectionId)}
+          toggleExpanded={toggleExpanded}
+        >
+          <>
+            {component.demos?.map(demo => (
+              <SectionItem
+                key={demo.name}
+                to="/$componentId/demo/$demoName"
+                params={{
+                  componentId: component.id,
+                  demoName: demo.name,
+                }}
+                isActive={
+                  routeComponentId === component.id &&
+                  routeDemoName === demo.name
+                }
+                name={demo.name}
+              />
+            ))}
+          </>
+        </CollapsibleSection>
+      )}
+    </li>
+  )
+}
+
+export function Sidebar({ components }: SidebarProps) {
+  const params = useParams({ strict: false })
+  const { isExpanded, toggleExpanded } = useExpandState()
+  
+  // Extract route params more cleanly
+  const routeComponentId = 'componentId' in params ? (params.componentId as string) : null
+  const routeVariantName = 'variantName' in params ? (params.variantName as string) : null
+  const routeDemoName = 'demoName' in params ? (params.demoName as string) : null
+  
+  // Group components by category
   const grouped = components.reduce(
     (acc, comp) => {
       if (!acc[comp.category]) {
@@ -67,115 +228,28 @@ export function Sidebar({ components }: SidebarProps) {
     },
     {} as Record<string, DiscoveredComponent[]>
   )
-
+  
   return (
     <aside className={styles.sidebar}>
-      {Object.entries(grouped).map(([category, discoveredComponents]) => {
-        return (
-          <div key={category} className={styles.category}>
-            <h2 className={styles.categoryTitle}>{category}</h2>
-            <ul className={styles.componentList}>
-              {discoveredComponents.map(component => {
-                const hasVariants =
-                  component.variants && component.variants.length > 0
-                const hasDemos = component.demos && component.demos.length > 0
-
-                const variantsSectionId = `${component.id}-variants`
-                const demosSectionId = `${component.id}-demos`
-                const isVariantsExpanded =
-                  expandedSections.has(variantsSectionId)
-                const isDemosExpanded = expandedSections.has(demosSectionId)
-
-                return (
-                  <li key={component.id} className={styles.componentItem}>
-                    <div className={styles.componentTitle}>
-                      {component.name}
-                    </div>
-
-                    {/* Variants Section */}
-                    {hasVariants && (
-                      <div className={styles.section}>
-                        <SectionHeader
-                          action={() => toggleExpanded(variantsSectionId)}
-                          isExpanded={isVariantsExpanded}
-                          title="Variants"
-                        />
-
-                        {isVariantsExpanded && (
-                          <ul
-                            className={styles.sectionList}
-                            id={`variants-list-${component.id}`}
-                            role="group"
-                          >
-                            {component.variants?.map(
-                              (variant: ComponentVariant) => (
-                                <li key={variant.name}>
-                                  <Link
-                                    to="/$componentId/variant/$variantName"
-                                    params={{
-                                      componentId: component.id,
-                                      variantName: variant.name,
-                                    }}
-                                    className={styles.itemButton}
-                                    data-active={
-                                      routeComponentId === component.id &&
-                                      routeVariantName === variant.name
-                                    }
-                                  >
-                                    {variant.name}
-                                  </Link>
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Demos Section */}
-                    {hasDemos && (
-                      <div className={styles.section}>
-                        <SectionHeader
-                          action={() => toggleExpanded(demosSectionId)}
-                          isExpanded={isDemosExpanded}
-                          title="Demos"
-                        />
-
-                        {isDemosExpanded && (
-                          <ul
-                            className={styles.sectionList}
-                            id={`demos-list-${component.id}`}
-                            role="group"
-                          >
-                            {component.demos?.map(demo => (
-                              <li key={demo.name}>
-                                <Link
-                                  to="/$componentId/demo/$demoName"
-                                  params={{
-                                    componentId: component.id,
-                                    demoName: demo.name,
-                                  }}
-                                  className={styles.itemButton}
-                                  data-active={
-                                    routeComponentId === component.id &&
-                                    routeDemoName === demo.name
-                                  }
-                                >
-                                  {demo.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        )
-      })}
+      {Object.entries(grouped).map(([category, discoveredComponents]) => (
+        <div key={category} className={styles.category}>
+          <h2 className={styles.categoryTitle}>{category}</h2>
+          <ul className={styles.componentList}>
+            {discoveredComponents.map(component => (
+              <ComponentItem
+                key={component.id}
+                component={component}
+                isComponentExpanded={isExpanded(`${component.id}-component`)}
+                toggleExpanded={toggleExpanded}
+                isExpanded={isExpanded}
+                routeComponentId={routeComponentId}
+                routeVariantName={routeVariantName}
+                routeDemoName={routeDemoName}
+              />
+            ))}
+          </ul>
+        </div>
+      ))}
     </aside>
   )
 }

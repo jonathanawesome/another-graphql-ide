@@ -10,7 +10,7 @@ export const category = style({
 })
 
 export const categoryTitle = style({
-  fontSize: themeContract.px[11],
+  fontSize: themeContract.px[10],
   fontWeight: 600,
   textTransform: 'uppercase',
   color: themeContract.colors.neutral6,
@@ -23,15 +23,33 @@ export const componentList = style({
 })
 
 export const componentItem = style({
-  marginBottom: themeContract.px[12],
+  marginBottom: themeContract.px[8],
 })
 
 export const componentTitle = style({
+  display: 'block',
+  width: '100%',
+  textAlign: 'left',
   fontSize: themeContract.px[14],
   fontWeight: 500,
   color: themeContract.colors.neutral7,
   marginBottom: themeContract.px[6],
-  paddingLeft: themeContract.px[8],
+  paddingLeft: themeContract.px[2],
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  transition: `color 0.2s ${themeContract.motion.authentic}`,
+
+  ':hover': {
+    color: themeContract.colors.neutral8,
+  },
+
+  selectors: {
+    '&[data-expanded="true"]': {
+      color: themeContract.colors.neutral8,
+      marginBottom: themeContract.px[8],
+    },
+  },
 })
 
 export const section = style({
@@ -44,11 +62,9 @@ export const sectionHeader = style({
   alignItems: 'center',
   width: '100%',
   height: themeContract.px[20],
-  fontSize: themeContract.px[10],
-  textTransform: 'uppercase',
-  fontWeight: 600,
-  letterSpacing: themeContract.px[1],
-  color: themeContract.colors.neutral7,
+  fontSize: themeContract.px[14],
+  fontWeight: 500,
+  color: themeContract.colors.neutral6,
 
   ':hover': {
     color: themeContract.colors.neutral8,
