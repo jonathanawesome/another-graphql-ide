@@ -1,3 +1,4 @@
+import { Link, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { IconButton } from '../../../../packages/react/src/ui-components/icon-button/icon-button'
@@ -8,19 +9,13 @@ import * as styles from './sidebar.css'
 
 interface SidebarProps {
   components: DiscoveredComponent[]
-  selectedId: string | null
-  selectedItem: string | null
-  selectedType: 'variant' | 'demo' | null
-  onSelect: (id: string, itemName: string, type: 'variant' | 'demo') => void
 }
 
-export function Sidebar({
-  components,
-  selectedId,
-  selectedItem,
-  selectedType,
-  onSelect,
-}: SidebarProps) {
+export function Sidebar({ components }: SidebarProps) {
+  const params = useParams({ strict: false })
+  const componentId = 'componentId' in params ? params.componentId : null
+  const variantName = 'variantName' in params ? params.variantName : null
+  const demoName = 'demoName' in params ? params.demoName : null
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set()
   )
@@ -103,19 +98,20 @@ export function Sidebar({
                                 className={styles.sectionItem}
                               >
                                 <div className={styles.treeItem}>
-                                  <button
+                                  <Link
+                                    to="/$componentId/variant/$variantName"
+                                    params={{
+                                      componentId: item.id,
+                                      variantName: variant.name,
+                                    }}
                                     className={styles.itemButton}
                                     data-active={
-                                      selectedId === item.id &&
-                                      selectedItem === variant.name &&
-                                      selectedType === 'variant'
-                                    }
-                                    onClick={() =>
-                                      onSelect(item.id, variant.name, 'variant')
+                                      componentId === item.id &&
+                                      variantName === variant.name
                                     }
                                   >
                                     {variant.name}
-                                  </button>
+                                  </Link>
                                 </div>
                               </li>
                             )
@@ -151,19 +147,20 @@ export function Sidebar({
                           {preview.demos?.map(demo => (
                             <li key={demo.name} className={styles.sectionItem}>
                               <div className={styles.treeItem}>
-                                <button
+                                <Link
+                                  to="/$componentId/demo/$demoName"
+                                  params={{
+                                    componentId: item.id,
+                                    demoName: demo.name,
+                                  }}
                                   className={styles.itemButton}
                                   data-active={
-                                    selectedId === item.id &&
-                                    selectedItem === demo.name &&
-                                    selectedType === 'demo'
-                                  }
-                                  onClick={() =>
-                                    onSelect(item.id, demo.name, 'demo')
+                                    componentId === item.id &&
+                                    demoName === demo.name
                                   }
                                 >
                                   {demo.name}
-                                </button>
+                                </Link>
                               </div>
                             </li>
                           ))}

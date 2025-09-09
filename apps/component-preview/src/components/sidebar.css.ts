@@ -69,9 +69,11 @@ export const itemButton = style({
   borderRadius: '4px',
   fontSize: '13px',
   transition: 'background-color 0.2s',
+  textDecoration: 'none',
 
   ':hover': {
     color: themeContract.colors.neutral8,
+    textDecoration: 'none',
   },
 
   selectors: {
