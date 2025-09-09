@@ -14,12 +14,11 @@ export const Route = createFileRoute('/$componentId/demo/$demoName')({
       throw redirect({ to: '/' })
     }
 
-    const preview = component.module?.default
-    if (!preview?.demos) {
+    if (!component.demos) {
       throw redirect({ to: '/' })
     }
 
-    const demo = preview.demos.find(d => d.name === params.demoName)
+    const demo = component.demos.find(d => d.name === params.demoName)
     if (!demo) {
       throw redirect({ to: '/' })
     }
@@ -33,7 +32,13 @@ function DemoRoute() {
   const { componentId, demoName } = Route.useParams()
   const components = useMemo(() => discoverComponents(), [])
   const selectedComponent = components.find(c => c.id === componentId)
-  const preview = selectedComponent?.module.default || null
+  const preview = selectedComponent ? {
+    title: selectedComponent.title,
+    component: selectedComponent.component,
+    category: selectedComponent.category,
+    variants: selectedComponent.variants,
+    demos: selectedComponent.demos
+  } : null
 
   return (
     <Preview preview={preview} selectedItem={demoName} selectedType="demo" />

@@ -36,20 +36,18 @@ export const shelf = style({
 
 export const closeButton = style({
   position: 'absolute',
-  top: '16px',
-  right: '16px',
+  top: themeContract.px[16],
+  right: themeContract.px[16],
   background: 'transparent',
   border: 'none',
-  fontSize: '18px',
   cursor: 'pointer',
-  padding: '8px',
-  color: '#666',
-  borderRadius: '4px',
+  padding: themeContract.px[8],
+  borderRadius: themeContract.px[4],
 })
 
 export const content = style({
   flex: 1,
   overflow: 'auto',
-  padding: '24px',
-  paddingTop: '64px', // Account for close button
+  padding: themeContract.px[20],
+  paddingTop: themeContract.px[64], // Account for close button
 })

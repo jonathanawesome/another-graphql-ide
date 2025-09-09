@@ -14,12 +14,11 @@ export const Route = createFileRoute('/$componentId/variant/$variantName')({
       throw redirect({ to: '/' })
     }
 
-    const preview = component.module?.default
-    if (!preview?.variants) {
+    if (!component.variants) {
       throw redirect({ to: '/' })
     }
 
-    const variant = preview.variants.find(v => v.name === params.variantName)
+    const variant = component.variants.find(v => v.name === params.variantName)
     if (!variant) {
       throw redirect({ to: '/' })
     }
@@ -33,7 +32,13 @@ function VariantRoute() {
   const { componentId, variantName } = Route.useParams()
   const components = useMemo(() => discoverComponents(), [])
   const selectedComponent = components.find(c => c.id === componentId)
-  const preview = selectedComponent?.module.default || null
+  const preview = selectedComponent ? {
+    title: selectedComponent.title,
+    component: selectedComponent.component,
+    category: selectedComponent.category,
+    variants: selectedComponent.variants,
+    demos: selectedComponent.demos
+  } : null
 
   return (
     <Preview

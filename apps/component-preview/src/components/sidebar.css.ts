@@ -6,7 +6,7 @@ export const sidebar = style({
 })
 
 export const category = style({
-  marginBottom: themeContract.px[16],
+  marginBottom: themeContract.px[24],
 })
 
 export const categoryTitle = style({
@@ -28,20 +28,22 @@ export const componentItem = style({
 
 export const componentTitle = style({
   fontSize: themeContract.px[14],
-  fontWeight: 600,
+  fontWeight: 500,
   color: themeContract.colors.neutral7,
-  marginBottom: themeContract.px[4],
-  paddingLeft: themeContract.px[2],
+  marginBottom: themeContract.px[6],
+  paddingLeft: themeContract.px[8],
 })
 
 export const section = style({
   marginBottom: themeContract.px[2],
+  marginLeft: themeContract.px[4],
 })
 
 export const sectionHeader = style({
   display: 'flex',
   alignItems: 'center',
   width: '100%',
+  height: themeContract.px[20],
   fontSize: themeContract.px[10],
   textTransform: 'uppercase',
   fontWeight: 600,
@@ -56,7 +58,6 @@ export const sectionHeader = style({
   selectors: {
     '&[data-active="true"]': {
       color: themeContract.colors.neutral8,
-      backgroundColor: themeContract.colors.neutral3,
     },
   },
 })
@@ -65,13 +66,13 @@ export const sectionList = style({
   listStyle: 'none',
   margin: 0,
   padding: 0,
-  marginLeft: themeContract.px[24],
+  marginLeft: themeContract.px[16],
 })
 
 export const itemButton = style({
-  display: 'block',
-  flex: 1,
-  padding: `${themeContract.px[4]} ${themeContract.px[8]}`,
+  display: 'flex',
+  alignItems: 'center',
+  height: themeContract.px[24],
   textAlign: 'left',
   border: 'none',
   backgroundColor: 'transparent',
@@ -79,18 +80,15 @@ export const itemButton = style({
   cursor: 'pointer',
   fontSize: themeContract.px[14],
   transition: `background-color 0.2s ${themeContract.motion.authentic}`,
-  textDecoration: 'none',
 
   ':hover': {
     color: themeContract.colors.neutral8,
-    textDecoration: 'none',
   },
 
   selectors: {
     '&[data-active="true"]': {
       color: themeContract.colors.neutral8,
       fontWeight: 600,
-      backgroundColor: 'rgba(0, 0, 0, 0.05)',
     },
   },
 })

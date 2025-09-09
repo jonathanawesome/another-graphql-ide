@@ -24,8 +24,17 @@ const previewModules = import.meta.glob<PreviewModule>(
 export interface DiscoveredComponent {
   id: string;
   path: string;
-  module: PreviewModule;
+  title: string;
+  component: ComponentType<Record<string, unknown>>;
   category: string;
+  variants?: Array<{
+    name: string;
+    props: Record<string, unknown>;
+  }>;
+  demos?: Array<{
+    name: string;
+    render: () => ReactElement;
+  }>;
   name: string;
 }
 
@@ -42,8 +51,11 @@ export function discoverComponents(): DiscoveredComponent[] {
     components.push({
       id: fileName,
       path,
-      module: previewModule,
+      title: previewModule.default.title,
+      component: previewModule.default.component,
       category: previewModule.default.category || packageName,
+      variants: previewModule.default.variants,
+      demos: previewModule.default.demos,
       name: previewModule.default.title || fileName,
     });
   }
