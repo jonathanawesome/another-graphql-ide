@@ -1,6 +1,7 @@
 import { Link, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 
+import { Icon } from '../../../../packages/react/src/ui-components/icon/icon'
 import { IconButton } from '../../../../packages/react/src/ui-components/icon-button/icon-button'
 import { ComponentVariant } from '../types'
 import { DiscoveredComponent } from '../utils/discovery'
@@ -10,6 +11,56 @@ import * as styles from './sidebar.css'
 interface SidebarProps {
   components: DiscoveredComponent[]
 }
+
+const SectionHeader = ({
+  action,
+  title,
+  isExpanded,
+}: {
+  action: () => void
+  title: string
+  isExpanded: boolean
+}) => {
+  return (
+    <button
+      className={styles.sectionHeader}
+      onClick={action}
+      data-active={isExpanded}
+    >
+      <Icon
+        name="Chevron"
+        rotate={isExpanded ? '90' : undefined}
+        size="small"
+      />
+      {title}
+    </button>
+  )
+}
+
+// const SectionList = () => {
+//   return (
+//     <ul
+//       className={styles.sectionList}
+//       role="group"
+//     >
+//       {preview.demos?.map(demo => (
+//         <li key={demo.name}>
+//           <Link
+//             to="/$componentId/demo/$demoName"
+//             params={{
+//               componentId: item.id,
+//               demoName: demo.name,
+//             }}
+//             className={styles.itemButton}
+//             data-active={componentId === item.id && demoName === demo.name}
+//           >
+//             {demo.name}
+//           </Link>
+//         </li>
+//       ))}
+//     </ul>
+//   )
+// }
 
 export function Sidebar({ components }: SidebarProps) {
   const params = useParams({ strict: false })
@@ -69,22 +120,12 @@ export function Sidebar({ components }: SidebarProps) {
                   {/* Variants Section */}
                   {hasVariants && (
                     <div className={styles.section}>
-                      <div className={styles.sectionHeader}>
-                        <IconButton
-                          action={() => toggleExpanded(variantsSectionId)}
-                          iconName="Caret"
-                          rotate={isVariantsExpanded ? '90' : undefined}
-                          size="mini"
-                          title="Caret"
-                          aria-expanded={isVariantsExpanded}
-                          aria-controls={`variants-list-${item.id}`}
-                        />
-                        <button
-                          onClick={() => toggleExpanded(variantsSectionId)}
-                        >
-                          Variants
-                        </button>
-                      </div>
+                      <SectionHeader
+                        action={() => toggleExpanded(variantsSectionId)}
+                        isExpanded={isVariantsExpanded}
+                        title="Variants"
+                      />
+
                       {isVariantsExpanded && (
                         <ul
                           className={styles.sectionList}
@@ -94,22 +135,20 @@ export function Sidebar({ components }: SidebarProps) {
                           {preview.variants?.map(
                             (variant: ComponentVariant) => (
                               <li key={variant.name}>
-                                <div>
-                                  <Link
-                                    to="/$componentId/variant/$variantName"
-                                    params={{
-                                      componentId: item.id,
-                                      variantName: variant.name,
-                                    }}
-                                    className={styles.itemButton}
-                                    data-active={
-                                      componentId === item.id &&
-                                      variantName === variant.name
-                                    }
-                                  >
-                                    {variant.name}
-                                  </Link>
-                                </div>
+                                <Link
+                                  to="/$componentId/variant/$variantName"
+                                  params={{
+                                    componentId: item.id,
+                                    variantName: variant.name,
+                                  }}
+                                  className={styles.itemButton}
+                                  data-active={
+                                    componentId === item.id &&
+                                    variantName === variant.name
+                                  }
+                                >
+                                  {variant.name}
+                                </Link>
                               </li>
                             )
                           )}
@@ -121,20 +160,12 @@ export function Sidebar({ components }: SidebarProps) {
                   {/* Demos Section */}
                   {hasDemos && (
                     <div className={styles.section}>
-                      <div className={styles.sectionHeader}>
-                        <IconButton
-                          action={() => toggleExpanded(demosSectionId)}
-                          iconName="Caret"
-                          rotate={isDemosExpanded ? '90' : undefined}
-                          size="mini"
-                          title="Caret"
-                          aria-expanded={isDemosExpanded}
-                          aria-controls={`demos-list-${item.id}`}
-                        />
-                        <button onClick={() => toggleExpanded(demosSectionId)}>
-                          Demos
-                        </button>
-                      </div>
+                      <SectionHeader
+                        action={() => toggleExpanded(demosSectionId)}
+                        isExpanded={isDemosExpanded}
+                        title="Demos"
+                      />
+
                       {isDemosExpanded && (
                         <ul
                           className={styles.sectionList}
@@ -143,22 +174,20 @@ export function Sidebar({ components }: SidebarProps) {
                         >
                           {preview.demos?.map(demo => (
                             <li key={demo.name}>
-                              <div>
-                                <Link
-                                  to="/$componentId/demo/$demoName"
-                                  params={{
-                                    componentId: item.id,
-                                    demoName: demo.name,
-                                  }}
-                                  className={styles.itemButton}
-                                  data-active={
-                                    componentId === item.id &&
-                                    demoName === demo.name
-                                  }
-                                >
-                                  {demo.name}
-                                </Link>
-                              </div>
+                              <Link
+                                to="/$componentId/demo/$demoName"
+                                params={{
+                                  componentId: item.id,
+                                  demoName: demo.name,
+                                }}
+                                className={styles.itemButton}
+                                data-active={
+                                  componentId === item.id &&
+                                  demoName === demo.name
+                                }
+                              >
+                                {demo.name}
+                              </Link>
                             </li>
                           ))}
                         </ul>

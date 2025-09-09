@@ -41,6 +41,24 @@ export const section = style({
 export const sectionHeader = style({
   display: 'flex',
   alignItems: 'center',
+  width: '100%',
+  fontSize: themeContract.px[10],
+  textTransform: 'uppercase',
+  fontWeight: 600,
+  letterSpacing: themeContract.px[1],
+  color: themeContract.colors.neutral7,
+
+  ':hover': {
+    color: themeContract.colors.neutral8,
+    backgroundColor: themeContract.colors.neutral3,
+  },
+
+  selectors: {
+    '&[data-active="true"]': {
+      color: themeContract.colors.neutral8,
+      backgroundColor: themeContract.colors.neutral3,
+    },
+  },
 })
 
 export const sectionList = style({
@@ -57,7 +75,7 @@ export const itemButton = style({
   textAlign: 'left',
   border: 'none',
   backgroundColor: 'transparent',
-  color: themeContract.colors.neutral7,
+  color: themeContract.colors.neutral6,
   cursor: 'pointer',
   fontSize: themeContract.px[14],
   transition: `background-color 0.2s ${themeContract.motion.authentic}`,
