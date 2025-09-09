@@ -4,6 +4,10 @@ import { themeContract } from './theme-contract.css'
 
 // Shared tokens that don't change between themes
 const sharedTokens = {
+  shadows: {
+    box: `0px 0px 0px 1px ${themeContract.colors.neutral4}, 0px 0px 32px 2px ${themeContract.colors.neutral4}`,
+  },
+
   px: {
     1: '0.0625rem',
     2: '0.125rem',

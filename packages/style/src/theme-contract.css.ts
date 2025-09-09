@@ -3,7 +3,9 @@ import { arrayToKebabString } from './utils'
 
 export const themeContract = createGlobalThemeContract(
   {
-    //TODO: boxShadow
+    shadows: {
+      box: null,
+    },
 
     colors: {
       // neutral scale
