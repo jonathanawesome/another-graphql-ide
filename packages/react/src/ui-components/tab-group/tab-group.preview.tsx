@@ -10,7 +10,7 @@ const action = (name: string) => {
 const preview = createPreview<TabGroupProps>({
   title: 'TabGroup',
   component: TabGroup,
-  category: 'Navigation Components',
+  category: 'UI Components',
   demos: [
     {
       name: 'Example',

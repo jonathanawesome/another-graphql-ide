@@ -3,31 +3,38 @@ import { RecipeVariants } from '@another-graphql-ide/style'
 import { IconButton, IconButtonProps } from '../icon-button/icon-button'
 import { Pill, PillProps } from '../pill/pill'
 
-import { tabGroupItemClass } from './tab-group-item.css'
+import { tabGroupItemStyles } from './tab-group-item.css'
 
 export type TabGroupItemProps = {
   action: () => void
   actionIconButton?: IconButtonProps
   active?: Pick<
-    NonNullable<RecipeVariants<typeof tabGroupItemClass>>,
+    NonNullable<RecipeVariants<typeof tabGroupItemStyles.container>>,
     'active'
   >['active']
-  text: string
   pill?: PillProps
+  text: string
 }
 
 export const TabGroupItem = ({
   action,
   actionIconButton,
   active = false,
-  text,
   pill,
+  text,
 }: TabGroupItemProps) => {
   return (
-    <button className={tabGroupItemClass({ active })} onClick={action}>
-      {text}
-      {pill && <Pill {...pill} />}
+    <div
+      className={tabGroupItemStyles.container({
+        active,
+        withActionIcon: actionIconButton && true,
+      })}
+    >
+      <button className={tabGroupItemStyles.button} onClick={action}>
+        {text}
+        {pill && <Pill {...pill} />}
+      </button>
       {actionIconButton && <IconButton {...actionIconButton} />}
-    </button>
+    </div>
   )
 }
