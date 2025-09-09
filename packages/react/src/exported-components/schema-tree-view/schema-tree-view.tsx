@@ -5,7 +5,7 @@ import { Icon } from '../../ui-components/icon/icon'
 import { IconButton } from '../../ui-components/icon-button/icon-button'
 import { TabGroup } from '../../ui-components/tab-group/tab-group'
 
-import { TreeNode } from './components/tree-node'
+import { TreeContainer } from './components/tree-container'
 import { useSchemaTabs } from './hooks/use-schema-tabs'
 import { useSchemaTree } from './hooks/use-schema-tree'
 import { schemaTreeViewStyles } from './schema-tree-view.css'
@@ -60,22 +60,19 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
         <TabGroup tabs={tabs} />
       </div>
 
-      <div className={schemaTreeViewStyles.treeContainer}>
-        {currentTabData &&
-          currentTabData.children?.map(child => (
-            <TreeNode
-              key={child.id}
-              node={child}
-              expandedNodes={expanded}
-              onToggleExpanded={toggleExpanded}
-            />
-          ))}
-        {activeTab === 'favorites' && (
+      {currentTabData && currentTabData.children ? (
+        <TreeContainer
+          nodes={currentTabData.children}
+          expandedNodes={expanded}
+          onToggleExpanded={toggleExpanded}
+        />
+      ) : (
+        activeTab === 'favorites' && (
           <div className={schemaTreeViewStyles.emptyState}>
             No favorites yet. Click on fields to add them to your favorites.
           </div>
-        )}
-      </div>
+        )
+      )}
     </div>
   )
 }

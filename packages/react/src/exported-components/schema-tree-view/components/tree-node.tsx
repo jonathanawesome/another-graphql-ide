@@ -1,32 +1,34 @@
+import React from 'react'
+
 import { Icon } from '../../../ui-components/icon/icon'
 import { IconButton } from '../../../ui-components/icon-button/icon-button'
 import { schemaTreeViewStyles } from '../schema-tree-view.css'
 import { getTypeDisplayName, getTypeIcon } from '../utils/graphql-utils'
-import type { TreeNode as TreeNodeType } from '../utils/tree-utils'
+import type { FlattenedTreeNode } from '../utils/tree-utils'
 
 type TreeNodeProps = {
-  node: TreeNodeType
-  depth?: number
+  node: FlattenedTreeNode
   expandedNodes: Record<string, boolean>
   onToggleExpanded: (nodeId: string) => void
 }
 
-export const TreeNode = ({
+const TreeNodeComponent = ({
   node,
-  depth = 0,
   expandedNodes,
   onToggleExpanded,
 }: TreeNodeProps): React.JSX.Element => {
   const isExpanded = expandedNodes[node.id]
-  const hasChildren = node.children && node.children.length > 0
+  
+  // Check if node has children
+  const hasChildrenFlag = node.children && node.children.length > 0
 
   return (
-    <div key={node.id} className={schemaTreeViewStyles.treeNode}>
+    <div className={schemaTreeViewStyles.treeNode}>
       <div
         className={schemaTreeViewStyles.nodeContent}
-        style={{ paddingLeft: `${depth * 16}px` }}
+        style={{ paddingLeft: `${node.depth * 16}px` }}
       >
-        {hasChildren && (
+        {hasChildrenFlag && (
           <IconButton
             iconName="Caret"
             title={isExpanded ? 'Collapse' : 'Expand'}
@@ -48,20 +50,22 @@ export const TreeNode = ({
           )}
         </div>
       </div>
-
-      {isExpanded && hasChildren && (
-        <div className={schemaTreeViewStyles.nodeChildren}>
-          {node.children?.map(child => (
-            <TreeNode
-              key={child.id}
-              node={child}
-              depth={depth + 1}
-              expandedNodes={expandedNodes}
-              onToggleExpanded={onToggleExpanded}
-            />
-          ))}
-        </div>
-      )}
     </div>
   )
 }
+
+// Memoize the component to prevent unnecessary re-renders
+// Only re-render if node ID changes or expansion state for this specific node changes
+export const TreeNode = React.memo(TreeNodeComponent, (prevProps, nextProps) => {
+  // Return true if props are equal (skip re-render)
+  // Return false if props changed (trigger re-render)
+  const prevExpanded = prevProps.expandedNodes[prevProps.node.id]
+  const nextExpanded = nextProps.expandedNodes[nextProps.node.id]
+  
+  return (
+    prevProps.node.id === nextProps.node.id &&
+    prevProps.node.depth === nextProps.node.depth &&
+    prevExpanded === nextExpanded &&
+    prevProps.onToggleExpanded === nextProps.onToggleExpanded
+  )
+})

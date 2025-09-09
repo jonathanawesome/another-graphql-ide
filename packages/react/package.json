@@ -14,6 +14,7 @@
   "dependencies": {
     "@another-graphql-ide/eslint-config": "workspace:*",
     "@another-graphql-ide/shared": "workspace:*",
-    "@another-graphql-ide/style": "workspace:*"
+    "@another-graphql-ide/style": "workspace:*",
+    "@tanstack/react-virtual": "^3.13.12"
   }
 }

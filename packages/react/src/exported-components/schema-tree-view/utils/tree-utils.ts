@@ -18,11 +18,13 @@ export type TreeNode = {
 
 export type TabType = 'query' | 'mutation' | 'subscription' | 'favorites'
 
+
 /**
  * Sort nodes with expandable types first, then leaf fields
  */
 export function sortTreeNodes(nodes: TreeNode[]): TreeNode[] {
   return nodes.sort((a, b) => {
+    // Check if nodes have children
     const aHasChildren = a.children && a.children.length > 0
     const bHasChildren = b.children && b.children.length > 0
     
@@ -70,8 +72,9 @@ export function createChildrenFromType(
   return []
 }
 
+
 /**
- * Create a tree node for a GraphQL field
+ * Create a tree node for a GraphQL field (eager version - creates children immediately)
  */
 export function createFieldNode(
   id: string,
@@ -88,6 +91,7 @@ export function createFieldNode(
     children,
   }
 }
+
 
 /**
  * Create a root tree node for a GraphQL object type
@@ -111,6 +115,41 @@ export function createRootNode(
     graphqlType: type,
     children,
   }
+}
+
+/**
+ * Flattened tree node for virtualization
+ */
+export type FlattenedTreeNode = TreeNode & {
+  depth: number
+  isVisible: boolean
+}
+
+/**
+ * Flatten tree nodes into a list for virtualization
+ */
+export function flattenTreeNodes(
+  nodes: TreeNode[], 
+  expandedNodes: Record<string, boolean>,
+  depth = 0
+): FlattenedTreeNode[] {
+  const flattened: FlattenedTreeNode[] = []
+  
+  for (const node of nodes) {
+    // Add the current node
+    flattened.push({
+      ...node,
+      depth,
+      isVisible: true,
+    })
+    
+    // If the node is expanded and has children, add them recursively
+    if (expandedNodes[node.id] && node.children && node.children.length > 0) {
+      flattened.push(...flattenTreeNodes(node.children, expandedNodes, depth + 1))
+    }
+  }
+  
+  return flattened
 }
 
 /**
