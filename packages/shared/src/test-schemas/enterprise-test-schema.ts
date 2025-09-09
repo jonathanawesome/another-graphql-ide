@@ -19,7 +19,7 @@ import {
   emailScalar,
   jsonScalar,
   urlScalar,
-} from './test-schema/scalar-stubs'
+} from './scalar-stubs'
 
 // TypeScript Interfaces
 interface IUser {
@@ -776,7 +776,7 @@ const Invoice = new GraphQLObjectType({
     status: { type: new GraphQLNonNull(GraphQLString) },
     dueDate: { type: new GraphQLNonNull(dateTimeScalar) },
     paidAt: { type: dateTimeScalar },
-    items: { 
+    items: {
       type: new GraphQLList(InvoiceItem),
       resolve: (): IInvoiceItem[] => [
         {
@@ -1080,7 +1080,10 @@ const MutationType = new GraphQLObjectType({
       args: {
         input: { type: new GraphQLNonNull(CreateProjectInput) },
       },
-      resolve: (_root, { input }: { input: ICreateProjectInput }): IProject | null => {
+      resolve: (
+        _root,
+        { input }: { input: ICreateProjectInput }
+      ): IProject | null => {
         return {
           id: '1',
           name: input.name,
@@ -1114,7 +1117,10 @@ const MutationType = new GraphQLObjectType({
       args: {
         input: { type: new GraphQLNonNull(CreateTaskInput) },
       },
-      resolve: (_root, { input }: { input: ICreateTaskInput }): ITask | null => {
+      resolve: (
+        _root,
+        { input }: { input: ICreateTaskInput }
+      ): ITask | null => {
         return {
           id: '1',
           title: input.title,
@@ -1151,7 +1157,10 @@ const MutationType = new GraphQLObjectType({
         taskId: { type: new GraphQLNonNull(GraphQLID) },
         content: { type: new GraphQLNonNull(GraphQLString) },
       },
-      resolve: (_root, { content }: { taskId: string; content: string }): IComment | null => {
+      resolve: (
+        _root,
+        { content }: { taskId: string; content: string }
+      ): IComment | null => {
         return {
           id: '1',
           content,
@@ -1203,7 +1212,10 @@ const MutationType = new GraphQLObjectType({
         file: { type: new GraphQLNonNull(GraphQLString) }, // In practice, this would be a file upload
         description: { type: GraphQLString },
       },
-      resolve: (_root, args: { projectId?: string; file: string; description?: string }): IDocument | null => {
+      resolve: (
+        _root,
+        args: { projectId?: string; file: string; description?: string }
+      ): IDocument | null => {
         return {
           id: '1',
           name: 'document.pdf',
@@ -1270,7 +1282,7 @@ const SubscriptionType = new GraphQLObjectType({
 })
 
 // Create and export the schema
-export const enterpriseSchema = new GraphQLSchema({
+export const enterpriseTestSchema = new GraphQLSchema({
   query: QueryType,
   mutation: MutationType,
   subscription: SubscriptionType,
