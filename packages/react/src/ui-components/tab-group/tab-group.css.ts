@@ -5,4 +5,5 @@ export const tabGroupClass = style({
   alignItems: 'center',
   flexDirection: 'row',
   gap: themeContract.px[8],
+  paddingLeft: themeContract.px[8],
 })

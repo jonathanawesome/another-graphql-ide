@@ -7,6 +7,7 @@ export const tabGroupItemStyles = {
       height: themeContract.px[40],
       fontSize: themeContract.px[14],
       display: 'flex',
+      flex: 0,
       flexDirection: 'row',
       alignItems: 'center',
       gap: themeContract.px[4],
