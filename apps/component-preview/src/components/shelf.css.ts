@@ -8,7 +8,7 @@ export const overlay = style({
   right: 0,
   bottom: 0,
   background: 'transparent',
-  zIndex: 998,
+  zIndex: 8,
 })
 
 export const shelf = style({
@@ -21,7 +21,7 @@ export const shelf = style({
   background: themeContract.colors.neutral1,
 
   borderLeft: `1px solid ${themeContract.colors.neutral4}`,
-  zIndex: 999,
+  zIndex: 9,
   transform: 'translateX(100%)',
   transition: `transform 0.3s ${themeContract.motion.authentic}`,
   display: 'flex',
@@ -31,23 +31,53 @@ export const shelf = style({
     '&[data-open="true"]': {
       transform: 'translateX(0)',
     },
+    '&[data-pinned="true"]': {
+      transform: 'translateX(0)',
+      transition: 'none',
+      borderLeft: `1px solid ${themeContract.colors.neutral4}`,
+    },
   },
 })
 
+export const header = style({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  height: themeContract.px[64],
+  gap: themeContract.px[8],
+  borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+})
+
+// export const pinButton = style({
+//   background: 'transparent',
+//   border: 'none',
+//   cursor: 'pointer',
+//   padding: themeContract.px[8],
+//   borderRadius: themeContract.px[4],
+//   color: themeContract.colors.textStrong,
+//   selectors: {
+//     '&:hover': {
+//       background: themeContract.colors.neutral3,
+//     },
+//   },
+// })
+
 export const closeButton = style({
-  position: 'absolute',
-  top: themeContract.px[16],
-  right: themeContract.px[16],
   background: 'transparent',
   border: 'none',
   cursor: 'pointer',
   padding: themeContract.px[8],
   borderRadius: themeContract.px[4],
+  color: themeContract.colors.textStrong,
+  selectors: {
+    '&:hover': {
+      background: themeContract.colors.neutral3,
+    },
+  },
 })
 
 export const content = style({
   flex: 1,
   overflow: 'auto',
   padding: themeContract.px[20],
-  paddingTop: themeContract.px[64], // Account for close button
 })

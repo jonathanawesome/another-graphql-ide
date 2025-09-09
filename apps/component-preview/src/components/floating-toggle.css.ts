@@ -3,7 +3,7 @@ import { recipe, themeContract } from '@another-graphql-ide/style'
 export const floatingToggleClass = recipe({
   base: {
     position: 'fixed',
-    right: themeContract.px[24],
+    right: themeContract.px[16],
     width: themeContract.px[32],
     height: themeContract.px[32],
     borderRadius: '50%',
@@ -14,7 +14,7 @@ export const floatingToggleClass = recipe({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 997,
+    zIndex: 10,
     transition: `all 0.2s ${themeContract.motion.authentic}`,
 
     ':hover': {
@@ -30,13 +30,92 @@ export const floatingToggleClass = recipe({
   },
 
   variants: {
+    isShelfOpen: {
+      false: {},
+      true: {},
+    },
+    isShelfPinned: {
+      false: {},
+      true: {},
+    },
     type: {
-      shelf: {
-        bottom: themeContract.px[24],
-      },
-      theme: {
-        bottom: themeContract.px[64],
-      },
+      shelf: {},
+      theme: {},
+      pin: {},
     },
   },
+
+  compoundVariants: [
+    //shelf
+    {
+      variants: {
+        isShelfOpen: true,
+        type: 'shelf',
+      },
+      style: {
+        top: themeContract.px[16],
+        right: themeContract.px[16],
+      },
+    },
+    {
+      variants: {
+        isShelfOpen: false,
+        type: 'shelf',
+      },
+      style: {
+        bottom: themeContract.px[16],
+      },
+    },
+    //theme
+    {
+      variants: {
+        isShelfOpen: true,
+        type: 'theme',
+      },
+      style: {
+        top: themeContract.px[16],
+        right: themeContract.px[60],
+      },
+    },
+    {
+      variants: {
+        isShelfOpen: false,
+        type: 'theme',
+      },
+      style: {
+        bottom: themeContract.px[60],
+      },
+    },
+
+    // pin
+    {
+      variants: {
+        isShelfOpen: true,
+        type: 'pin',
+      },
+      style: {
+        top: themeContract.px[16],
+        right: 104,
+      },
+    },
+    {
+      variants: {
+        isShelfOpen: true,
+        isShelfPinned: true,
+        type: 'pin',
+      },
+      style: {
+        display: 'none',
+      },
+    },
+    {
+      variants: {
+        isShelfOpen: false,
+        type: 'pin',
+      },
+      style: {
+        display: 'none',
+      },
+    },
+  ],
 })

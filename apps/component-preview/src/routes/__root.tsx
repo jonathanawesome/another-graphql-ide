@@ -23,6 +23,7 @@ function RootLayout() {
 function RootContent() {
   const components = useMemo(() => discoverComponents(), [])
   const [isShelfOpen, setIsShelfOpen] = useState(false)
+  const [isShelfPinned, setIsShelfPinned] = useState(false)
   const { theme, setTheme, resolvedTheme } = useTheme()
 
   const handleToggleShelf = () => {
@@ -30,7 +31,21 @@ function RootContent() {
   }
 
   const handleCloseShelf = () => {
-    setIsShelfOpen(false)
+    if (!isShelfPinned) {
+      setIsShelfOpen(false)
+    }
+  }
+
+  const handleTogglePin = () => {
+    if (isShelfPinned) {
+      // When unpinning, also close the shelf
+      setIsShelfPinned(false)
+      setIsShelfOpen(false)
+    } else {
+      // When pinning, open and pin the shelf
+      setIsShelfPinned(true)
+      setIsShelfOpen(true)
+    }
   }
 
   const handleToggleTheme = () => {
@@ -42,22 +57,44 @@ function RootContent() {
   }
 
   return (
-    <Layout>
+    <Layout isShelfPinned={isShelfPinned}>
       <Outlet />
 
       <FloatingToggle
-        onClick={handleToggleShelf}
+        isShelfOpen={isShelfOpen}
+        isShelfPinned={isShelfPinned}
+        onClick={() => {
+          if (isShelfPinned) {
+            handleToggleShelf()
+            handleTogglePin()
+          } else {
+            handleToggleShelf()
+          }
+        }}
         title="Open Component List"
         type="shelf"
       />
       <FloatingToggle
+        isShelfOpen={isShelfOpen}
+        isShelfPinned={isShelfPinned}
         onClick={handleToggleTheme}
         theme={resolvedTheme}
         title="Toggle Theme"
         type="theme"
       />
+      <FloatingToggle
+        isShelfOpen={isShelfOpen}
+        isShelfPinned={isShelfPinned}
+        onClick={handleTogglePin}
+        title={isShelfPinned ? 'Unpin and close shelf' : 'Pin shelf'}
+        type="pin"
+      />
 
-      <Shelf isOpen={isShelfOpen} onClose={handleCloseShelf}>
+      <Shelf
+        isOpen={isShelfOpen}
+        onClose={handleCloseShelf}
+        isPinned={isShelfPinned}
+      >
         <Sidebar components={components} />
       </Shelf>
     </Layout>

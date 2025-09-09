@@ -12,6 +12,7 @@ import { Gear } from './icons/gear'
 import { GraphQL } from './icons/graphql'
 import { InsertCode } from './icons/insert-code'
 import { Moon } from './icons/moon'
+import { Pin } from './icons/pin'
 import { Play } from './icons/play'
 import { Plus } from './icons/plus'
 import { Prettier } from './icons/prettier'
@@ -38,6 +39,7 @@ export const IconMap = {
   GraphQL,
   InsertCode,
   Moon,
+  Pin,
   Play,
   Plus,
   Prettier,
