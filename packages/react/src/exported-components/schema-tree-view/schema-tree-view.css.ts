@@ -4,7 +4,7 @@ export const schemaTreeViewStyles = {
   container: style({
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: themeContract.colors.neutral1,
+    backgroundColor: themeContract.colors.neutral2,
     border: `1px solid ${themeContract.colors.neutral4}`,
     borderRadius: themeContract.radii.medium,
     overflow: 'hidden',
@@ -18,7 +18,7 @@ export const schemaTreeViewStyles = {
     gap: themeContract.px[8],
     padding: themeContract.px[12],
     borderBottom: `1px solid ${themeContract.colors.neutral4}`,
-    backgroundColor: themeContract.colors.neutral2,
+    backgroundColor: themeContract.colors.neutral1,
   }),
 
   searchInput: style({
