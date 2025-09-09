@@ -4,6 +4,11 @@ import { DemoGrid } from '../../utility-components/previews/components'
 
 import { TabGroupItem, type TabGroupItemProps } from './tab-group-item'
 
+const action = (name: string) => {
+  // eslint-disable-next-line no-console
+  console.log(`TabGroupItem clicked: ${name}`)
+}
+
 const preview = createPreview<TabGroupItemProps>({
   title: 'TabGroupItem',
   component: TabGroupItem,
@@ -11,19 +16,33 @@ const preview = createPreview<TabGroupItemProps>({
   variants: [
     {
       name: 'Default',
-      props: { active: false, text: 'Tab Group Item' },
+      props: {
+        action: () => action('Tab Group Item'),
+        active: false,
+        text: 'Tab Group Item',
+      },
     },
     {
       name: 'Active',
-      props: { active: true, text: 'Tab Group Item' },
+      props: {
+        action: () => action('Tab Group Item'),
+        active: true,
+        text: 'Tab Group Item',
+      },
     },
     {
       name: 'With Pill',
-      props: { active: true, text: 'Tab Group Item', pill: { text: '123' } },
+      props: {
+        action: () => action('Tab Group Item'),
+        active: true,
+        text: 'Tab Group Item',
+        pill: { text: '123' },
+      },
     },
     {
-      name: 'With Action',
+      name: 'With Action Icon',
       props: {
+        action: () => action('Tab Group Item'),
         active: true,
         text: 'Tab Group Item',
         actionIconButton: { iconName: 'X', title: 'X', size: 'mini' },
@@ -35,8 +54,16 @@ const preview = createPreview<TabGroupItemProps>({
       name: 'Default & Active',
       render: () => (
         <DemoGrid>
-          <TabGroupItem active={false} text="Tab Group Item" />
-          <TabGroupItem active text="Tab Group Item" />
+          <TabGroupItem
+            action={() => action('Tab Group Item')}
+            active={false}
+            text="Tab Group Item"
+          />
+          <TabGroupItem
+            action={() => action('Tab Group Item')}
+            active
+            text="Tab Group Item"
+          />
         </DemoGrid>
       ),
     },

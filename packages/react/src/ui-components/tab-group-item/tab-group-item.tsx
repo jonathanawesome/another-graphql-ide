@@ -6,8 +6,9 @@ import { Pill, PillProps } from '../pill/pill'
 import { tabGroupItemClass } from './tab-group-item.css'
 
 export type TabGroupItemProps = {
+  action: () => void
   actionIconButton?: IconButtonProps
-  active: Pick<
+  active?: Pick<
     NonNullable<RecipeVariants<typeof tabGroupItemClass>>,
     'active'
   >['active']
@@ -16,16 +17,17 @@ export type TabGroupItemProps = {
 }
 
 export const TabGroupItem = ({
+  action,
   actionIconButton,
-  active,
+  active = false,
   text,
   pill,
 }: TabGroupItemProps) => {
   return (
-    <div className={tabGroupItemClass({ active })}>
+    <button className={tabGroupItemClass({ active })} onClick={action}>
       {text}
       {pill && <Pill {...pill} />}
       {actionIconButton && <IconButton {...actionIconButton} />}
-    </div>
+    </button>
   )
 }
