@@ -154,8 +154,8 @@ globalStyle('[disabled]', {
 
 // Global scrollbar styles for webkit browsers (Chrome, Safari, Edge)
 globalStyle('::-webkit-scrollbar', {
-  width: themeContract.px[12], // Width of vertical scrollbar
-  height: themeContract.px[12], // Height of horizontal scrollbar
+  width: themeContract.px[4], // Width of vertical scrollbar
+  height: themeContract.px[4], // Height of horizontal scrollbar
 })
 
 globalStyle('::-webkit-scrollbar-track', {
@@ -164,13 +164,13 @@ globalStyle('::-webkit-scrollbar-track', {
 })
 
 globalStyle('::-webkit-scrollbar-thumb', {
-  background: themeContract.colors.neutral6, // Scrollbar handle
+  background: themeContract.colors.neutral7, // Scrollbar handle
   borderRadius: themeContract.px[6],
   transition: 'background 0.3s ease',
 })
 
 globalStyle('::-webkit-scrollbar-thumb:hover', {
-  background: themeContract.colors.neutral5, // Darker on hover
+  background: themeContract.colors.neutral6, // Darker on hover
 })
 
 globalStyle('::-webkit-scrollbar-corner', {
@@ -180,5 +180,5 @@ globalStyle('::-webkit-scrollbar-corner', {
 // For Firefox (uses different syntax)
 globalStyle('html', {
   scrollbarWidth: 'thin',
-  scrollbarColor: `${themeContract.colors.neutral6} transparent`, // thumb track
+  scrollbarColor: `${themeContract.colors.neutral7} transparent`, // thumb track
 })
