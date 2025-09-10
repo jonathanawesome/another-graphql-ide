@@ -22,7 +22,6 @@ export function Shelf({ isOpen, onClose, children, isPinned }: ShelfProps) {
         />
       )}
       <aside className={styles.shelf} data-open={isOpen} data-pinned={isPinned}>
-        <div className={styles.header} />
         <div className={styles.content}>{children}</div>
       </aside>
     </>

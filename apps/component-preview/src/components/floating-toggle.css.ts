@@ -15,7 +15,7 @@ export const floatingToggleClass = recipe({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
-    transition: `all 0.2s ${themeContract.motion.authentic}`,
+    transition: `all 0.15s ${themeContract.motion.authentic}`,
 
     ':hover': {
       background: themeContract.colors.neutral3,
@@ -39,65 +39,21 @@ export const floatingToggleClass = recipe({
       true: {},
     },
     type: {
-      shelf: {},
-      theme: {},
-      pin: {},
+      shelf: {
+        bottom: themeContract.px[16],
+      },
+      theme: {
+        bottom: themeContract.px[60],
+      },
+      pin: {
+        bottom: 104,
+        opacity: 1,
+      },
     },
   },
 
   compoundVariants: [
-    //shelf
-    {
-      variants: {
-        isShelfOpen: true,
-        type: 'shelf',
-      },
-      style: {
-        top: themeContract.px[16],
-        right: themeContract.px[16],
-      },
-    },
-    {
-      variants: {
-        isShelfOpen: false,
-        type: 'shelf',
-      },
-      style: {
-        bottom: themeContract.px[16],
-      },
-    },
-    //theme
-    {
-      variants: {
-        isShelfOpen: true,
-        type: 'theme',
-      },
-      style: {
-        top: themeContract.px[16],
-        right: themeContract.px[60],
-      },
-    },
-    {
-      variants: {
-        isShelfOpen: false,
-        type: 'theme',
-      },
-      style: {
-        bottom: themeContract.px[60],
-      },
-    },
-
     // pin
-    {
-      variants: {
-        isShelfOpen: true,
-        type: 'pin',
-      },
-      style: {
-        top: themeContract.px[16],
-        right: 104,
-      },
-    },
     {
       variants: {
         isShelfOpen: true,
@@ -105,7 +61,8 @@ export const floatingToggleClass = recipe({
         type: 'pin',
       },
       style: {
-        display: 'none',
+        opacity: 0,
+        visibility: 'hidden',
       },
     },
     {
@@ -114,7 +71,8 @@ export const floatingToggleClass = recipe({
         type: 'pin',
       },
       style: {
-        display: 'none',
+        opacity: 0,
+        visibility: 'hidden',
       },
     },
   ],

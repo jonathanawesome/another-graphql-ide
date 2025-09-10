@@ -39,29 +39,6 @@ export const shelf = style({
   },
 })
 
-export const header = style({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  alignItems: 'center',
-  height: themeContract.px[64],
-  gap: themeContract.px[8],
-  borderBottom: `1px solid ${themeContract.colors.neutral4}`,
-})
-
-// export const pinButton = style({
-//   background: 'transparent',
-//   border: 'none',
-//   cursor: 'pointer',
-//   padding: themeContract.px[8],
-//   borderRadius: themeContract.px[4],
-//   color: themeContract.colors.textStrong,
-//   selectors: {
-//     '&:hover': {
-//       background: themeContract.colors.neutral3,
-//     },
-//   },
-// })
-
 export const closeButton = style({
   background: 'transparent',
   border: 'none',
