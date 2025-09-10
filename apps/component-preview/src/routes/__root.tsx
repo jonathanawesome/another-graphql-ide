@@ -22,8 +22,8 @@ function RootLayout() {
 
 function RootContent() {
   const components = useMemo(() => discoverComponents(), [])
-  const [isShelfOpen, setIsShelfOpen] = useState(false)
-  const [isShelfPinned, setIsShelfPinned] = useState(false)
+  const [isShelfOpen, setIsShelfOpen] = useState(true)
+  const [isShelfPinned, setIsShelfPinned] = useState(true)
   const { theme, setTheme, resolvedTheme } = useTheme()
 
   const handleToggleShelf = () => {
