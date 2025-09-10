@@ -29,8 +29,8 @@ export const TreeContainer = ({
   const virtualizer = useVirtualizer({
     count: flattenedNodes.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 32, // Estimate row height in pixels
-    overscan: 10, // Render 10 extra items for smoother scrolling
+    estimateSize: () => 24, // Estimate row height in pixels
+    overscan: 50, // Render 10 extra items for smoother scrolling
   })
 
   return (

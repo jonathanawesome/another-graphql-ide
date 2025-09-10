@@ -3,6 +3,7 @@ import {
   GraphQLObjectType,
   GraphQLField,
   GraphQLType,
+  GraphQLArgument,
   isObjectType,
   getNamedType,
 } from 'graphql'
@@ -10,8 +11,10 @@ import {
 export type ListItemType = {
   id: string
   name: string
-  type: 'root' | 'field' | 'type' | 'argument'
+  type: 'root' | 'field' | 'type' | 'argument' | 'arguments'
   graphqlType?: GraphQLType
+  graphqlField?: GraphQLField<unknown, unknown>
+  graphqlArgument?: GraphQLArgument
   children?: ListItemType[]
   parent?: ListItemType
 }
@@ -72,6 +75,34 @@ export function createChildrenFromType(
 }
 
 /**
+ * Create argument nodes for a field
+ */
+export function createArgumentNodes(
+  parentId: string,
+  field: GraphQLField<unknown, unknown>
+): ListItemType[] {
+  const args = field.args || []
+  
+  if (args.length === 0) return []
+  
+  // Create the ARGUMENTS collapsible node
+  const argumentsNode: ListItemType = {
+    id: `${parentId}.arguments`,
+    name: 'ARGUMENTS',
+    type: 'arguments',
+    children: args.map(arg => ({
+      id: `${parentId}.arguments.${arg.name}`,
+      name: arg.name,
+      type: 'argument',
+      graphqlType: arg.type,
+      graphqlArgument: arg,
+    })),
+  }
+  
+  return [argumentsNode]
+}
+
+/**
  * Create a tree node for a GraphQL field (eager version - creates children immediately)
  */
 export function createFieldNode(
@@ -79,13 +110,18 @@ export function createFieldNode(
   name: string,
   field: GraphQLField<unknown, unknown>
 ): ListItemType {
-  const children = createChildrenFromType(`${id}.${name}`, field.type)
+  const typeChildren = createChildrenFromType(`${id}.${name}`, field.type)
+  const argumentNodes = createArgumentNodes(id, field)
+  
+  // Combine arguments (if any) with type children
+  const children = [...argumentNodes, ...typeChildren]
 
   return {
     id,
     name,
     type: 'field',
     graphqlType: field.type,
+    graphqlField: field,
     children,
   }
 }

@@ -94,14 +94,14 @@ export const schemaTreeViewStyles = {
       display: 'flex',
       alignItems: 'center',
       gap: themeContract.px[4],
-      padding: `${themeContract.px[4]} ${themeContract.px[8]}`,
-      borderRadius: themeContract.radii.small,
-      cursor: 'pointer',
-      transition: `background-color ${themeContract.motion.authentic}`,
+      // padding: `${themeContract.px[4]} ${themeContract.px[8]}`,
+      // borderRadius: themeContract.radii.small,
+      // cursor: 'pointer',
+      // transition: `background-color ${themeContract.motion.authentic}`,
 
-      ':hover': {
-        backgroundColor: themeContract.colors.neutral3,
-      },
+      // ':hover': {
+      //   backgroundColor: themeContract.colors.neutral3,
+      // },
     },
     'list-item-inner'
   ),
@@ -119,12 +119,24 @@ export const schemaTreeViewStyles = {
   listItemName: style(
     {
       color: themeContract.colors.textRegular,
+      cursor: 'pointer',
 
       ':hover': {
         color: themeContract.colors.textStrong,
       },
     },
     'list-item-name'
+  ),
+
+  listItemArgumentsLabel: style(
+    {
+      color: themeContract.colors.textLight,
+      fontSize: themeContract.px[12],
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.05em',
+    },
+    'list-item-arguments-label'
   ),
 
   listItemActionsContainer: recipe(

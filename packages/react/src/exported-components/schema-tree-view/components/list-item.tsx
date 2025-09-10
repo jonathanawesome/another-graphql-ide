@@ -46,6 +46,9 @@ const ListItemComponent = ({
     }
   }
 
+  // Special handling for ARGUMENTS node
+  const isArgumentsNode = node.type === 'arguments'
+
   return (
     <li
       style={style || undefined}
@@ -71,9 +74,10 @@ const ListItemComponent = ({
           />
         ) : (
           <>
-            {node.type === 'field' && node.graphqlType && (
-              <Icon name={getTypeIcon(node.graphqlType)} size="small" />
-            )}
+            {node.type === 'field' ||
+              (node.type === 'argument' && node.graphqlType && (
+                <Icon name={getTypeIcon(node.graphqlType)} size="small" />
+              ))}
           </>
         )}
 
@@ -82,29 +86,52 @@ const ListItemComponent = ({
           onMouseEnter={() => setShowActions(true)}
           onMouseLeave={() => setShowActions(false)}
         >
-          <span className={schemaTreeViewStyles.listItemName}>{node.name}</span>
-          <div
-            className={schemaTreeViewStyles.listItemActionsContainer({
-              showActions,
-            })}
+          <span
+            className={
+              isArgumentsNode
+                ? schemaTreeViewStyles.listItemArgumentsLabel
+                : schemaTreeViewStyles.listItemName
+            }
           >
-            <IconButtonGroup
-              icons={[
-                {
-                  action: () => alert('Implement Quick Docs'),
-                  iconName: 'BookOpenText',
-                  size: 'mini',
-                  title: 'View Documentation',
-                },
-                {
-                  action: () => alert('Implement Insert Code'),
-                  iconName: 'InsertCode',
-                  size: 'mini',
-                  title: 'Insert Code',
-                },
-              ]}
-            />
-          </div>
+            {node.name}
+          </span>
+          {!isArgumentsNode && (
+            <div
+              className={schemaTreeViewStyles.listItemActionsContainer({
+                showActions,
+              })}
+            >
+              {node.depth === 0 ? (
+                <IconButtonGroup
+                  icons={[
+                    {
+                      action: () => alert('Implement Quick Docs'),
+                      iconName: 'BookOpenText',
+                      size: 'mini',
+                      title: 'View Documentation',
+                    },
+                    {
+                      action: () => alert('Implement Insert Code'),
+                      iconName: 'InsertCode',
+                      size: 'mini',
+                      title: 'Insert Code',
+                    },
+                  ]}
+                />
+              ) : (
+                <IconButtonGroup
+                  icons={[
+                    {
+                      action: () => alert('Implement Quick Docs'),
+                      iconName: 'BookOpenText',
+                      size: 'mini',
+                      title: 'View Documentation',
+                    },
+                  ]}
+                />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </li>
