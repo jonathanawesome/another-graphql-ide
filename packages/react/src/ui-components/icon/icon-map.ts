@@ -1,5 +1,6 @@
 import { BookOpenText } from './icons/book-open-text'
 import { BowArrow } from './icons/bow-arrow'
+import { Cable } from './icons/cable'
 import { Caret } from './icons/caret'
 import { Chevron } from './icons/chevron'
 import { ChevronsUpDown } from './icons/chevrons-up-down'
@@ -11,6 +12,8 @@ import { Copy } from './icons/copy'
 import { Gear } from './icons/gear'
 import { GraphQL } from './icons/graphql'
 import { InsertCode } from './icons/insert-code'
+import { List } from './icons/list'
+import { Merge } from './icons/merge'
 import { Moon } from './icons/moon'
 import { Pin } from './icons/pin'
 import { Play } from './icons/play'
@@ -27,6 +30,7 @@ import { X } from './icons/x'
 export const IconMap = {
   BookOpenText,
   BowArrow,
+  Cable,
   Caret,
   Chevron,
   ChevronsUpDown,
@@ -38,6 +42,8 @@ export const IconMap = {
   Gear,
   GraphQL,
   InsertCode,
+  List,
+  Merge,
   Moon,
   Pin,
   Play,

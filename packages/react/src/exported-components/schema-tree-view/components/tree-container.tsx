@@ -46,21 +46,16 @@ export const TreeContainer = ({
         {virtualizer.getVirtualItems().map(virtualItem => {
           const node = flattenedNodes[virtualItem.index]
           return (
-            <li
+            <ListItem
               key={virtualItem.key}
-              role="presentation"
-              className={schemaTreeViewStyles.virtualItem}
               style={{
                 height: `${virtualItem.size}px`,
                 transform: `translateY(${virtualItem.start}px)`,
               }}
-            >
-              <ListItem
-                node={node}
-                expandedNodes={expandedNodes}
-                onToggleExpanded={onToggleExpanded}
-              />
-            </li>
+              node={node}
+              expandedNodes={expandedNodes}
+              onToggleExpanded={onToggleExpanded}
+            />
           )
         })}
       </ul>

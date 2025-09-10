@@ -1,22 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Icon } from '../../../ui-components/icon/icon'
 import { IconButton } from '../../../ui-components/icon-button/icon-button'
+import { IconButtonGroup } from '../../../ui-components/icon-button-group/icon-button-group'
 import { schemaTreeViewStyles } from '../schema-tree-view.css'
-import { getTypeDisplayName, getTypeIcon } from '../utils/graphql-utils'
+import { getTypeIcon } from '../utils/graphql-utils'
 import type { FlattenedListItem } from '../utils/tree-utils'
 
 type ListItemProps = {
-  node: FlattenedListItem
   expandedNodes: Record<string, boolean>
+  node: FlattenedListItem
   onToggleExpanded: (nodeId: string) => void
+  style?: React.CSSProperties
 }
 
 const ListItemComponent = ({
-  node,
   expandedNodes,
+  node,
   onToggleExpanded,
+  style,
 }: ListItemProps): React.JSX.Element => {
+  const [showActions, setShowActions] = useState<boolean>(false)
+
   const isExpanded = expandedNodes[node.id]
 
   // Check if node has children
@@ -42,7 +47,8 @@ const ListItemComponent = ({
   }
 
   return (
-    <div
+    <li
+      style={style || undefined}
       className={schemaTreeViewStyles.listItem}
       role="treeitem"
       aria-expanded={hasChildrenFlag ? isExpanded : undefined}
@@ -51,37 +57,57 @@ const ListItemComponent = ({
       onKeyDown={handleKeyDown}
     >
       <div
-        className={schemaTreeViewStyles.nodeContent}
+        className={schemaTreeViewStyles.listItemInner}
         style={{ paddingLeft: `${node.depth * 16}px` }}
       >
-        {hasChildrenFlag && (
+        {hasChildrenFlag ? (
           <IconButton
-            iconName="Caret"
+            iconName="Chevron"
             title={isExpanded ? 'Collapse' : 'Expand'}
             rotate={isExpanded ? '90' : undefined}
             action={() => onToggleExpanded(node.id)}
-            size="small"
+            size="mini"
             aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.name}`}
           />
+        ) : (
+          <>
+            {node.type === 'field' && node.graphqlType && (
+              <Icon name={getTypeIcon(node.graphqlType)} size="small" />
+            )}
+          </>
         )}
 
-        <div className={schemaTreeViewStyles.nodeInfo}>
-          {node.type === 'field' && node.graphqlType && (
-            <Icon
-              name={getTypeIcon(node.graphqlType)}
-              size="small"
-              aria-hidden="true"
+        <div
+          className={schemaTreeViewStyles.listItemDetail}
+          onMouseEnter={() => setShowActions(true)}
+          onMouseLeave={() => setShowActions(false)}
+        >
+          <span className={schemaTreeViewStyles.listItemName}>{node.name}</span>
+          <div
+            className={schemaTreeViewStyles.listItemActionsContainer({
+              showActions,
+            })}
+          >
+            <IconButtonGroup
+              icons={[
+                {
+                  action: () => alert('Implement Quick Docs'),
+                  iconName: 'BookOpenText',
+                  size: 'mini',
+                  title: 'View Documentation',
+                },
+                {
+                  action: () => alert('Implement Insert Code'),
+                  iconName: 'InsertCode',
+                  size: 'mini',
+                  title: 'Insert Code',
+                },
+              ]}
             />
-          )}
-          <span className={schemaTreeViewStyles.nodeName}>{node.name}</span>
-          {node.type === 'field' && node.graphqlType && (
-            <span className={schemaTreeViewStyles.nodeType}>
-              : {getTypeDisplayName(node.graphqlType)}
-            </span>
-          )}
+          </div>
         </div>
       </div>
-    </div>
+    </li>
   )
 }
 

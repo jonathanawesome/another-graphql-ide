@@ -36,9 +36,9 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
   if (queryData.schemaData.query) {
     tabItems.push({
       name: 'query',
-      content: queryData.currentTabData?.children ? (
+      content: queryData.tabData?.children ? (
         <TreeContainer
-          nodes={queryData.currentTabData.children}
+          nodes={queryData.tabData.children}
           expandedNodes={expanded}
           onToggleExpanded={toggleExpanded}
         />
@@ -56,9 +56,9 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
   if (mutationData.schemaData.mutation) {
     tabItems.push({
       name: 'mutation',
-      content: mutationData.currentTabData?.children ? (
+      content: mutationData.tabData?.children ? (
         <TreeContainer
-          nodes={mutationData.currentTabData.children}
+          nodes={mutationData.tabData.children}
           expandedNodes={expanded}
           onToggleExpanded={toggleExpanded}
         />
@@ -76,9 +76,9 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
   if (subscriptionData.schemaData.subscription) {
     tabItems.push({
       name: 'subscription',
-      content: subscriptionData.currentTabData?.children ? (
+      content: subscriptionData.tabData?.children ? (
         <TreeContainer
-          nodes={subscriptionData.currentTabData.children}
+          nodes={subscriptionData.tabData.children}
           expandedNodes={expanded}
           onToggleExpanded={toggleExpanded}
         />
@@ -96,9 +96,9 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
   // Add favorites tab
   tabItems.push({
     name: 'favorites',
-    content: favoritesData.currentTabData?.children ? (
+    content: favoritesData.tabData?.children ? (
       <TreeContainer
-        nodes={favoritesData.currentTabData.children}
+        nodes={favoritesData.tabData.children}
         expandedNodes={expanded}
         onToggleExpanded={toggleExpanded}
       />
@@ -128,7 +128,7 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
             iconName="X"
             title="Clear search"
             action={() => setSearchTerm('')}
-            size="small"
+            size="mini"
           />
         )}
       </div>

@@ -15,35 +15,19 @@ const preview = createPreview<SchemaTreeViewProps>({
   demos: [
     {
       name: 'Enterprise Test Schema',
-      render: () => (
-        <div style={{ height: '600px', width: '400px' }}>
-          <SchemaTreeView schema={enterpriseTestSchema} />
-        </div>
-      ),
+      render: () => <SchemaTreeView schema={enterpriseTestSchema} />,
     },
     {
       name: 'GraphiQL Test Schema',
-      render: () => (
-        <div style={{ height: '600px', width: '400px' }}>
-          <SchemaTreeView schema={graphiqlTestSchema} />
-        </div>
-      ),
+      render: () => <SchemaTreeView schema={graphiqlTestSchema} />,
     },
     {
       name: 'Veterinary Office Test Schema',
-      render: () => (
-        <div style={{ height: '600px', width: '400px' }}>
-          <SchemaTreeView schema={veterinaryOfficeSchema} />
-        </div>
-      ),
+      render: () => <SchemaTreeView schema={veterinaryOfficeSchema} />,
     },
     {
       name: 'Performance Test Schema',
-      render: () => (
-        <div style={{ height: '600px', width: '400px' }}>
-          <SchemaTreeView schema={performanceTestSchema} />
-        </div>
-      ),
+      render: () => <SchemaTreeView schema={performanceTestSchema} />,
     },
   ],
 })

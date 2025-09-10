@@ -1,25 +1,30 @@
-import { style, themeContract } from '@another-graphql-ide/style'
+import { recipe, style, themeContract } from '@another-graphql-ide/style'
 
 export const schemaTreeViewStyles = {
-  container: style({
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: themeContract.colors.neutral2,
-    border: `1px solid ${themeContract.colors.neutral4}`,
-    borderRadius: themeContract.radii.medium,
-    overflow: 'hidden',
-    height: '100%',
-    boxShadow: themeContract.shadows.box,
-  }),
+  container: style(
+    {
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: themeContract.colors.neutral2,
+      border: `1px solid ${themeContract.colors.neutral4}`,
+      borderRadius: themeContract.radii.medium,
+      overflow: 'hidden',
+      height: '100%',
+      boxShadow: themeContract.shadows.box,
+    },
+    'container'
+  ),
 
-  searchContainer: style({
-    display: 'flex',
-    alignItems: 'center',
-    gap: themeContract.px[8],
-    padding: themeContract.px[12],
-    borderBottom: `1px solid ${themeContract.colors.neutral4}`,
-    backgroundColor: themeContract.colors.neutral1,
-  }),
+  searchContainer: style(
+    {
+      display: 'flex',
+      alignItems: 'center',
+      gap: themeContract.px[8],
+      borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+      backgroundColor: themeContract.colors.neutral1,
+    },
+    'search-container'
+  ),
 
   searchInput: style({
     flex: 1,
@@ -42,12 +47,15 @@ export const schemaTreeViewStyles = {
     },
   }),
 
-  treeContainer: style({
-    flex: 1,
-    height: '100%',
-    overflow: 'auto',
-    padding: themeContract.px[8],
-  }),
+  treeContainer: style(
+    {
+      flex: 1,
+      height: '100%',
+      overflow: 'auto',
+      padding: themeContract.px[8],
+    },
+    'tree-container'
+  ),
 
   emptyState: style({
     display: 'flex',
@@ -60,63 +68,91 @@ export const schemaTreeViewStyles = {
     textAlign: 'center',
   }),
 
-  listItem: style({
-    marginBottom: themeContract.px[2],
-  }),
-
-  nodeContent: style({
-    display: 'flex',
-    alignItems: 'center',
-    gap: themeContract.px[4],
-    padding: `${themeContract.px[4]} ${themeContract.px[8]}`,
-    borderRadius: themeContract.radii.small,
-    cursor: 'pointer',
-    transition: `background-color ${themeContract.motion.authentic}`,
-
-    ':hover': {
-      backgroundColor: themeContract.colors.neutral3,
+  virtualList: style(
+    {
+      position: 'relative',
+      width: '100%',
+      margin: 0,
+      padding: 0,
+      listStyle: 'none',
     },
-  }),
+    'virtual-list'
+  ),
 
-  nodeInfo: style({
-    display: 'flex',
-    alignItems: 'center',
-    gap: themeContract.px[6],
-    flex: 1,
-  }),
+  listItem: style(
+    {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+    },
+    'list-item'
+  ),
 
-  nodeName: style({
-    fontSize: themeContract.px[14],
-    fontWeight: '500',
-    color: themeContract.colors.textStrong,
-    fontFamily: themeContract.fonts.mono,
-  }),
+  listItemInner: style(
+    {
+      display: 'flex',
+      alignItems: 'center',
+      gap: themeContract.px[4],
+      padding: `${themeContract.px[4]} ${themeContract.px[8]}`,
+      borderRadius: themeContract.radii.small,
+      cursor: 'pointer',
+      transition: `background-color ${themeContract.motion.authentic}`,
 
-  nodeType: style({
-    fontSize: themeContract.px[13],
-    color: themeContract.colors.textLight,
-    fontFamily: themeContract.fonts.mono,
-    fontStyle: 'italic',
-  }),
+      ':hover': {
+        backgroundColor: themeContract.colors.neutral3,
+      },
+    },
+    'list-item-inner'
+  ),
 
-  nodeChildren: style({
-    marginLeft: themeContract.px[16],
-    borderLeft: `1px solid ${themeContract.colors.neutral4}`,
-    paddingLeft: themeContract.px[8],
-  }),
+  listItemDetail: style(
+    {
+      display: 'flex',
+      alignItems: 'center',
+      gap: themeContract.px[6],
+      flex: 1,
+    },
+    'list-item-detail'
+  ),
 
-  virtualList: style({
-    position: 'relative',
-    width: '100%',
-    margin: 0,
-    padding: 0,
-    listStyle: 'none',
-  }),
+  listItemName: style(
+    {
+      color: themeContract.colors.textRegular,
 
-  virtualItem: style({
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-  }),
+      ':hover': {
+        color: themeContract.colors.textStrong,
+      },
+    },
+    'list-item-name'
+  ),
+
+  listItemActionsContainer: recipe(
+    {
+      base: {
+        transition: `all .35s ${themeContract.motion.authentic}`,
+      },
+      variants: {
+        showActions: {
+          false: { opacity: 0, visibility: 'hidden' },
+          true: {
+            opacity: 1,
+            visibility: 'visible',
+          },
+        },
+      },
+    },
+    'list-item-name-actions-container'
+  ),
+
+  nodeType: style({}, 'node-type'),
+
+  nodeChildren: style(
+    {
+      marginLeft: themeContract.px[16],
+      borderLeft: `1px solid ${themeContract.colors.neutral4}`,
+      paddingLeft: themeContract.px[8],
+    },
+    'node-children'
+  ),
 }

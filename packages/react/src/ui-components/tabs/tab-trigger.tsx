@@ -1,4 +1,3 @@
-// import { RecipeVariants } from '@another-graphql-ide/style'
 import { Tabs as RadixTabs } from 'radix-ui'
 
 import { IconButton, type IconButtonProps } from '../icon-button/icon-button'
@@ -19,11 +18,7 @@ export const TabTrigger = ({
   pill,
   text,
 }: TabTriggerProps) => (
-  <div
-    className={tabsStyles.triggerContainer({
-      withActionIcon: actionIconButton && true,
-    })}
-  >
+  <div className={tabsStyles.triggerContainer}>
     <RadixTabs.Trigger
       className={tabsStyles.trigger({
         withActionIcon: actionIconButton && true,

@@ -42,7 +42,7 @@ export function useSchemaTree(
   )
 
   // Get current tab data with filtering
-  const currentTabData = useMemo(() => {
+  const tabData = useMemo(() => {
     let rootNode: ListItemType | null = null
 
     if (activeTab === 'query') rootNode = schemaData.query
@@ -67,6 +67,6 @@ export function useSchemaTree(
   return {
     schemaData,
     fieldCounts,
-    currentTabData,
+    tabData,
   }
 }
