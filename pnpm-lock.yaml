@@ -169,10 +169,17 @@ importers:
         specifier: ^19
         version: 19.1.1(react@19.1.1)
 
-  packages/shared: {}
+  packages/shared:
+    dependencies:
+      '@another-graphql-ide/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
 
   packages/style:
     dependencies:
+      '@another-graphql-ide/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@vanilla-extract/css':
         specifier: ^1.17.0
         version: 1.17.4

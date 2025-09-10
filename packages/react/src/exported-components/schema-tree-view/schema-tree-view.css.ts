@@ -68,42 +68,81 @@ export const schemaTreeViewStyles = {
     textAlign: 'center',
   }),
 
-  virtualList: style(
+  treeList: style(
     {
-      position: 'relative',
-      width: '100%',
       margin: 0,
       padding: 0,
       listStyle: 'none',
     },
-    'virtual-list'
+    'tree-list'
+  ),
+
+  nestedList: style(
+    {
+      margin: 0,
+      padding: 0,
+      listStyle: 'none',
+
+      marginLeft: themeContract.px[20],
+
+      '::before': {
+        content: '',
+        position: 'absolute',
+        top: themeContract.px[18],
+        left: themeContract.px[12],
+        height: 'calc(100% - 30px)',
+        width: '1px',
+        backgroundColor: themeContract.colors.neutral5,
+      },
+    },
+    'nested-list'
   ),
 
   listItem: style(
     {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
+      position: 'relative',
     },
     'list-item'
   ),
 
-  listItemInner: style(
+  listItemInner: recipe(
     {
-      display: 'flex',
-      alignItems: 'center',
-      gap: themeContract.px[4],
-      // padding: `${themeContract.px[4]} ${themeContract.px[8]}`,
-      // borderRadius: themeContract.radii.small,
-      // cursor: 'pointer',
-      // transition: `background-color ${themeContract.motion.authentic}`,
+      base: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: themeContract.px[4],
+        position: 'relative',
+      },
 
-      // ':hover': {
-      //   backgroundColor: themeContract.colors.neutral3,
-      // },
+      variants: {
+        withIndentLine: {
+          false: {},
+          true: {
+            '::before': {
+              content: '',
+              position: 'absolute',
+              top: '12px',
+              left: '-8px',
+              height: '1px',
+              width: '12px',
+              backgroundColor: themeContract.colors.neutral5,
+            },
+          },
+        },
+      },
     },
     'list-item-inner'
+  ),
+
+  listItemLeafIndicatorContainer: style(
+    {
+      height: themeContract.px[24],
+      width: themeContract.px[24],
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    'list-item-leaf-indicator-container'
   ),
 
   listItemDetail: style(
@@ -120,9 +159,12 @@ export const schemaTreeViewStyles = {
     {
       color: themeContract.colors.textRegular,
       cursor: 'pointer',
+      fontVariationSettings: `"wght" 400`,
+      transition: `all 0.3s ${themeContract.motion.authentic}`,
 
       ':hover': {
         color: themeContract.colors.textStrong,
+        fontVariationSettings: `"wght" 600`,
       },
     },
     'list-item-name'
@@ -131,10 +173,10 @@ export const schemaTreeViewStyles = {
   listItemArgumentsLabel: style(
     {
       color: themeContract.colors.textLight,
-      fontSize: themeContract.px[12],
+      fontSize: themeContract.px[9],
       fontWeight: 600,
       textTransform: 'uppercase',
-      letterSpacing: '0.05em',
+      letterSpacing: '1px',
     },
     'list-item-arguments-label'
   ),

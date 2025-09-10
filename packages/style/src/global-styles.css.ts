@@ -1,4 +1,5 @@
 import { globalStyle } from '@vanilla-extract/css'
+
 import { themeContract } from './theme-contract.css'
 
 // CSS Reset

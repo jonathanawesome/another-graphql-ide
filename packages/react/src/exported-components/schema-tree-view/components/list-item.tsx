@@ -4,31 +4,31 @@ import { Icon } from '../../../ui-components/icon/icon'
 import { IconButton } from '../../../ui-components/icon-button/icon-button'
 import { IconButtonGroup } from '../../../ui-components/icon-button-group/icon-button-group'
 import { schemaTreeViewStyles } from '../schema-tree-view.css'
-import { getTypeIcon } from '../utils/graphql-utils'
-import type { FlattenedListItem } from '../utils/tree-utils'
+// import { getTypeIcon } from '../utils/graphql-utils'
+import type { ListItemType } from '../utils/tree-utils'
 
 type ListItemProps = {
   expandedNodes: Record<string, boolean>
-  node: FlattenedListItem
+  node: ListItemType
   onToggleExpanded: (nodeId: string) => void
-  style?: React.CSSProperties
+  depth?: number
 }
 
 const ListItemComponent = ({
   expandedNodes,
   node,
   onToggleExpanded,
-  style,
+  depth = 0,
 }: ListItemProps): React.JSX.Element => {
   const [showActions, setShowActions] = useState<boolean>(false)
 
   const isExpanded = expandedNodes[node.id]
 
   // Check if node has children
-  const hasChildrenFlag = node.children && node.children.length > 0
+  const hasChildren = node.children && node.children.length > 0
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (hasChildrenFlag) {
+    if (hasChildren) {
       if (e.key === 'ArrowRight' && !isExpanded) {
         e.preventDefault()
         onToggleExpanded(node.id)
@@ -40,7 +40,7 @@ const ListItemComponent = ({
 
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      if (hasChildrenFlag) {
+      if (hasChildren) {
         onToggleExpanded(node.id)
       }
     }
@@ -51,19 +51,19 @@ const ListItemComponent = ({
 
   return (
     <li
-      style={style || undefined}
       className={schemaTreeViewStyles.listItem}
       role="treeitem"
-      aria-expanded={hasChildrenFlag ? isExpanded : undefined}
-      aria-level={node.depth + 1}
+      aria-expanded={hasChildren ? isExpanded : undefined}
+      aria-level={depth + 1}
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
       <div
-        className={schemaTreeViewStyles.listItemInner}
-        style={{ paddingLeft: `${node.depth * 16}px` }}
+        className={schemaTreeViewStyles.listItemInner({
+          withIndentLine: depth !== 0,
+        })}
       >
-        {hasChildrenFlag ? (
+        {hasChildren ? (
           <IconButton
             iconName="Chevron"
             title={isExpanded ? 'Collapse' : 'Expand'}
@@ -73,12 +73,10 @@ const ListItemComponent = ({
             aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.name}`}
           />
         ) : (
-          <>
-            {node.type === 'field' ||
-              (node.type === 'argument' && node.graphqlType && (
-                <Icon name={getTypeIcon(node.graphqlType)} size="small" />
-              ))}
-          </>
+          <div className={schemaTreeViewStyles.listItemLeafIndicatorContainer}>
+            {/* <Icon name={getTypeIcon(node.graphqlType)} size="small" /> */}
+            <Icon name={'SeparatorSquare'} size="small" />
+          </div>
         )}
 
         <div
@@ -94,6 +92,7 @@ const ListItemComponent = ({
             }
           >
             {node.name}
+            {node.type === 'argument' ? 'is argmument' : 'not argmument'}
           </span>
           {!isArgumentsNode && (
             <div
@@ -101,7 +100,7 @@ const ListItemComponent = ({
                 showActions,
               })}
             >
-              {node.depth === 0 ? (
+              {depth === 0 ? (
                 <IconButtonGroup
                   icons={[
                     {
@@ -134,6 +133,19 @@ const ListItemComponent = ({
           )}
         </div>
       </div>
+      {isExpanded && hasChildren && (
+        <ul role="group" className={schemaTreeViewStyles.nestedList}>
+          {node.children?.map(childNode => (
+            <ListItem
+              key={childNode.id}
+              node={childNode}
+              expandedNodes={expandedNodes}
+              onToggleExpanded={onToggleExpanded}
+              depth={depth + 1}
+            />
+          ))}
+        </ul>
+      )}
     </li>
   )
 }
@@ -150,7 +162,7 @@ export const ListItem = React.memo(
 
     return (
       prevProps.node.id === nextProps.node.id &&
-      prevProps.node.depth === nextProps.node.depth &&
+      prevProps.depth === nextProps.depth &&
       prevExpanded === nextExpanded &&
       prevProps.onToggleExpanded === nextProps.onToggleExpanded
     )

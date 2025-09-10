@@ -6,7 +6,7 @@ export const inputClass = style({
   // height: themeContract.px[15],
   // paddingLeft: themeContract.px[4],
   // paddingRight: themeContract.px[4],
-  // color: themeContract.colors.textStrong,
+  color: themeContract.colors.textStrong,
   // backgroundColor: themeContract.colors.neutral3,
   // border: `1px solid ${themeContract.colors.neutral5}`,
   // borderRadius: themeContract.radii.small,

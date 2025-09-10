@@ -10,5 +10,8 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@another-graphql-ide/eslint-config": "workspace:*"
   }
 }

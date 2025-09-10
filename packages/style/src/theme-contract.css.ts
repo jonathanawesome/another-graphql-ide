@@ -1,4 +1,5 @@
 import { createGlobalThemeContract } from '@vanilla-extract/css'
+
 import { arrayToKebabString } from './utils'
 
 export const themeContract = createGlobalThemeContract(
