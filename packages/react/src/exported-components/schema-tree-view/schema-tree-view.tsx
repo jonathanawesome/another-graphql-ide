@@ -23,11 +23,18 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
   const subscriptionData = useSchemaTree(schema, searchTerm, 'subscription')
   const favoritesData = useSchemaTree(schema, searchTerm, 'favorites')
 
-  function toggleExpanded(nodeId: string) {
+  function toggleExpanded(nodeId: string, remeasure?: () => void) {
     setExpanded(prev => ({
       ...prev,
       [nodeId]: !prev[nodeId],
     }))
+    
+    // Trigger remeasurement after DOM updates
+    if (remeasure) {
+      setTimeout(() => {
+        remeasure()
+      }, 0)
+    }
   }
 
   // Create tab items with content

@@ -49,8 +49,8 @@ export function createChildrenFromType(
   type: GraphQLType,
   depth = 0
 ): ListItemType[] {
-  // Limit recursion depth to prevent infinite loops with circular references
-  if (depth > 5) return []
+  // Limit recursion depth to prevent performance issues (shallow loading)
+  if (depth > 2) return []
 
   const namedType = getNamedType(type)
 
@@ -152,7 +152,7 @@ export function createArgumentNodes(
 }
 
 /**
- * Create a tree node for a GraphQL field (eager version - creates children immediately)
+ * Create a tree node for a GraphQL field (shallow eager loading)
  */
 export function createFieldNode(
   id: string,
@@ -200,42 +200,6 @@ export function createRootNode(
   }
 }
 
-/**
- * Flattened tree node for virtualization
- */
-export type FlattenedListItem = ListItemType & {
-  depth: number
-  isVisible: boolean
-}
-
-/**
- * Flatten tree nodes into a list for virtualization
- */
-export function flattenListItems(
-  nodes: ListItemType[],
-  expandedNodes: Record<string, boolean>,
-  depth = 0
-): FlattenedListItem[] {
-  const flattened: FlattenedListItem[] = []
-
-  for (const node of nodes) {
-    // Add the current node
-    flattened.push({
-      ...node,
-      depth,
-      isVisible: true,
-    })
-
-    // If the node is expanded and has children, add them recursively
-    if (expandedNodes[node.id] && node.children && node.children.length > 0) {
-      flattened.push(
-        ...flattenListItems(node.children, expandedNodes, depth + 1)
-      )
-    }
-  }
-
-  return flattened
-}
 
 /**
  * Parse GraphQL schema into tree data organized by operation type
