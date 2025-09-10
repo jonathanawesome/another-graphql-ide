@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 
-import type { TabGroupItemProps } from '../../../ui-components/tab-group-item/tab-group-item'
+import type { TabTriggerProps } from '../../../ui-components/tabs/tab-trigger'
 import type { ListItemType, TabType } from '../utils/tree-utils'
 
 type SchemaData = {
@@ -22,54 +22,71 @@ export function useSchemaTabs(
   schemaData: SchemaData,
   activeTab: TabType,
   fieldCounts: FieldCounts,
-  setActiveTab: (tab: TabType) => void
-): TabGroupItemProps[] {
+  setActiveTab: (tab: TabType) => void,
+  renderContent: (tabType: TabType) => ReactNode
+): Array<{
+  name: string
+  content: ReactNode
+  trigger: Omit<TabTriggerProps, 'tabName'>
+}> {
   return useMemo(() => {
-    const tabsConfig: TabGroupItemProps[] = []
+    const tabsConfig: Array<{
+      name: string
+      content: ReactNode
+      trigger: Omit<TabTriggerProps, 'tabName'>
+    }> = []
 
     if (schemaData.query) {
       tabsConfig.push({
-        text: 'Query',
-        action: () => setActiveTab('query'),
-        active: activeTab === 'query',
-        pill:
-          fieldCounts.query > 0
-            ? { text: fieldCounts.query.toString() }
-            : undefined,
+        name: 'query',
+        content: renderContent('query'),
+        trigger: {
+          text: 'Query',
+          pill:
+            fieldCounts.query > 0
+              ? { text: fieldCounts.query.toString() }
+              : undefined,
+        },
       })
     }
 
     if (schemaData.mutation) {
       tabsConfig.push({
-        text: 'Mutation',
-        action: () => setActiveTab('mutation'),
-        active: activeTab === 'mutation',
-        pill:
-          fieldCounts.mutation > 0
-            ? { text: fieldCounts.mutation.toString() }
-            : undefined,
+        name: 'mutation',
+        content: renderContent('mutation'),
+        trigger: {
+          text: 'Mutation',
+          pill:
+            fieldCounts.mutation > 0
+              ? { text: fieldCounts.mutation.toString() }
+              : undefined,
+        },
       })
     }
 
     if (schemaData.subscription) {
       tabsConfig.push({
-        text: 'Subscription',
-        action: () => setActiveTab('subscription'),
-        active: activeTab === 'subscription',
-        pill:
-          fieldCounts.subscription > 0
-            ? { text: fieldCounts.subscription.toString() }
-            : undefined,
+        name: 'subscription',
+        content: renderContent('subscription'),
+        trigger: {
+          text: 'Subscription',
+          pill:
+            fieldCounts.subscription > 0
+              ? { text: fieldCounts.subscription.toString() }
+              : undefined,
+        },
       })
     }
 
     // Add favorites tab (placeholder for now)
     tabsConfig.push({
-      text: 'Favorites',
-      action: () => setActiveTab('favorites'),
-      active: activeTab === 'favorites',
+      name: 'favorites',
+      content: renderContent('favorites'),
+      trigger: {
+        text: 'Favorites',
+      },
     })
 
     return tabsConfig
-  }, [schemaData, activeTab, fieldCounts, setActiveTab])
+  }, [schemaData, fieldCounts, renderContent])
 }

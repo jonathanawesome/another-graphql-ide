@@ -42,10 +42,6 @@ export const schemaTreeViewStyles = {
     },
   }),
 
-  tabContainer: style({
-    borderBottom: `1px solid ${themeContract.colors.neutral4}`,
-  }),
-
   treeContainer: style({
     flex: 1,
     height: '100%',
