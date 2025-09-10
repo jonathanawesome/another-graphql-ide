@@ -48,6 +48,7 @@ export const schemaTreeViewStyles = {
 
   treeContainer: style({
     flex: 1,
+    height: '100%',
     overflow: 'auto',
     padding: themeContract.px[8],
   }),
@@ -106,5 +107,20 @@ export const schemaTreeViewStyles = {
     marginLeft: themeContract.px[16],
     borderLeft: `1px solid ${themeContract.colors.neutral4}`,
     paddingLeft: themeContract.px[8],
+  }),
+
+  virtualList: style({
+    position: 'relative',
+    width: '100%',
+    margin: 0,
+    padding: 0,
+    listStyle: 'none',
+  }),
+
+  virtualItem: style({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
   }),
 }

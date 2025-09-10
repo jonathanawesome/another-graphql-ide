@@ -7,13 +7,13 @@ import {
   getNamedType,
 } from 'graphql'
 
-export type SchemaTreeViewListItem = {
+export type ListItemType = {
   id: string
   name: string
   type: 'root' | 'field' | 'type' | 'argument'
   graphqlType?: GraphQLType
-  children?: SchemaTreeViewListItem[]
-  parent?: SchemaTreeViewListItem
+  children?: ListItemType[]
+  parent?: ListItemType
 }
 
 export type TabType = 'query' | 'mutation' | 'subscription' | 'favorites'
@@ -21,9 +21,7 @@ export type TabType = 'query' | 'mutation' | 'subscription' | 'favorites'
 /**
  * Sort nodes with expandable types first, then leaf fields
  */
-export function sortTreeNodes(
-  nodes: SchemaTreeViewListItem[]
-): SchemaTreeViewListItem[] {
+export function sortTreeNodes(nodes: ListItemType[]): ListItemType[] {
   return nodes.sort((a, b) => {
     // Check if nodes have children
     const aHasChildren = a.children && a.children.length > 0
@@ -45,7 +43,7 @@ export function createChildrenFromType(
   parentId: string,
   type: GraphQLType,
   depth = 0
-): SchemaTreeViewListItem[] {
+): ListItemType[] {
   // Limit recursion depth to prevent infinite loops with circular references
   if (depth > 5) return []
 
@@ -80,7 +78,7 @@ export function createFieldNode(
   id: string,
   name: string,
   field: GraphQLField<unknown, unknown>
-): SchemaTreeViewListItem {
+): ListItemType {
   const children = createChildrenFromType(`${id}.${name}`, field.type)
 
   return {
@@ -99,7 +97,7 @@ export function createRootNode(
   id: string,
   name: string,
   type: GraphQLObjectType
-): SchemaTreeViewListItem {
+): ListItemType {
   const fields = type.getFields()
   const children = sortTreeNodes(
     Object.keys(fields).map(fieldName =>
@@ -119,7 +117,7 @@ export function createRootNode(
 /**
  * Flattened tree node for virtualization
  */
-export type FlattenedSchemaTreeViewListItem = SchemaTreeViewListItem & {
+export type FlattenedListItem = ListItemType & {
   depth: number
   isVisible: boolean
 }
@@ -127,12 +125,12 @@ export type FlattenedSchemaTreeViewListItem = SchemaTreeViewListItem & {
 /**
  * Flatten tree nodes into a list for virtualization
  */
-export function flattenSchemaTreeViewListItems(
-  nodes: SchemaTreeViewListItem[],
+export function flattenListItems(
+  nodes: ListItemType[],
   expandedNodes: Record<string, boolean>,
   depth = 0
-): FlattenedSchemaTreeViewListItem[] {
-  const flattened: FlattenedSchemaTreeViewListItem[] = []
+): FlattenedListItem[] {
+  const flattened: FlattenedListItem[] = []
 
   for (const node of nodes) {
     // Add the current node
@@ -145,11 +143,7 @@ export function flattenSchemaTreeViewListItems(
     // If the node is expanded and has children, add them recursively
     if (expandedNodes[node.id] && node.children && node.children.length > 0) {
       flattened.push(
-        ...flattenSchemaTreeViewListItems(
-          node.children,
-          expandedNodes,
-          depth + 1
-        )
+        ...flattenListItems(node.children, expandedNodes, depth + 1)
       )
     }
   }
