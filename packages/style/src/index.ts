@@ -1,6 +1,6 @@
 // import and reexport VE bits (we'll manage all VE bits here in style)
 export { recipe, type RecipeVariants } from '@vanilla-extract/recipes'
-export { globalStyle, style } from '@vanilla-extract/css'
+export { globalStyle, keyframes, style } from '@vanilla-extract/css'
 
 // Global styles
 import './global-styles.css'

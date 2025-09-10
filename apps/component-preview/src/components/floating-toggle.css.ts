@@ -3,7 +3,7 @@ import { recipe, themeContract } from '@another-graphql-ide/style'
 export const floatingToggleClass = recipe({
   base: {
     position: 'fixed',
-    right: themeContract.px[24],
+    right: themeContract.px[16],
     width: themeContract.px[32],
     height: themeContract.px[32],
     borderRadius: '50%',
@@ -14,8 +14,8 @@ export const floatingToggleClass = recipe({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 997,
-    transition: `all 0.2s ${themeContract.motion.authentic}`,
+    zIndex: 10,
+    transition: `all 0.15s ${themeContract.motion.authentic}`,
 
     ':hover': {
       background: themeContract.colors.neutral3,
@@ -30,13 +30,50 @@ export const floatingToggleClass = recipe({
   },
 
   variants: {
+    isShelfOpen: {
+      false: {},
+      true: {},
+    },
+    isShelfPinned: {
+      false: {},
+      true: {},
+    },
     type: {
       shelf: {
-        bottom: themeContract.px[24],
+        bottom: themeContract.px[16],
       },
       theme: {
-        bottom: themeContract.px[64],
+        bottom: themeContract.px[60],
+      },
+      pin: {
+        bottom: 104,
+        opacity: 1,
       },
     },
   },
+
+  compoundVariants: [
+    // pin
+    {
+      variants: {
+        isShelfOpen: true,
+        isShelfPinned: true,
+        type: 'pin',
+      },
+      style: {
+        opacity: 0,
+        visibility: 'hidden',
+      },
+    },
+    {
+      variants: {
+        isShelfOpen: false,
+        type: 'pin',
+      },
+      style: {
+        opacity: 0,
+        visibility: 'hidden',
+      },
+    },
+  ],
 })

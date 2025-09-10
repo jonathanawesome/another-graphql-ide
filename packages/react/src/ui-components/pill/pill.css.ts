@@ -3,7 +3,7 @@ import { style, themeContract } from '@another-graphql-ide/style'
 export const pillClass = style({
   display: 'flex',
   alignItems: 'center',
-  height: themeContract.px[16],
+  height: themeContract.px[15],
   paddingLeft: themeContract.px[4],
   paddingRight: themeContract.px[4],
   color: themeContract.colors.textStrong,

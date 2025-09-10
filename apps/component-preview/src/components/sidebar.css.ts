@@ -6,16 +6,16 @@ export const sidebar = style({
 })
 
 export const category = style({
-  marginBottom: '16px',
+  marginBottom: themeContract.px[24],
 })
 
 export const categoryTitle = style({
-  fontSize: '12px',
+  fontSize: themeContract.px[10],
   fontWeight: 600,
   textTransform: 'uppercase',
-  color: themeContract.colors.neutral7,
-  marginBottom: '8px',
-  letterSpacing: '0.5px',
+  color: themeContract.colors.neutral6,
+  marginBottom: themeContract.px[12],
+  letterSpacing: themeContract.px[1],
 })
 
 export const componentList = style({
@@ -23,152 +23,79 @@ export const componentList = style({
 })
 
 export const componentItem = style({
-  marginBottom: '12px',
+  marginBottom: themeContract.px[8],
 })
 
 export const componentTitle = style({
-  fontSize: '14px',
-  fontWeight: 600,
-  color: themeContract.colors.neutral8,
-  marginBottom: '8px',
-  paddingLeft: '4px',
+  display: 'block',
+  width: '100%',
+  textAlign: 'left',
+  fontSize: themeContract.px[14],
+  fontWeight: 500,
+  color: themeContract.colors.neutral7,
+  marginBottom: themeContract.px[6],
+  paddingLeft: themeContract.px[2],
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  transition: `color 0.2s ${themeContract.motion.authentic}`,
+
+  ':hover': {
+    color: themeContract.colors.neutral8,
+  },
+
+  selectors: {
+    '&[data-expanded="true"]': {
+      color: themeContract.colors.neutral8,
+      marginBottom: themeContract.px[8],
+    },
+  },
 })
 
 export const section = style({
-  marginBottom: '4px',
+  marginBottom: themeContract.px[2],
+  marginLeft: themeContract.px[4],
 })
 
 export const sectionHeader = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '4px',
-  marginLeft: '8px',
-  marginBottom: '4px',
+  width: '100%',
+  height: themeContract.px[20],
+  fontSize: themeContract.px[14],
+  fontWeight: 500,
+  color: themeContract.colors.neutral6,
+
+  ':hover': {
+    color: themeContract.colors.neutral8,
+    backgroundColor: themeContract.colors.neutral3,
+  },
+
+  selectors: {
+    '&[data-active="true"]': {
+      color: themeContract.colors.neutral8,
+    },
+  },
 })
 
 export const sectionList = style({
   listStyle: 'none',
   margin: 0,
   padding: 0,
-  marginLeft: themeContract.px[32],
-})
-
-export const sectionItem = style({
-  marginBottom: '2px',
+  marginLeft: themeContract.px[16],
 })
 
 export const itemButton = style({
-  display: 'block',
-  flex: 1,
-  padding: '4px 8px',
-  textAlign: 'left',
-  border: 'none',
-  backgroundColor: 'transparent',
-  color: themeContract.colors.neutral7,
-  cursor: 'pointer',
-  borderRadius: '4px',
-  fontSize: '13px',
-  transition: 'background-color 0.2s',
-  textDecoration: 'none',
-
-  ':hover': {
-    color: themeContract.colors.neutral8,
-    textDecoration: 'none',
-  },
-
-  selectors: {
-    '&[data-active="true"]': {
-      color: themeContract.colors.neutral8,
-      fontWeight: 600,
-      backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    },
-  },
-})
-
-export const treeItem = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '4px',
-})
-
-export const chevronButton = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '16px',
-  height: '16px',
-  padding: 0,
-  border: 'none',
-  backgroundColor: 'transparent',
-  color: themeContract.colors.neutral7,
-  cursor: 'pointer',
-  borderRadius: '2px',
-  transition: 'all 0.2s',
-
-  ':hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    color: themeContract.colors.neutral8,
-  },
-
-  ':focus': {
-    outline: '1px solid #3b82f6',
-    outlineOffset: '1px',
-  },
-})
-
-export const spacer = style({
-  width: '16px',
-  height: '16px',
-})
-
-export const componentButton = style({
-  display: 'block',
-  flex: 1,
-  padding: '4px 8px',
+  height: themeContract.px[24],
   textAlign: 'left',
   border: 'none',
   backgroundColor: 'transparent',
-  color: themeContract.colors.neutral7,
+  color: themeContract.colors.neutral6,
   cursor: 'pointer',
-  borderRadius: '4px',
-  fontSize: '14px',
-  fontWeight: 500,
-  transition: 'background-color 0.2s',
-
-  ':hover': {
-    color: themeContract.colors.neutral8,
-  },
-
-  selectors: {
-    '&[data-active="true"]': {
-      color: themeContract.colors.neutral8,
-      fontWeight: 600,
-    },
-  },
-})
-
-export const variantList = style({
-  listStyle: 'none',
-  margin: 0,
-  padding: 0,
-})
-
-export const variantItem = style({
-  marginLeft: '20px',
-})
-
-export const variantButton = style({
-  display: 'block',
-  flex: 1,
-  padding: '4px 8px',
-  textAlign: 'left',
-  border: 'none',
-  backgroundColor: 'transparent',
-  color: themeContract.colors.neutral7,
-  cursor: 'pointer',
-  borderRadius: '4px',
-  fontSize: '13px',
-  transition: 'background-color 0.2s',
+  fontSize: themeContract.px[14],
+  transition: `background-color 0.2s ${themeContract.motion.authentic}`,
 
   ':hover': {
     color: themeContract.colors.neutral8,

@@ -8,7 +8,7 @@ export const overlay = style({
   right: 0,
   bottom: 0,
   background: 'transparent',
-  zIndex: 998,
+  zIndex: 8,
 })
 
 export const shelf = style({
@@ -21,7 +21,7 @@ export const shelf = style({
   background: themeContract.colors.neutral1,
 
   borderLeft: `1px solid ${themeContract.colors.neutral4}`,
-  zIndex: 999,
+  zIndex: 9,
   transform: 'translateX(100%)',
   transition: `transform 0.3s ${themeContract.motion.authentic}`,
   display: 'flex',
@@ -31,25 +31,30 @@ export const shelf = style({
     '&[data-open="true"]': {
       transform: 'translateX(0)',
     },
+    '&[data-pinned="true"]': {
+      transform: 'translateX(0)',
+      transition: 'none',
+      borderLeft: `1px solid ${themeContract.colors.neutral4}`,
+    },
   },
 })
 
 export const closeButton = style({
-  position: 'absolute',
-  top: '16px',
-  right: '16px',
   background: 'transparent',
   border: 'none',
-  fontSize: '18px',
   cursor: 'pointer',
-  padding: '8px',
-  color: '#666',
-  borderRadius: '4px',
+  padding: themeContract.px[8],
+  borderRadius: themeContract.px[4],
+  color: themeContract.colors.textStrong,
+  selectors: {
+    '&:hover': {
+      background: themeContract.colors.neutral3,
+    },
+  },
 })
 
 export const content = style({
   flex: 1,
   overflow: 'auto',
-  padding: '24px',
-  paddingTop: '64px', // Account for close button
+  padding: themeContract.px[20],
 })

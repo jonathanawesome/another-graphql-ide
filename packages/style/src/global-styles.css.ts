@@ -1,4 +1,5 @@
 import { globalStyle } from '@vanilla-extract/css'
+
 import { themeContract } from './theme-contract.css'
 
 // CSS Reset
@@ -150,4 +151,35 @@ globalStyle('table', {
 globalStyle('[disabled]', {
   cursor: 'not-allowed',
   opacity: 0.5,
+})
+
+// Global scrollbar styles for webkit browsers (Chrome, Safari, Edge)
+globalStyle('::-webkit-scrollbar', {
+  width: themeContract.px[4], // Width of vertical scrollbar
+  height: themeContract.px[4], // Height of horizontal scrollbar
+})
+
+globalStyle('::-webkit-scrollbar-track', {
+  background: 'transparent', // Track background
+  borderRadius: themeContract.px[6],
+})
+
+globalStyle('::-webkit-scrollbar-thumb', {
+  background: themeContract.colors.neutral7, // Scrollbar handle
+  borderRadius: themeContract.px[6],
+  transition: 'background 0.3s ease',
+})
+
+globalStyle('::-webkit-scrollbar-thumb:hover', {
+  background: themeContract.colors.neutral6, // Darker on hover
+})
+
+globalStyle('::-webkit-scrollbar-corner', {
+  background: 'transparent', // Corner where scrollbars meet
+})
+
+// For Firefox (uses different syntax)
+globalStyle('html', {
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${themeContract.colors.neutral7} transparent`, // thumb track
 })

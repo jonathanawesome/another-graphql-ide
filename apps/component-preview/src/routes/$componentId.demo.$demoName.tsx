@@ -1,41 +1,22 @@
-/* eslint-disable @typescript-eslint/only-throw-error */
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 
 import { Preview } from '../components/preview'
-import { discoverComponents } from '../utils/discovery'
+import { createPreviewLoader, usePreviewComponent } from '../utils/route-utils'
 
 export const Route = createFileRoute('/$componentId/demo/$demoName')({
-  loader: ({ params }) => {
-    const components = discoverComponents()
-    const component = components.find(c => c.id === params.componentId)
-
-    if (!component) {
-      throw redirect({ to: '/' })
-    }
-
-    const preview = component.module?.default
-    if (!preview?.demos) {
-      throw redirect({ to: '/' })
-    }
-
-    const demo = preview.demos.find(d => d.name === params.demoName)
-    if (!demo) {
-      throw redirect({ to: '/' })
-    }
-
-    return { component, demo }
-  },
+  loader: createPreviewLoader('demo'),
   component: DemoRoute,
 })
 
 function DemoRoute() {
   const { componentId, demoName } = Route.useParams()
-  const components = useMemo(() => discoverComponents(), [])
-  const selectedComponent = components.find(c => c.id === componentId)
-  const preview = selectedComponent?.module.default || null
+  const preview = usePreviewComponent(componentId)
 
   return (
-    <Preview preview={preview} selectedItem={demoName} selectedType="demo" />
+    <Preview
+      preview={preview}
+      selectedItem={demoName || null}
+      selectedType="demo"
+    />
   )
 }

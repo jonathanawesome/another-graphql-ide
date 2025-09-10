@@ -1,13 +1,21 @@
-import path from 'path';
+import path from 'path'
 
-import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
-import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
-
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
-  plugins: [react(), vanillaExtractPlugin(), TanStackRouterVite()],
+  plugins: [
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+    }),
+    react(),
+    vanillaExtractPlugin({
+      identifiers: 'debug',
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -21,4 +29,4 @@ export default defineConfig({
   optimizeDeps: {
     include: ['@vanilla-extract/css', '@vanilla-extract/recipes'],
   },
-});
+})

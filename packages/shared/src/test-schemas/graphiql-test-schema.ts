@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /**
  *  Test schema is adapted from https://github.com/graphql/graphiql/blob/main/packages/graphiql/test/schema.js
  */
@@ -393,7 +396,7 @@ const TestSubscriptionType = new GraphQLObjectType({
   },
 })
 
-export const testSchema = new GraphQLSchema({
+export const graphiqlTestSchema = new GraphQLSchema({
   query: TestType,
   mutation: TestMutationType,
   subscription: TestSubscriptionType,

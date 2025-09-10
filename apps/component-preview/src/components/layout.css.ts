@@ -5,4 +5,11 @@ export const layout = style({
   width: '100vw',
   overflow: 'hidden',
   position: 'relative',
+  display: 'flex',
+  
+  selectors: {
+    '&[data-shelf-pinned="true"]': {
+      paddingRight: '320px',
+    },
+  },
 });

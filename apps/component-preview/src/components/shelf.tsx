@@ -1,19 +1,18 @@
 import { ReactNode } from 'react'
 
-import { Icon } from '../../../../packages/react/src/ui-components/icon/icon'
-
 import * as styles from './shelf.css'
 
 interface ShelfProps {
   isOpen: boolean
   onClose: () => void
   children: ReactNode
+  isPinned: boolean
 }
 
-export function Shelf({ isOpen, onClose, children }: ShelfProps) {
+export function Shelf({ isOpen, onClose, children, isPinned }: ShelfProps) {
   return (
     <>
-      {isOpen && (
+      {isOpen && !isPinned && (
         <div
           className={styles.overlay}
           onClick={onClose}
@@ -22,10 +21,7 @@ export function Shelf({ isOpen, onClose, children }: ShelfProps) {
           tabIndex={0}
         />
       )}
-      <aside className={styles.shelf} data-open={isOpen}>
-        <button className={styles.closeButton} onClick={onClose}>
-          <Icon name="X" />
-        </button>
+      <aside className={styles.shelf} data-open={isOpen} data-pinned={isPinned}>
         <div className={styles.content}>{children}</div>
       </aside>
     </>

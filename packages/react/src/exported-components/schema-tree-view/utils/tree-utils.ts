@@ -1,0 +1,225 @@
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLField,
+  GraphQLType,
+  GraphQLArgument,
+  isObjectType,
+  isUnionType,
+  isInterfaceType,
+  getNamedType,
+} from 'graphql'
+
+export type ListItemType = {
+  id: string
+  name: string
+  type: 'root' | 'field' | 'type' | 'argument' | 'arguments'
+  graphqlType?: GraphQLType
+  graphqlField?: GraphQLField<unknown, unknown>
+  graphqlArgument?: GraphQLArgument
+  children?: ListItemType[]
+  parent?: ListItemType
+}
+
+export type TabType = 'query' | 'mutation' | 'subscription' | 'favorites'
+
+/**
+ * Sort nodes with expandable types first, then leaf fields
+ */
+function sortTreeNodes(nodes: ListItemType[]): ListItemType[] {
+  return nodes.sort((a, b) => {
+    // Check if nodes have children
+    const aHasChildren = a.children && a.children.length > 0
+    const bHasChildren = b.children && b.children.length > 0
+
+    // If one has children and the other doesn't, prioritize the one with children
+    if (aHasChildren && !bHasChildren) return -1
+    if (!aHasChildren && bHasChildren) return 1
+
+    // If both have children or both are leaves, sort alphabetically
+    return a.name.localeCompare(b.name)
+  })
+}
+
+/**
+ * Create children tree nodes from a GraphQL type
+ */
+function createChildrenFromType(
+  parentId: string,
+  type: GraphQLType,
+  depth = 0
+): ListItemType[] {
+  // Limit recursion depth to prevent performance issues (shallow loading)
+  if (depth > 2) return []
+
+  const namedType = getNamedType(type)
+
+  // Handle object types that have fields
+  if (isObjectType(namedType)) {
+    const fields = namedType.getFields()
+    const nodes = Object.keys(fields).map(fieldName => {
+      const childField = fields[fieldName]
+      const childId = `${parentId}.${fieldName}`
+
+      return {
+        id: childId,
+        name: fieldName,
+        type: 'field' as const,
+        graphqlType: childField.type,
+        children: createChildrenFromType(childId, childField.type, depth + 1),
+      }
+    })
+
+    return sortTreeNodes(nodes)
+  }
+
+  // Handle interface types - interfaces have fields just like object types
+  if (isInterfaceType(namedType)) {
+    const fields = namedType.getFields()
+    const nodes = Object.keys(fields).map(fieldName => {
+      const childField = fields[fieldName]
+      const childId = `${parentId}.${fieldName}`
+
+      return {
+        id: childId,
+        name: fieldName,
+        type: 'field' as const,
+        graphqlType: childField.type,
+        children: createChildrenFromType(childId, childField.type, depth + 1),
+      }
+    })
+
+    return sortTreeNodes(nodes)
+  }
+
+  // Handle union types - show possible types as "... on <typename>"
+  if (isUnionType(namedType)) {
+    const possibleTypes = namedType.getTypes()
+    const nodes = possibleTypes.map(possibleType => {
+      const childId = `${parentId}.${possibleType.name}`
+
+      // For union members that are object types, create field nodes directly
+      let children: ListItemType[] = []
+      if (isObjectType(possibleType)) {
+        const fields = possibleType.getFields()
+        children = Object.keys(fields).map(fieldName =>
+          createFieldNode(
+            `${childId}.${fieldName}`,
+            fieldName,
+            fields[fieldName],
+            depth + 1
+          )
+        )
+        children = sortTreeNodes(children)
+      }
+
+      return {
+        id: childId,
+        name: `... on ${possibleType.name}`,
+        type: 'type' as const,
+        graphqlType: possibleType,
+        children,
+      }
+    })
+
+    return sortTreeNodes(nodes)
+  }
+
+  return []
+}
+
+/**
+ * Create argument nodes for a field
+ */
+function createArgumentNodes(
+  parentId: string,
+  field: GraphQLField<unknown, unknown>
+): ListItemType[] {
+  const args = field.args || []
+
+  if (args.length === 0) return []
+
+  // Create the ARGUMENTS collapsible node
+  const argumentsNode: ListItemType = {
+    id: `${parentId}.arguments`,
+    name: 'ARGUMENTS',
+    type: 'arguments',
+    children: args.map(arg => ({
+      id: `${parentId}.arguments.${arg.name}`,
+      name: arg.name,
+      type: 'argument',
+      graphqlType: arg.type,
+      graphqlArgument: arg,
+    })),
+  }
+
+  return [argumentsNode]
+}
+
+/**
+ * Create a tree node for a GraphQL field (shallow eager loading)
+ */
+function createFieldNode(
+  id: string,
+  name: string,
+  field: GraphQLField<unknown, unknown>,
+  depth = 0
+): ListItemType {
+  const typeChildren = createChildrenFromType(id, field.type, depth)
+  const argumentNodes = createArgumentNodes(id, field)
+
+  // Combine arguments (if any) with type children
+  const children = [...argumentNodes, ...typeChildren]
+
+  return {
+    id,
+    name,
+    type: 'field',
+    graphqlType: field.type,
+    graphqlField: field,
+    children,
+  }
+}
+
+/**
+ * Create a root tree node for a GraphQL object type
+ */
+function createRootNode(
+  id: string,
+  name: string,
+  type: GraphQLObjectType
+): ListItemType {
+  const fields = type.getFields()
+  const children = sortTreeNodes(
+    Object.keys(fields).map(fieldName =>
+      createFieldNode(`${id}.${fieldName}`, fieldName, fields[fieldName])
+    )
+  )
+
+  return {
+    id,
+    name,
+    type: 'root',
+    graphqlType: type,
+    children,
+  }
+}
+
+/**
+ * Parse GraphQL schema into tree data organized by operation type
+ */
+export function createSchemaTreeData(schema: GraphQLSchema) {
+  const queryType = schema.getQueryType()
+  const mutationType = schema.getMutationType()
+  const subscriptionType = schema.getSubscriptionType()
+
+  return {
+    query: queryType ? createRootNode('query', 'Query', queryType) : null,
+    mutation: mutationType
+      ? createRootNode('mutation', 'Mutation', mutationType)
+      : null,
+    subscription: subscriptionType
+      ? createRootNode('subscription', 'Subscription', subscriptionType)
+      : null,
+  }
+}

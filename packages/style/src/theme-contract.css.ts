@@ -1,9 +1,12 @@
 import { createGlobalThemeContract } from '@vanilla-extract/css'
+
 import { arrayToKebabString } from './utils'
 
 export const themeContract = createGlobalThemeContract(
   {
-    //TODO: boxShadow
+    shadows: {
+      box: null,
+    },
 
     colors: {
       // neutral scale
@@ -50,6 +53,7 @@ export const themeContract = createGlobalThemeContract(
       24: null,
       32: null,
       40: null,
+      60: null,
       64: null,
     },
 
