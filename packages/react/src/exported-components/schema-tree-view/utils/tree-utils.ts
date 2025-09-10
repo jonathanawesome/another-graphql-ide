@@ -26,7 +26,7 @@ export type TabType = 'query' | 'mutation' | 'subscription' | 'favorites'
 /**
  * Sort nodes with expandable types first, then leaf fields
  */
-export function sortTreeNodes(nodes: ListItemType[]): ListItemType[] {
+function sortTreeNodes(nodes: ListItemType[]): ListItemType[] {
   return nodes.sort((a, b) => {
     // Check if nodes have children
     const aHasChildren = a.children && a.children.length > 0
@@ -44,7 +44,7 @@ export function sortTreeNodes(nodes: ListItemType[]): ListItemType[] {
 /**
  * Create children tree nodes from a GraphQL type
  */
-export function createChildrenFromType(
+function createChildrenFromType(
   parentId: string,
   type: GraphQLType,
   depth = 0
@@ -97,17 +97,22 @@ export function createChildrenFromType(
     const possibleTypes = namedType.getTypes()
     const nodes = possibleTypes.map(possibleType => {
       const childId = `${parentId}.${possibleType.name}`
-      
+
       // For union members that are object types, create field nodes directly
       let children: ListItemType[] = []
       if (isObjectType(possibleType)) {
         const fields = possibleType.getFields()
-        children = Object.keys(fields).map(fieldName => 
-          createFieldNode(`${childId}.${fieldName}`, fieldName, fields[fieldName], depth + 1)
+        children = Object.keys(fields).map(fieldName =>
+          createFieldNode(
+            `${childId}.${fieldName}`,
+            fieldName,
+            fields[fieldName],
+            depth + 1
+          )
         )
         children = sortTreeNodes(children)
       }
-      
+
       return {
         id: childId,
         name: `... on ${possibleType.name}`,
@@ -126,14 +131,14 @@ export function createChildrenFromType(
 /**
  * Create argument nodes for a field
  */
-export function createArgumentNodes(
+function createArgumentNodes(
   parentId: string,
   field: GraphQLField<unknown, unknown>
 ): ListItemType[] {
   const args = field.args || []
-  
+
   if (args.length === 0) return []
-  
+
   // Create the ARGUMENTS collapsible node
   const argumentsNode: ListItemType = {
     id: `${parentId}.arguments`,
@@ -147,14 +152,14 @@ export function createArgumentNodes(
       graphqlArgument: arg,
     })),
   }
-  
+
   return [argumentsNode]
 }
 
 /**
  * Create a tree node for a GraphQL field (shallow eager loading)
  */
-export function createFieldNode(
+function createFieldNode(
   id: string,
   name: string,
   field: GraphQLField<unknown, unknown>,
@@ -162,7 +167,7 @@ export function createFieldNode(
 ): ListItemType {
   const typeChildren = createChildrenFromType(id, field.type, depth)
   const argumentNodes = createArgumentNodes(id, field)
-  
+
   // Combine arguments (if any) with type children
   const children = [...argumentNodes, ...typeChildren]
 
@@ -179,7 +184,7 @@ export function createFieldNode(
 /**
  * Create a root tree node for a GraphQL object type
  */
-export function createRootNode(
+function createRootNode(
   id: string,
   name: string,
   type: GraphQLObjectType
@@ -199,7 +204,6 @@ export function createRootNode(
     children,
   }
 }
-
 
 /**
  * Parse GraphQL schema into tree data organized by operation type

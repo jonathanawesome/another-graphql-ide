@@ -14,7 +14,6 @@ export type SchemaTreeViewProps = {
 }
 
 export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [searchTerm, setSearchTerm] = useState('')
 
   // Get data for all tabs
@@ -23,20 +22,6 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
   const subscriptionData = useSchemaTree(schema, searchTerm, 'subscription')
   const favoritesData = useSchemaTree(schema, searchTerm, 'favorites')
 
-  function toggleExpanded(nodeId: string, remeasure?: () => void) {
-    setExpanded(prev => ({
-      ...prev,
-      [nodeId]: !prev[nodeId],
-    }))
-    
-    // Trigger remeasurement after DOM updates
-    if (remeasure) {
-      setTimeout(() => {
-        remeasure()
-      }, 0)
-    }
-  }
-
   // Create tab items with content
   const tabItems = []
 
@@ -44,11 +29,7 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
     tabItems.push({
       name: 'query',
       content: queryData.tabData?.children ? (
-        <TreeContainer
-          nodes={queryData.tabData.children}
-          expandedNodes={expanded}
-          onToggleExpanded={toggleExpanded}
-        />
+        <TreeContainer nodes={queryData.tabData.children} />
       ) : null,
       trigger: {
         text: 'Query',
@@ -64,11 +45,7 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
     tabItems.push({
       name: 'mutation',
       content: mutationData.tabData?.children ? (
-        <TreeContainer
-          nodes={mutationData.tabData.children}
-          expandedNodes={expanded}
-          onToggleExpanded={toggleExpanded}
-        />
+        <TreeContainer nodes={mutationData.tabData.children} />
       ) : null,
       trigger: {
         text: 'Mutation',
@@ -84,11 +61,7 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
     tabItems.push({
       name: 'subscription',
       content: subscriptionData.tabData?.children ? (
-        <TreeContainer
-          nodes={subscriptionData.tabData.children}
-          expandedNodes={expanded}
-          onToggleExpanded={toggleExpanded}
-        />
+        <TreeContainer nodes={subscriptionData.tabData.children} />
       ) : null,
       trigger: {
         text: 'Subscription',
@@ -104,11 +77,7 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
   tabItems.push({
     name: 'favorites',
     content: favoritesData.tabData?.children ? (
-      <TreeContainer
-        nodes={favoritesData.tabData.children}
-        expandedNodes={expanded}
-        onToggleExpanded={toggleExpanded}
-      />
+      <TreeContainer nodes={favoritesData.tabData.children} />
     ) : (
       <div className={schemaTreeViewStyles.emptyState}>
         No favorites yet. Click on fields to add them to your favorites.
