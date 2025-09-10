@@ -1,5 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useState, useEffect } from 'react'
 
 import { Icon } from '../../../../packages/react/src/ui-components/icon/icon'
 import { DiscoveredComponent } from '../utils/discovery'
@@ -11,8 +11,35 @@ interface SidebarProps {
 }
 
 // Custom hook for managing expanded state
-function useExpandState() {
+function useExpandState(
+  routeComponentId: string | null,
+  routeVariantName: string | null,
+  routeDemoName: string | null
+) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
+  
+  // Auto-expand sections based on current route
+  useEffect(() => {
+    if (routeComponentId) {
+      setExpandedSections(prev => {
+        const newSet = new Set(prev)
+        // Expand the component section
+        newSet.add(`${routeComponentId}-component`)
+        
+        // Expand variants section if we're on a variant route
+        if (routeVariantName) {
+          newSet.add(`${routeComponentId}-variants`)
+        }
+        
+        // Expand demos section if we're on a demo route
+        if (routeDemoName) {
+          newSet.add(`${routeComponentId}-demos`)
+        }
+        
+        return newSet
+      })
+    }
+  }, [routeComponentId, routeVariantName, routeDemoName])
   
   const toggleExpanded = (sectionId: string) => {
     setExpandedSections(prev => {
@@ -210,12 +237,17 @@ const ComponentItem = ({
 
 export function Sidebar({ components }: SidebarProps) {
   const params = useParams({ strict: false })
-  const { isExpanded, toggleExpanded } = useExpandState()
   
   // Extract route params more cleanly
   const routeComponentId = 'componentId' in params ? (params.componentId as string) : null
   const routeVariantName = 'variantName' in params ? (params.variantName as string) : null
   const routeDemoName = 'demoName' in params ? (params.demoName as string) : null
+  
+  const { isExpanded, toggleExpanded } = useExpandState(
+    routeComponentId,
+    routeVariantName,
+    routeDemoName
+  )
   
   // Group components by category
   const grouped = components.reduce(
