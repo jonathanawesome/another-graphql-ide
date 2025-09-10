@@ -5,11 +5,11 @@ import {
   DemoGridItem,
 } from '../../utility-components/previews/components'
 
-import { Pill, type PillProps } from './pill'
+import { Input, type InputProps } from './input'
 
-const preview = createPreview<PillProps>({
-  title: 'Pill',
-  component: Pill,
+const preview = createPreview<InputProps>({
+  title: 'Input',
+  component: Input,
   category: 'UI Components',
   demos: [
     {
@@ -17,16 +17,16 @@ const preview = createPreview<PillProps>({
       render: () => (
         <DemoGrid>
           <DemoGridItem>
-            <Pill text="213" />
+            <Input text="213" />
           </DemoGridItem>
           <DemoGridItem>
-            <Pill text="243637" />
+            <Input text="243637" />
           </DemoGridItem>
           <DemoGridItem>
-            <Pill text="Some Cool Pill" />
+            <Input text="Some Cool Input" />
           </DemoGridItem>
           <DemoGridItem>
-            <Pill text="987" />
+            <Input text="987" />
           </DemoGridItem>
         </DemoGrid>
       ),
