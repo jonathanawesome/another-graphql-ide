@@ -3,7 +3,7 @@ import { useMemo, useCallback } from 'react'
 
 import {
   createSchemaTreeData,
-  type TreeNode,
+  type SchemaTreeViewListItem,
   type TabType,
 } from '../utils/tree-utils'
 
@@ -20,7 +20,7 @@ export function useSchemaTree(
 
   // Helper function to count fields matching search term
   const getFilteredFieldCount = useCallback(
-    (rootNode: TreeNode | null, searchTerm: string): number => {
+    (rootNode: SchemaTreeViewListItem | null, searchTerm: string): number => {
       if (!rootNode?.children) return 0
       if (!searchTerm.trim()) return rootNode.children.length
 
@@ -43,7 +43,7 @@ export function useSchemaTree(
 
   // Get current tab data with filtering
   const currentTabData = useMemo(() => {
-    let rootNode: TreeNode | null = null
+    let rootNode: SchemaTreeViewListItem | null = null
 
     if (activeTab === 'query') rootNode = schemaData.query
     else if (activeTab === 'mutation') rootNode = schemaData.mutation

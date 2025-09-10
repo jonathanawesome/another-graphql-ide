@@ -63,7 +63,7 @@ export const schemaTreeViewStyles = {
     textAlign: 'center',
   }),
 
-  treeNode: style({
+  listItem: style({
     marginBottom: themeContract.px[2],
   }),
 

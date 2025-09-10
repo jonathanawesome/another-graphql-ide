@@ -2,12 +2,15 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import React, { useMemo } from 'react'
 
 import { schemaTreeViewStyles } from '../schema-tree-view.css'
-import { flattenTreeNodes, type TreeNode as TreeNodeType } from '../utils/tree-utils'
+import {
+  flattenSchemaTreeViewListItems,
+  type SchemaTreeViewListItem as SchemaTreeViewListItemType,
+} from '../utils/tree-utils'
 
-import { TreeNode } from './tree-node'
+import { SchemaTreeViewListItem } from './schema-tree-view-list-item'
 
 type TreeContainerProps = {
-  nodes: TreeNodeType[]
+  nodes: SchemaTreeViewListItemType[]
   expandedNodes: Record<string, boolean>
   onToggleExpanded: (nodeId: string) => void
 }
@@ -19,7 +22,7 @@ export const TreeContainer = ({
 }: TreeContainerProps) => {
   // Flatten the tree for virtualization
   const flattenedNodes = useMemo(() => {
-    return flattenTreeNodes(nodes, expandedNodes)
+    return flattenSchemaTreeViewListItems(nodes, expandedNodes)
   }, [nodes, expandedNodes])
 
   // Create parent ref for virtualizer
@@ -42,18 +45,24 @@ export const TreeContainer = ({
         overflow: 'auto',
       }}
     >
-      <div
+      <ul
+        role="tree"
+        aria-label="Schema tree view"
         style={{
           height: `${virtualizer.getTotalSize()}px`,
           width: '100%',
           position: 'relative',
+          margin: 0,
+          padding: 0,
+          listStyle: 'none',
         }}
       >
         {virtualizer.getVirtualItems().map(virtualItem => {
           const node = flattenedNodes[virtualItem.index]
           return (
-            <div
+            <li
               key={virtualItem.key}
+              role="presentation"
               style={{
                 position: 'absolute',
                 top: 0,
@@ -63,15 +72,15 @@ export const TreeContainer = ({
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              <TreeNode
+              <SchemaTreeViewListItem
                 node={node}
                 expandedNodes={expandedNodes}
                 onToggleExpanded={onToggleExpanded}
               />
-            </div>
+            </li>
           )
         })}
-      </div>
+      </ul>
     </div>
   )
 }

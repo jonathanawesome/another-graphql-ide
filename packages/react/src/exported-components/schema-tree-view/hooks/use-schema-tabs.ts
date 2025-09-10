@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 
 import type { TabGroupItemProps } from '../../../ui-components/tab-group-item/tab-group-item'
-import type { TreeNode, TabType } from '../utils/tree-utils'
+import type { SchemaTreeViewListItem, TabType } from '../utils/tree-utils'
 
 type SchemaData = {
-  query: TreeNode | null
-  mutation: TreeNode | null
-  subscription: TreeNode | null
+  query: SchemaTreeViewListItem | null
+  mutation: SchemaTreeViewListItem | null
+  subscription: SchemaTreeViewListItem | null
 }
 
 type FieldCounts = {
