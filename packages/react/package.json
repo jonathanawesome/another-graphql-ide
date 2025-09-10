@@ -15,6 +15,7 @@
     "@another-graphql-ide/eslint-config": "workspace:*",
     "@another-graphql-ide/shared": "workspace:*",
     "@another-graphql-ide/style": "workspace:*",
-    "@tanstack/react-virtual": "^3.13.12"
+    "@tanstack/react-virtual": "^3.13.12",
+    "radix-ui": "^1.4.3"
   }
 }

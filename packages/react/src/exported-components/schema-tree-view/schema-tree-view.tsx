@@ -3,7 +3,6 @@ import { useState } from 'react'
 
 import { Icon } from '../../ui-components/icon/icon'
 import { IconButton } from '../../ui-components/icon-button/icon-button'
-import { TabGroup } from '../../ui-components/tab-group/tab-group'
 
 import { TreeContainer } from './components/tree-container'
 import { useSchemaTabs } from './hooks/use-schema-tabs'

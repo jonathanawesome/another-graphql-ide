@@ -4,19 +4,19 @@ import { Icon } from '../../../ui-components/icon/icon'
 import { IconButton } from '../../../ui-components/icon-button/icon-button'
 import { schemaTreeViewStyles } from '../schema-tree-view.css'
 import { getTypeDisplayName, getTypeIcon } from '../utils/graphql-utils'
-import type { FlattenedSchemaTreeViewListItem } from '../utils/tree-utils'
+import type { FlattenedListItem } from '../utils/tree-utils'
 
-type SchemaTreeViewListItemProps = {
-  node: FlattenedSchemaTreeViewListItem
+type ListItemProps = {
+  node: FlattenedListItem
   expandedNodes: Record<string, boolean>
   onToggleExpanded: (nodeId: string) => void
 }
 
-const SchemaTreeViewListItemComponent = ({
+const ListItemComponent = ({
   node,
   expandedNodes,
   onToggleExpanded,
-}: SchemaTreeViewListItemProps): React.JSX.Element => {
+}: ListItemProps): React.JSX.Element => {
   const isExpanded = expandedNodes[node.id]
 
   // Check if node has children
@@ -32,7 +32,7 @@ const SchemaTreeViewListItemComponent = ({
         onToggleExpanded(node.id)
       }
     }
-    
+
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
       if (hasChildrenFlag) {
@@ -42,7 +42,7 @@ const SchemaTreeViewListItemComponent = ({
   }
 
   return (
-    <div 
+    <div
       className={schemaTreeViewStyles.listItem}
       role="treeitem"
       aria-expanded={hasChildrenFlag ? isExpanded : undefined}
@@ -67,7 +67,11 @@ const SchemaTreeViewListItemComponent = ({
 
         <div className={schemaTreeViewStyles.nodeInfo}>
           {node.type === 'field' && node.graphqlType && (
-            <Icon name={getTypeIcon(node.graphqlType)} size="small" aria-hidden="true" />
+            <Icon
+              name={getTypeIcon(node.graphqlType)}
+              size="small"
+              aria-hidden="true"
+            />
           )}
           <span className={schemaTreeViewStyles.nodeName}>{node.name}</span>
           {node.type === 'field' && node.graphqlType && (
@@ -83,8 +87,8 @@ const SchemaTreeViewListItemComponent = ({
 
 // Memoize the component to prevent unnecessary re-renders
 // Only re-render if node ID changes or expansion state for this specific node changes
-export const SchemaTreeViewListItem = React.memo(
-  SchemaTreeViewListItemComponent,
+export const ListItem = React.memo(
+  ListItemComponent,
   (prevProps, nextProps) => {
     // Return true if props are equal (skip re-render)
     // Return false if props changed (trigger re-render)

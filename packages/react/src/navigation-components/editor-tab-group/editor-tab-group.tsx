@@ -1,19 +1,56 @@
 import { IconButton } from '../../ui-components/icon-button/icon-button'
-import {
-  TabGroup,
-  TabGroupProps,
-} from '../../ui-components/tab-group/tab-group'
+import { Tabs } from '../../ui-components/tabs/tabs'
 
 import { editorTabGroupStyles } from './editor-tab-group.css'
 
-export type EditorTabGroupProps = {
-  tabs: TabGroupProps
-}
-
-export const EditorTabGroup = ({ tabs }: EditorTabGroupProps) => {
+export const EditorTabGroup = () => {
   return (
     <div className={editorTabGroupStyles}>
-      <TabGroup {...tabs} />
+      <Tabs
+        items={[
+          {
+            name: 'tab1',
+            content: <div>Content1</div>,
+            trigger: {
+              text: 'OperationName',
+              actionIconButton: {
+                iconName: 'X',
+                title: 'X',
+                size: 'mini',
+                action: () => alert('Hi from Tab1'),
+              },
+            },
+          },
+          {
+            name: 'tab2',
+            content: <div>Content2</div>,
+            trigger: {
+              text: 'Untitled',
+              actionIconButton: {
+                iconName: 'X',
+                title: 'X',
+                size: 'mini',
+                action: () => alert('Hi from Tab2'),
+              },
+            },
+          },
+          {
+            name: 'tab3',
+            content: <div>Content3</div>,
+            trigger: {
+              text: 'MyQuery',
+              actionIconButton: {
+                iconName: 'X',
+                title: 'X',
+                size: 'mini',
+                action: () => alert('Hi from Tab3'),
+              },
+            },
+          },
+        ]}
+        label="Demo Tabs"
+        defaultActiveTab="trigger1"
+      />
       <IconButton iconName="Plus" title="Add Tab" size="mini" />
     </div>
   )
