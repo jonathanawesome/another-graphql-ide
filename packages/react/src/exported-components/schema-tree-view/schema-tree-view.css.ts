@@ -84,16 +84,6 @@ export const schemaTreeViewStyles = {
       listStyle: 'none',
 
       marginLeft: themeContract.px[20],
-
-      '::before': {
-        content: '',
-        position: 'absolute',
-        top: themeContract.px[18],
-        left: themeContract.px[12],
-        height: 'calc(100% - 30px)',
-        width: '1px',
-        backgroundColor: themeContract.colors.neutral5,
-      },
     },
     'nested-list'
   ),
@@ -101,6 +91,29 @@ export const schemaTreeViewStyles = {
   listItem: style(
     {
       position: 'relative',
+
+      selectors: {
+        '&::before': {
+          content: '',
+          position: 'absolute',
+          top: 18,
+          left: 12,
+          height: 'calc(100% - 30px)',
+          width: 1,
+          backgroundColor: themeContract.colors.neutral5,
+        },
+
+        '&:last-of-type&::after': {
+          content: '',
+          position: 'absolute',
+          zIndex: 1,
+          top: 13,
+          left: -8,
+          height: 'calc(100% - 12px)',
+          width: 1,
+          backgroundColor: themeContract.colors.neutral2,
+        },
+      },
     },
     'list-item'
   ),
@@ -121,10 +134,10 @@ export const schemaTreeViewStyles = {
             '::before': {
               content: '',
               position: 'absolute',
-              top: '12px',
-              left: '-8px',
-              height: '1px',
-              width: '12px',
+              top: 12,
+              left: -8,
+              height: 1,
+              width: 12,
               backgroundColor: themeContract.colors.neutral5,
             },
           },

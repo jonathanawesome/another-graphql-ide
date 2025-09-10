@@ -92,7 +92,6 @@ const ListItemComponent = ({
             }
           >
             {node.name}
-            {node.type === 'argument' ? 'is argmument' : 'not argmument'}
           </span>
           {!isArgumentsNode && (
             <div

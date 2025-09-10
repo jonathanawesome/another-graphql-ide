@@ -5,6 +5,8 @@ import {
   GraphQLType,
   GraphQLArgument,
   isObjectType,
+  isUnionType,
+  isInterfaceType,
   getNamedType,
 } from 'graphql'
 
@@ -52,7 +54,7 @@ export function createChildrenFromType(
 
   const namedType = getNamedType(type)
 
-  // Only create children for object types that have fields
+  // Handle object types that have fields
   if (isObjectType(namedType)) {
     const fields = namedType.getFields()
     const nodes = Object.keys(fields).map(fieldName => {
@@ -65,6 +67,53 @@ export function createChildrenFromType(
         type: 'field' as const,
         graphqlType: childField.type,
         children: createChildrenFromType(childId, childField.type, depth + 1),
+      }
+    })
+
+    return sortTreeNodes(nodes)
+  }
+
+  // Handle interface types - interfaces have fields just like object types
+  if (isInterfaceType(namedType)) {
+    const fields = namedType.getFields()
+    const nodes = Object.keys(fields).map(fieldName => {
+      const childField = fields[fieldName]
+      const childId = `${parentId}.${fieldName}`
+
+      return {
+        id: childId,
+        name: fieldName,
+        type: 'field' as const,
+        graphqlType: childField.type,
+        children: createChildrenFromType(childId, childField.type, depth + 1),
+      }
+    })
+
+    return sortTreeNodes(nodes)
+  }
+
+  // Handle union types - show possible types as "... on <typename>"
+  if (isUnionType(namedType)) {
+    const possibleTypes = namedType.getTypes()
+    const nodes = possibleTypes.map(possibleType => {
+      const childId = `${parentId}.${possibleType.name}`
+      
+      // For union members that are object types, create field nodes directly
+      let children: ListItemType[] = []
+      if (isObjectType(possibleType)) {
+        const fields = possibleType.getFields()
+        children = Object.keys(fields).map(fieldName => 
+          createFieldNode(`${childId}.${fieldName}`, fieldName, fields[fieldName], depth + 1)
+        )
+        children = sortTreeNodes(children)
+      }
+      
+      return {
+        id: childId,
+        name: `... on ${possibleType.name}`,
+        type: 'type' as const,
+        graphqlType: possibleType,
+        children,
       }
     })
 
@@ -108,9 +157,10 @@ export function createArgumentNodes(
 export function createFieldNode(
   id: string,
   name: string,
-  field: GraphQLField<unknown, unknown>
+  field: GraphQLField<unknown, unknown>,
+  depth = 0
 ): ListItemType {
-  const typeChildren = createChildrenFromType(`${id}.${name}`, field.type)
+  const typeChildren = createChildrenFromType(id, field.type, depth)
   const argumentNodes = createArgumentNodes(id, field)
   
   // Combine arguments (if any) with type children
