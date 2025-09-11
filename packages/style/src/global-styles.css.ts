@@ -72,6 +72,11 @@ globalStyle('h1, h2, h3, h4, h5, h6', {
 
 globalStyle('button', {
   all: 'unset',
+  border: 'none',
+  backgroundColor: 'transparent',
+  margin: 0,
+  padding: 0,
+  boxSizing: 'border-box',
 })
 
 globalStyle('button::-moz-focus-inner', {

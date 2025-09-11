@@ -52,46 +52,44 @@ const sharedTokens = {
   },
 }
 
-// Light theme
-export const lightTheme = createTheme(themeContract, {
+export const darkTheme = createTheme(themeContract, {
   colors: {
-    neutral1: 'color(display-p3 0.9803 0.9803 0.9803)',
-    neutral2: 'color(display-p3 0.9606 0.9606 0.9606)',
-    neutral3: 'color(display-p3 0.9306 0.9306 0.9306)',
-    neutral4: 'color(display-p3 0.8904 0.8904 0.8904)',
-    neutral5: 'color(display-p3 0.8251 0.8251 0.8251)',
-    neutral6: 'color(display-p3 0.4198 0.4198 0.4198)',
-    neutral7: 'color(display-p3 0.2199 0.2199 0.2199)',
-    neutral8: 'color(display-p3 0.0202 0.0202 0.0202)',
+    neutral1: 'oklch(14.6% 0 0)',
+    neutral2: 'oklch(17.4% 0 0)',
+    neutral3: 'oklch(21.6% 0 0)',
+    neutral4: 'oklch(23.8% 0 0)',
+    neutral5: 'oklch(30.1% 0 0)',
+    neutral6: 'oklch(62.5% 0 0)',
+    neutral7: 'oklch(90% 0.002575 15.9)',
+    neutral8: 'oklch(97.7% 0 0)',
 
-    textLight: 'color(display-p3 0.4198 0.4198 0.4198)', // neutral6
-    textRegular: 'color(display-p3 0.2199 0.2199 0.2199)', // neutral7
-    textStrong: 'color(display-p3 0.0202 0.0202 0.0202)', // neutral8
+    textLight: 'oklch(62.5% 0 0)', // neutral6
+    textRegular: 'oklch(90% 0.002575 15.9)', // neutral7
+    textStrong: 'oklch(97.7% 0 0)', // neutral8
 
-    brand: 'color(display-p3 0.8823 0.0003 0.5961)',
+    brand: 'oklch(62.1% 0.289482 350.9)',
   },
 
   // Use shared tokens
   ...sharedTokens,
 })
 
-// Dark theme
-export const darkTheme = createTheme(themeContract, {
+export const lightTheme = createTheme(themeContract, {
   colors: {
-    neutral1: 'color(display-p3 0.0402 0.0402 0.0402)',
-    neutral2: 'color(display-p3 0.0636 0.0636 0.0636)',
-    neutral3: 'color(display-p3 0.08 0.08 0.08)',
-    neutral4: 'color(display-p3 0.1103 0.1103 0.1103)',
-    neutral5: 'color(display-p3 0.1802 0.1802 0.1802)',
-    neutral6: 'color(display-p3 0.5313 0.5313 0.5313)',
-    neutral7: 'color(display-p3 0.8751 0.8677 0.8677)',
-    neutral8: 'color(display-p3 0.9698 0.9698 0.9698)',
+    neutral1: 'oklch(98.5% 0 0)',
+    neutral2: 'oklch(97% 0 0)',
+    neutral3: 'oklch(94.7% 0 0)',
+    neutral4: 'oklch(91.6% 0 0)',
+    neutral5: 'oklch(86.5% 0 0)',
+    neutral6: 'oklch(52.8% 0 0)',
+    neutral7: 'oklch(34.1% 0 0)',
+    neutral8: 'oklch(11.6% 0 0)',
 
-    textLight: 'color(display-p3 0.5313 0.5313 0.5313)', // neutral6
-    textRegular: 'color(display-p3 0.8751 0.8677 0.8677)', // neutral7
-    textStrong: 'color(display-p3 0.9698 0.9698 0.9698)', // neutral8
+    textLight: 'oklch(52.8% 0 0)', // neutral6
+    textRegular: 'oklch(34.1% 0 0)', // neutral7
+    textStrong: 'oklch(11.6% 0 0)', // neutral8
 
-    brand: 'color(display-p3 0.8823 0.0003 0.5961)',
+    brand: 'oklch(62.1% 0.289482 350.9)',
   },
 
   // Use shared tokens
