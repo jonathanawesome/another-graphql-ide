@@ -1,19 +1,19 @@
 import { GraphQLSchema } from 'graphql'
 import { useState } from 'react'
 
-import { Icon } from '../../ui-components/icon/icon'
-import { IconButton } from '../../ui-components/icon-button/icon-button'
+import { Search } from '../../panes/search/search'
+import { Popover } from '../../ui-components/popover/popover'
 import { Tabs } from '../../ui-components/tabs/tabs'
 
 import { TreeContainer } from './components/tree-container'
 import { useSchemaTree } from './hooks/use-schema-tree'
-import { schemaTreeViewStyles } from './schema-tree-view.css'
+import { schemaTreeStyles } from './schema-tree.css'
 
-export type SchemaTreeViewProps = {
+export type SchemaTreeProps = {
   schema: GraphQLSchema
 }
 
-export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
+export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   const [searchTerm, setSearchTerm] = useState('')
 
   // Get data for all tabs
@@ -79,7 +79,7 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
     content: favoritesData.tabData?.children ? (
       <TreeContainer nodes={favoritesData.tabData.children} />
     ) : (
-      <div className={schemaTreeViewStyles.emptyState}>
+      <div className={schemaTreeStyles.emptyState}>
         No favorites yet. Click on fields to add them to your favorites.
       </div>
     ),
@@ -89,24 +89,20 @@ export const SchemaTreeView = ({ schema }: SchemaTreeViewProps) => {
   })
 
   return (
-    <div className={schemaTreeViewStyles.container}>
-      <div className={schemaTreeViewStyles.searchContainer}>
-        <Icon name="Search" size="small" />
-        <input
-          type="text"
+    <div className={schemaTreeStyles.container}>
+      <div className={schemaTreeStyles.header}>
+        <Search
+          onChange={setSearchTerm}
           placeholder="Search schema..."
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          className={schemaTreeViewStyles.searchInput}
         />
-        {searchTerm && (
-          <IconButton
-            iconName="X"
-            title="Clear search"
-            action={() => setSearchTerm('')}
-            size="mini"
+        <div className={schemaTreeStyles.headerActionContainer}>
+          <Popover
+            content={<>CONTENT</>}
+            triggerIcon="Settings2"
+            triggerLabel="Open schema tree settings"
           />
-        )}
+        </div>
       </div>
 
       <Tabs items={tabItems} label="Schema types" defaultActiveTab="query" />

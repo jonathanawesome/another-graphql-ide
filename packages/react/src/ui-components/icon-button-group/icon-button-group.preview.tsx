@@ -11,10 +11,10 @@ const preview = createPreview<IconButtonGroupProps>({
       name: 'default',
       props: {
         icons: [
-          { iconName: 'BookOpenText', size: 'mini', title: 'BookOpenText' },
-          { iconName: 'Caret', size: 'mini', title: 'Caret' },
-          { iconName: 'Combine', size: 'mini', title: 'Combine' },
-          { iconName: 'Settings2', size: 'mini', title: 'Settings2' },
+          { name: 'BookOpenText', size: 'mini', title: 'BookOpenText' },
+          { name: 'Caret', size: 'mini', title: 'Caret' },
+          { name: 'Combine', size: 'mini', title: 'Combine' },
+          { name: 'Settings2', size: 'mini', title: 'Settings2' },
         ],
       },
     },

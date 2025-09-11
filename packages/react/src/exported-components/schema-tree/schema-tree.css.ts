@@ -1,6 +1,6 @@
 import { recipe, style, themeContract } from '@another-graphql-ide/style'
 
-export const schemaTreeViewStyles = {
+export const schemaTreeStyles = {
   container: style(
     {
       display: 'flex',
@@ -12,40 +12,48 @@ export const schemaTreeViewStyles = {
       height: '100%',
       boxShadow: themeContract.shadows.box,
     },
-    'container'
+    'schema-tree-container'
   ),
 
-  searchContainer: style(
+  header: style(
+    {
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'row',
+      height: themeContract.px[40],
+      width: '100%',
+      flex: 0,
+
+      selectors: {
+        '&::before': {
+          content: '',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          height: 1,
+          width: '100%',
+          backgroundColor: themeContract.colors.neutral4,
+          zIndex: 2,
+        },
+      },
+    },
+    'schema-tree-header'
+  ),
+
+  headerActionContainer: style(
     {
       display: 'flex',
-      alignItems: 'center',
-      gap: themeContract.px[8],
-      borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      width: themeContract.px[40],
+      height: themeContract.px[40],
+      flexShrink: 0,
       backgroundColor: themeContract.colors.neutral1,
+      borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+      borderLeft: `1px solid ${themeContract.colors.neutral4}`,
     },
-    'search-container'
+    'schema-tree-header-action-container'
   ),
-
-  searchInput: style({
-    flex: 1,
-    padding: `${themeContract.px[6]} ${themeContract.px[8]}`,
-    border: `1px solid ${themeContract.colors.neutral4}`,
-    borderRadius: themeContract.radii.small,
-    backgroundColor: themeContract.colors.neutral1,
-    color: themeContract.colors.textRegular,
-    fontSize: themeContract.px[14],
-    fontFamily: themeContract.fonts.sans,
-
-    '::placeholder': {
-      color: themeContract.colors.textLight,
-    },
-
-    ':focus': {
-      outline: 'none',
-      borderColor: themeContract.colors.brand,
-      boxShadow: `0 0 0 1px ${themeContract.colors.brand}`,
-    },
-  }),
 
   treeContainer: style(
     {
@@ -54,7 +62,7 @@ export const schemaTreeViewStyles = {
       overflow: 'auto',
       padding: themeContract.px[8],
     },
-    'tree-container'
+    'schema-tree-tree-container'
   ),
 
   emptyState: style({
@@ -74,7 +82,7 @@ export const schemaTreeViewStyles = {
       padding: 0,
       listStyle: 'none',
     },
-    'tree-list'
+    'schema-tree-tree-list'
   ),
 
   nestedList: style(
@@ -82,10 +90,9 @@ export const schemaTreeViewStyles = {
       margin: 0,
       padding: 0,
       listStyle: 'none',
-
       marginLeft: themeContract.px[20],
     },
-    'nested-list'
+    'schema-tree-nested-list'
   ),
 
   listItem: style(
@@ -115,7 +122,7 @@ export const schemaTreeViewStyles = {
         },
       },
     },
-    'list-item'
+    'schema-tree-list-item'
   ),
 
   listItemInner: recipe(
@@ -144,7 +151,7 @@ export const schemaTreeViewStyles = {
         },
       },
     },
-    'list-item-inner'
+    'schema-tree-list-item-inner'
   ),
 
   listItemLeafIndicatorContainer: style(
@@ -155,7 +162,7 @@ export const schemaTreeViewStyles = {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    'list-item-leaf-indicator-container'
+    'schema-tree-list-item-leaf-indicator-container'
   ),
 
   listItemDetail: style(
@@ -165,7 +172,7 @@ export const schemaTreeViewStyles = {
       gap: themeContract.px[6],
       flex: 1,
     },
-    'list-item-detail'
+    'schema-tree-list-item-detail'
   ),
 
   listItemName: style(
@@ -173,14 +180,14 @@ export const schemaTreeViewStyles = {
       color: themeContract.colors.textRegular,
       cursor: 'pointer',
       fontVariationSettings: `"wght" 400`,
-      transition: `all 0.3s ${themeContract.motion.authentic}`,
+      transition: `all 0.1s ${themeContract.motion.authentic}`,
 
       ':hover': {
         color: themeContract.colors.textStrong,
         fontVariationSettings: `"wght" 600`,
       },
     },
-    'list-item-name'
+    'schema-tree-list-item-name'
   ),
 
   listItemArgumentsLabel: style(
@@ -191,7 +198,7 @@ export const schemaTreeViewStyles = {
       textTransform: 'uppercase',
       letterSpacing: '1px',
     },
-    'list-item-arguments-label'
+    'schema-tree-list-item-arguments-label'
   ),
 
   listItemActionsContainer: recipe(
@@ -209,10 +216,10 @@ export const schemaTreeViewStyles = {
         },
       },
     },
-    'list-item-name-actions-container'
+    'schema-tree-list-item-name-actions-container'
   ),
 
-  nodeType: style({}, 'node-type'),
+  nodeType: style({}, 'schema-tree-node-type'),
 
   nodeChildren: style(
     {
@@ -220,6 +227,6 @@ export const schemaTreeViewStyles = {
       borderLeft: `1px solid ${themeContract.colors.neutral4}`,
       paddingLeft: themeContract.px[8],
     },
-    'node-children'
+    'schema-tree-node-children'
   ),
 }

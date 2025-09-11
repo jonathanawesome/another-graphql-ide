@@ -14,15 +14,15 @@ const preview = createPreview<IconButtonProps>({
   variants: [
     {
       name: 'default',
-      props: { iconName: 'BowArrow', title: 'BowArrow' },
+      props: { name: 'BowArrow', title: 'BowArrow' },
     },
     {
       name: 'active',
-      props: { iconName: 'BowArrow', title: 'BowArrow', state: 'active' },
+      props: { name: 'BowArrow', title: 'BowArrow', state: 'active' },
     },
     {
       name: 'highlight',
-      props: { iconName: 'BowArrow', title: 'BowArrow', state: 'highlight' },
+      props: { name: 'BowArrow', title: 'BowArrow', state: 'highlight' },
     },
   ],
   demos: [
@@ -33,7 +33,7 @@ const preview = createPreview<IconButtonProps>({
           <DemoGrid>
             <DemoGridItem>
               <IconButton
-                iconName="BowArrow"
+                name="BowArrow"
                 ghost={true}
                 size="large"
                 title="BowArrow"
@@ -42,7 +42,7 @@ const preview = createPreview<IconButtonProps>({
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                iconName="BowArrow"
+                name="BowArrow"
                 ghost={true}
                 size="medium"
                 title="BowArrow"
@@ -51,7 +51,7 @@ const preview = createPreview<IconButtonProps>({
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                iconName="BowArrow"
+                name="BowArrow"
                 ghost={true}
                 size="small"
                 title="BowArrow"
@@ -60,7 +60,7 @@ const preview = createPreview<IconButtonProps>({
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                iconName="BowArrow"
+                name="BowArrow"
                 ghost={true}
                 size="mini"
                 title="BowArrow"
@@ -71,7 +71,7 @@ const preview = createPreview<IconButtonProps>({
           <DemoGrid>
             <DemoGridItem>
               <IconButton
-                iconName="BowArrow"
+                name="BowArrow"
                 ghost={false}
                 size="large"
                 title="BowArrow"
@@ -80,7 +80,7 @@ const preview = createPreview<IconButtonProps>({
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                iconName="BowArrow"
+                name="BowArrow"
                 ghost={false}
                 size="medium"
                 title="BowArrow"
@@ -89,7 +89,7 @@ const preview = createPreview<IconButtonProps>({
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                iconName="BowArrow"
+                name="BowArrow"
                 ghost={false}
                 size="small"
                 title="BowArrow"
@@ -98,7 +98,7 @@ const preview = createPreview<IconButtonProps>({
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                iconName="BowArrow"
+                name="BowArrow"
                 ghost={false}
                 size="mini"
                 title="BowArrow"

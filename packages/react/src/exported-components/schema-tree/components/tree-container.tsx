@@ -1,7 +1,7 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import React from 'react'
 
-import { schemaTreeViewStyles } from '../schema-tree-view.css'
+import { schemaTreeStyles } from '../schema-tree.css'
 import type { ListItemType } from '../utils/tree-utils'
 
 import { ListItem } from './list-item'
@@ -23,7 +23,7 @@ export const TreeContainer = ({ nodes }: TreeContainerProps) => {
   const virtualItems = virtualizer.getVirtualItems()
 
   return (
-    <div ref={parentRef} className={schemaTreeViewStyles.treeContainer}>
+    <div ref={parentRef} className={schemaTreeStyles.treeContainer}>
       <div style={{ position: 'relative', height: virtualizer.getTotalSize() }}>
         <div
           style={{
@@ -37,7 +37,7 @@ export const TreeContainer = ({ nodes }: TreeContainerProps) => {
           <ul
             role="tree"
             aria-label="Schema tree view"
-            className={schemaTreeViewStyles.treeList}
+            className={schemaTreeStyles.treeList}
           >
             {virtualItems.map(virtualItem => {
               const node = nodes[virtualItem.index]

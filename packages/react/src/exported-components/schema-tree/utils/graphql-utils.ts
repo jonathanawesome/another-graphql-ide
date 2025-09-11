@@ -19,7 +19,7 @@ export function getTypeIcon(type: GraphQLType): IconNames {
   if (isScalarType(namedType)) return 'SeparatorRound'
   if (isObjectType(namedType)) return 'Code'
   if (isEnumType(namedType)) return 'List'
-  if (isInterfaceType(namedType)) return 'Cable'
+  if (isInterfaceType(namedType)) return 'Merge'
   if (isUnionType(namedType)) return 'Merge'
 
   return 'CircleFill'

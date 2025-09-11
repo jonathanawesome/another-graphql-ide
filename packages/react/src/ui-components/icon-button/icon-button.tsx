@@ -8,15 +8,15 @@ type IconButtonVariants = RecipeVariants<typeof iconButtonClass>
 
 export type IconButtonProps = IconButtonVariants & {
   action?: () => void
-  iconName: IconNames
+  name: IconNames
   title: string
 }
 
 export const IconButton = ({
   action,
   ghost = false,
-  iconName,
   isDisabled = false,
+  name,
   rotate,
   size = 'small',
   state,
@@ -36,7 +36,7 @@ export const IconButton = ({
       onClick={action}
       title={title}
     >
-      <Icon name={iconName} size={size === 'large' ? 'large' : 'medium'} />
+      <Icon name={name} size={size === 'large' ? 'large' : 'medium'} />
     </button>
   )
 }

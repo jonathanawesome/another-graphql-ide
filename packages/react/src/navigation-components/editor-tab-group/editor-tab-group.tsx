@@ -14,7 +14,7 @@ export const EditorTabGroup = () => {
             trigger: {
               text: 'OperationName',
               actionIconButton: {
-                iconName: 'X',
+                name: 'X',
                 title: 'X',
                 size: 'mini',
                 action: () => alert('Hi from Tab1'),
@@ -27,7 +27,7 @@ export const EditorTabGroup = () => {
             trigger: {
               text: 'Untitled',
               actionIconButton: {
-                iconName: 'X',
+                name: 'X',
                 title: 'X',
                 size: 'mini',
                 action: () => alert('Hi from Tab2'),
@@ -40,7 +40,7 @@ export const EditorTabGroup = () => {
             trigger: {
               text: 'MyQuery',
               actionIconButton: {
-                iconName: 'X',
+                name: 'X',
                 title: 'X',
                 size: 'mini',
                 action: () => alert('Hi from Tab3'),
@@ -51,7 +51,7 @@ export const EditorTabGroup = () => {
         label="Demo Tabs"
         defaultActiveTab="trigger1"
       />
-      <IconButton iconName="Plus" title="Add Tab" size="mini" />
+      <IconButton name="Plus" title="Add Tab" size="mini" />
     </div>
   )
 }

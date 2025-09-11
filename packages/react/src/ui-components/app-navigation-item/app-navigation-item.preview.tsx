@@ -24,7 +24,7 @@ const preview = createPreview<AppNavigationItemProps>({
               <AppNavigationItem
                 active={false}
                 icon={{
-                  iconName: 'Compass',
+                  name: 'Compass',
                   size: 'large',
                   title: 'Compass',
                 }}
@@ -36,7 +36,7 @@ const preview = createPreview<AppNavigationItemProps>({
               <AppNavigationItem
                 active={true}
                 icon={{
-                  iconName: 'Compass',
+                  name: 'Compass',
                   size: 'large',
                   state: 'active',
                   title: 'Compass',
@@ -49,7 +49,7 @@ const preview = createPreview<AppNavigationItemProps>({
               <AppNavigationItem
                 active={false}
                 icon={{
-                  iconName: 'Compass',
+                  name: 'Compass',
                   size: 'small',
                   title: 'Compass',
                 }}
@@ -61,7 +61,7 @@ const preview = createPreview<AppNavigationItemProps>({
               <AppNavigationItem
                 active={true}
                 icon={{
-                  iconName: 'Compass',
+                  name: 'Compass',
                   size: 'small',
                   state: 'active',
                   title: 'Compass',

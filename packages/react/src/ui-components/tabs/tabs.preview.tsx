@@ -47,7 +47,7 @@ const preview = createPreview<TabsProps>({
                 trigger: {
                   text: 'OperationName',
                   actionIconButton: {
-                    iconName: 'X',
+                    name: 'X',
                     title: 'X',
                     size: 'mini',
                     action: () => alert('Hi from Tab1'),
@@ -60,7 +60,7 @@ const preview = createPreview<TabsProps>({
                 trigger: {
                   text: 'Untitled',
                   actionIconButton: {
-                    iconName: 'X',
+                    name: 'X',
                     title: 'X',
                     size: 'mini',
                     action: () => alert('Hi from Tab2'),
@@ -73,7 +73,7 @@ const preview = createPreview<TabsProps>({
                 trigger: {
                   text: 'MyQuery',
                   actionIconButton: {
-                    iconName: 'X',
+                    name: 'X',
                     title: 'X',
                     size: 'mini',
                     action: () => alert('Hi from Tab3'),

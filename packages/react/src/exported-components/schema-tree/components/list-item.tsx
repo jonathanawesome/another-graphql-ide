@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Icon } from '../../../ui-components/icon/icon'
 import { IconButton } from '../../../ui-components/icon-button/icon-button'
 import { IconButtonGroup } from '../../../ui-components/icon-button-group/icon-button-group'
-import { schemaTreeViewStyles } from '../schema-tree-view.css'
+import { schemaTreeStyles } from '../schema-tree.css'
 import type { ListItemType } from '../utils/tree-utils'
 
 type ListItemProps = {
@@ -31,44 +31,45 @@ export const ListItem = ({
   const isArgumentsNode = node.type === 'arguments'
 
   return (
-    <li className={schemaTreeViewStyles.listItem}>
+    <li className={schemaTreeStyles.listItem}>
       <div
-        className={schemaTreeViewStyles.listItemInner({
+        className={schemaTreeStyles.listItemInner({
           withIndentLine: depth !== 0,
         })}
       >
         {hasChildren ? (
           <IconButton
-            iconName="Chevron"
-            title={isExpanded ? 'Collapse' : 'Expand'}
-            rotate={isExpanded ? '90' : undefined}
             action={() => setIsExpanded(!isExpanded)}
-            size="mini"
             aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.name}`}
+            ghost={true}
+            name="Chevron"
+            rotate={isExpanded ? '90' : undefined}
+            size="mini"
+            title={isExpanded ? 'Collapse' : 'Expand'}
           />
         ) : (
-          <div className={schemaTreeViewStyles.listItemLeafIndicatorContainer}>
+          <div className={schemaTreeStyles.listItemLeafIndicatorContainer}>
             <Icon name={'SeparatorSquare'} size="small" />
           </div>
         )}
 
         <div
-          className={schemaTreeViewStyles.listItemDetail}
+          className={schemaTreeStyles.listItemDetail}
           onMouseEnter={() => setShowActions(true)}
           onMouseLeave={() => setShowActions(false)}
         >
           <span
             className={
               isArgumentsNode
-                ? schemaTreeViewStyles.listItemArgumentsLabel
-                : schemaTreeViewStyles.listItemName
+                ? schemaTreeStyles.listItemArgumentsLabel
+                : schemaTreeStyles.listItemName
             }
           >
             {node.name}
           </span>
           {!isArgumentsNode && (
             <div
-              className={schemaTreeViewStyles.listItemActionsContainer({
+              className={schemaTreeStyles.listItemActionsContainer({
                 showActions,
               })}
             >
@@ -76,14 +77,16 @@ export const ListItem = ({
                 <IconButtonGroup
                   icons={[
                     {
+                      ghost: true,
                       action: () => alert('Implement Quick Docs'),
-                      iconName: 'BookOpenText',
+                      name: 'BookOpenText',
                       size: 'mini',
                       title: 'View Documentation',
                     },
                     {
+                      ghost: true,
                       action: () => alert('Implement Insert Code'),
-                      iconName: 'InsertCode',
+                      name: 'InsertCode',
                       size: 'mini',
                       title: 'Insert Code',
                     },
@@ -93,8 +96,9 @@ export const ListItem = ({
                 <IconButtonGroup
                   icons={[
                     {
+                      ghost: true,
                       action: () => alert('Implement Quick Docs'),
-                      iconName: 'BookOpenText',
+                      name: 'BookOpenText',
                       size: 'mini',
                       title: 'View Documentation',
                     },
@@ -106,7 +110,7 @@ export const ListItem = ({
         </div>
       </div>
       {isExpanded && hasChildren && (
-        <ul role="group" className={schemaTreeViewStyles.nestedList}>
+        <ul role="group" className={schemaTreeStyles.nestedList}>
           {node.children?.map(childNode => (
             <ListItem
               key={childNode.id}

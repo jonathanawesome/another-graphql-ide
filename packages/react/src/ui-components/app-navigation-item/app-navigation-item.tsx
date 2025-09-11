@@ -27,7 +27,7 @@ export const AppNavigationItem = ({
   return (
     <div className={appNavigationItemClass({ active, orientation })}>
       {orientation === 'horizontal' ? (
-        <Icon name={icon.iconName} />
+        <Icon name={icon.name} />
       ) : (
         <IconButton {...icon} />
       )}
