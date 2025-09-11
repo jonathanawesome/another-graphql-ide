@@ -1,13 +1,11 @@
 import { createTheme } from '@vanilla-extract/css'
 
-import { themeContract } from './theme-contract.css'
+import { alpha } from './alpha'
+import { colors } from './theme-colors'
+import { colorValuesContract, themeContract } from './theme-contract.css'
 
 // Shared tokens that don't change between themes
 const sharedTokens = {
-  shadows: {
-    box: `0px 0px 0px 1px ${themeContract.colors.neutral4}, 0px 0px 32px 2px ${themeContract.colors.neutral4}`,
-  },
-
   px: {
     1: '0.0625rem',
     2: '0.125rem',
@@ -53,45 +51,28 @@ const sharedTokens = {
 }
 
 export const darkTheme = createTheme(themeContract, {
-  colors: {
-    neutral1: 'oklch(14.6% 0 0)',
-    neutral2: 'oklch(17.4% 0 0)',
-    neutral3: 'oklch(21.6% 0 0)',
-    neutral4: 'oklch(23.8% 0 0)',
-    neutral5: 'oklch(30.1% 0 0)',
-    neutral6: 'oklch(62.5% 0 0)',
-    neutral7: 'oklch(90% 0.002575 15.9)',
-    neutral8: 'oklch(97.7% 0 0)',
+  colors: colors.dark.oklch,
 
-    textLight: 'oklch(62.5% 0 0)', // neutral6
-    textRegular: 'oklch(90% 0.002575 15.9)', // neutral7
-    textStrong: 'oklch(97.7% 0 0)', // neutral8
-
-    brand: 'oklch(62.1% 0.289482 350.9)',
-  },
-
-  // Use shared tokens
   ...sharedTokens,
+
+  shadows: {
+    box: `${alpha.neutral5(0.35)} 0px 10px 38px -10px, ${alpha.neutral5(0.2)} 0px 10px 20px -15px`,
+  },
 })
+
+export const darkColorValues = createTheme(colorValuesContract, colors.dark.raw)
 
 export const lightTheme = createTheme(themeContract, {
-  colors: {
-    neutral1: 'oklch(98.5% 0 0)',
-    neutral2: 'oklch(97% 0 0)',
-    neutral3: 'oklch(94.7% 0 0)',
-    neutral4: 'oklch(91.6% 0 0)',
-    neutral5: 'oklch(86.5% 0 0)',
-    neutral6: 'oklch(52.8% 0 0)',
-    neutral7: 'oklch(34.1% 0 0)',
-    neutral8: 'oklch(11.6% 0 0)',
+  colors: colors.light.oklch,
 
-    textLight: 'oklch(52.8% 0 0)', // neutral6
-    textRegular: 'oklch(34.1% 0 0)', // neutral7
-    textStrong: 'oklch(11.6% 0 0)', // neutral8
-
-    brand: 'oklch(62.1% 0.289482 350.9)',
-  },
-
-  // Use shared tokens
   ...sharedTokens,
+
+  shadows: {
+    box: `${alpha.neutral7(0.35)} 0px 10px 38px -10px, ${alpha.neutral7(0.2)} 0px 10px 20px -15px`,
+  },
 })
+
+export const lightColorValues = createTheme(
+  colorValuesContract,
+  colors.light.raw
+)
