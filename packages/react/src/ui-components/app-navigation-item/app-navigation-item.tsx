@@ -1,5 +1,6 @@
 import { RecipeVariants } from '@another-graphql-ide/style'
 
+import { Icon } from '../icon/icon'
 import { IconButton, IconButtonProps } from '../icon-button/icon-button'
 
 import { appNavigationItemClass } from './app-navigation-item.css'
@@ -25,7 +26,11 @@ export const AppNavigationItem = ({
 }: AppNavigationItemProps) => {
   return (
     <div className={appNavigationItemClass({ active, orientation })}>
-      <IconButton {...icon} />
+      {orientation === 'horizontal' ? (
+        <Icon name={icon.iconName} />
+      ) : (
+        <IconButton {...icon} />
+      )}
       {text}
     </div>
   )

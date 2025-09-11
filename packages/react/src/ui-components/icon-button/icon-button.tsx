@@ -14,27 +14,29 @@ export type IconButtonProps = IconButtonVariants & {
 
 export const IconButton = ({
   action,
+  ghost = false,
   iconName,
-  state,
   isDisabled = false,
   rotate,
   size = 'small',
+  state,
   title,
 }: IconButtonProps) => {
   return (
     <button
       className={iconButtonClass({
+        ghost,
         isDisabled,
         rotate,
-        state,
         size,
+        state,
       })}
       aria-label={title}
       disabled={isDisabled}
       onClick={action}
       title={title}
     >
-      <Icon name={iconName} size={size === 'large' ? 'medium' : 'small'} />
+      <Icon name={iconName} size={size === 'large' ? 'large' : 'medium'} />
     </button>
   )
 }

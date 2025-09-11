@@ -17,6 +17,7 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
   return (
     <div className={appNavigationStyles.container({ orientation })}>
       <IconButton
+        ghost={true}
         iconName="GraphQL"
         size="large"
         state="highlight"
@@ -29,9 +30,10 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
         <AppNavigationItem
           active={true}
           icon={{
-            state: 'active',
+            ghost: true,
             iconName: 'Compass',
             size: orientation === 'horizontal' ? 'small' : 'large',
+            state: 'active',
             title: 'Compass',
           }}
           orientation={orientation}
@@ -40,6 +42,7 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
         <AppNavigationItem
           active={false}
           icon={{
+            ghost: true,
             iconName: 'BookOpenText',
             size: orientation === 'horizontal' ? 'small' : 'large',
             title: 'BookOpenText',
@@ -50,6 +53,7 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
         <AppNavigationItem
           active={false}
           icon={{
+            ghost: true,
             iconName: 'Code',
             size: orientation === 'horizontal' ? 'small' : 'large',
             title: 'Code',

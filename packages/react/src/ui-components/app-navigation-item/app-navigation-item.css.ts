@@ -1,10 +1,16 @@
-import { recipe, themeContract } from '@another-graphql-ide/style'
+import { globalStyle, recipe, themeContract } from '@another-graphql-ide/style'
 
 export const appNavigationItemClass = recipe({
   base: {
     display: 'flex',
     alignItems: 'center',
     fontSize: themeContract.px[14],
+    cursor: 'pointer',
+    transition: `all .15s ${themeContract.motion.authentic}`,
+
+    ':hover': {
+      color: themeContract.colors.neutral8,
+    },
   },
 
   variants: {
@@ -22,6 +28,7 @@ export const appNavigationItemClass = recipe({
       horizontal: {
         height: themeContract.px[32],
         flexDirection: 'row',
+        gap: 4,
       },
       vertical: {
         flexDirection: 'column',
@@ -31,4 +38,15 @@ export const appNavigationItemClass = recipe({
       },
     },
   },
+})
+
+globalStyle(
+  `${appNavigationItemClass.classNames.variants.active.true} svg path`,
+  {
+    fill: themeContract.colors.neutral8,
+  }
+)
+
+globalStyle(`${appNavigationItemClass()}:hover svg path`, {
+  fill: themeContract.colors.neutral8,
 })

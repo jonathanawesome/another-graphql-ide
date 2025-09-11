@@ -1,6 +1,6 @@
 import { BookOpenText } from './icons/book-open-text'
 import { BowArrow } from './icons/bow-arrow'
-import { Cable } from './icons/cable'
+// import { Cable } from './icons/cable'
 import { Caret } from './icons/caret'
 import { Chevron } from './icons/chevron'
 import { ChevronsUpDown } from './icons/chevrons-up-down'
@@ -30,7 +30,7 @@ import { X } from './icons/x'
 export const IconMap = {
   BookOpenText,
   BowArrow,
-  Cable,
+  // Cable,
   Caret,
   Chevron,
   ChevronsUpDown,
