@@ -25,11 +25,10 @@ export const searchStyles = {
       borderTopLeftRadius: themeContract.radii.medium,
       height: '100%',
       width: '100%',
-      paddingLeft: 36,
+      paddingLeft: 20,
       paddingRight: themeContract.px[32],
       backgroundColor: themeContract.colors.neutral1,
       color: themeContract.colors.textRegular,
-      // fontSize: themeContract.px[13],
 
       '::placeholder': {
         color: themeContract.colors.textLight,

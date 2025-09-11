@@ -1,15 +1,17 @@
 import { Icon } from '../../ui-components/icon/icon'
 import { IconButton } from '../../ui-components/icon-button/icon-button'
+import { Input, InputProps } from '../../ui-components/input/input'
 
 import { searchStyles } from './search.css'
 
-export type SearchProps = {
-  onChange: (value: string) => void
-  placeholder: string
-  value: string
-}
+export type SearchProps = InputProps & {}
 
-export const Search = ({ onChange, placeholder, value }: SearchProps) => {
+export const Search = ({
+  handleChange,
+  name,
+  placeholder,
+  value,
+}: SearchProps) => {
   return (
     <div className={searchStyles.container}>
       <div
@@ -18,20 +20,27 @@ export const Search = ({ onChange, placeholder, value }: SearchProps) => {
       >
         <Icon name="Search" size="small" />
       </div>
-      <input
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        className={searchStyles.input}
-      />
+
+      <div className={searchStyles.input}>
+        <Input
+          placeholder={placeholder}
+          handleChange={handleChange}
+          name={name}
+          value={value}
+        />
+      </div>
+
       {value && (
         <div className={searchStyles.iconContainer({ location: 'right' })}>
           <IconButton
             ghost={true}
             name="X"
             title="Clear search"
-            action={() => onChange('')}
+            action={() =>
+              handleChange({
+                target: { value: '' },
+              } as React.ChangeEvent<HTMLInputElement>)
+            }
             size="mini"
           />
         </div>

@@ -1,77 +1,48 @@
 import { createPreview } from '@another-graphql-ide/shared'
+import { useState } from 'react'
 
 import {
   DemoGrid,
   DemoGridItem,
 } from '../../utility-components/previews/components'
 
-import { HandleChangeSignature, Input, type InputProps } from './input'
+import { Input, type InputProps } from './input'
 
-const handleChangeStub: HandleChangeSignature = ({ name, value }) => {
-  // eslint-disable-next-line no-console
-  console.log('input change', { name, value })
+const Wrapper = ({
+  name,
+  placeholder,
+}: Pick<InputProps, 'name' | 'placeholder'>) => {
+  const [value, setValue] = useState<string>('')
+  return (
+    <Input
+      handleChange={e => setValue(e.target.value)}
+      name={name}
+      placeholder={placeholder}
+      value={value}
+    />
+  )
 }
 
 const preview = createPreview<InputProps>({
   title: 'Input',
   component: Input,
   category: 'UI Components',
-  variants: [
-    {
-      name: 'default with placeholder',
-      props: {
-        placeholder: '213',
-        handleChange: handleChangeStub,
-        name: 'some-cool-input',
-        value: '',
-      },
-    },
-    {
-      name: 'with value',
-      props: {
-        placeholder: '213',
-        handleChange: handleChangeStub,
-        name: 'some-cool-input',
-        value: '12324312',
-      },
-    },
-  ],
   demos: [
     {
       name: 'Examples',
       render: () => (
         <DemoGrid>
           <DemoGridItem>
-            <Input
-              placeholder="213"
-              handleChange={handleChangeStub}
-              name="some-cool-input"
-              value={'12324312'}
-            />
+            <Wrapper name="some-cool-input1" placeholder="some-cool-input1" />
           </DemoGridItem>
           <DemoGridItem>
-            <Input
-              placeholder="243637"
-              handleChange={handleChangeStub}
-              name="some-cool-input"
-              value={''}
-            />
+            <Wrapper name="some-cool-input2" placeholder="some-cool-input2" />
           </DemoGridItem>
           <DemoGridItem>
-            <Input
-              placeholder="Some Cool Input"
-              handleChange={handleChangeStub}
-              name="some-cool-input"
-              value={''}
-            />
+            <Wrapper name="some-cool-input3" placeholder="some-cool-input3" />
           </DemoGridItem>
           <DemoGridItem>
-            <Input
-              placeholder="987"
-              handleChange={handleChangeStub}
-              name="some-cool-input"
-              value={''}
-            />
+            <Wrapper name="some-cool-input4" placeholder="some-cool-input4" />
           </DemoGridItem>
         </DemoGrid>
       ),

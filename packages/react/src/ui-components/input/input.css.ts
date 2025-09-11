@@ -10,8 +10,6 @@ export const inputStyles = {
     color: themeContract.colors.textStrong,
     backgroundColor: themeContract.colors.neutral1,
     fontSize: themeContract.px[14],
-    // border: `1px solid ${themeContract.colors.neutral5}`,
-    // borderRadius: themeContract.radii.small,
   }),
 
   input: style({
@@ -22,10 +20,11 @@ export const inputStyles = {
     color: themeContract.colors.neutral8,
 
     selectors: {
-      '&:focus': {},
-
       '&::placeholder': {
         color: themeContract.colors.neutral6,
+      },
+      '&:focus&::placeholder': {
+        color: themeContract.colors.neutral5,
       },
     },
   }),

@@ -1,25 +1,11 @@
 import { inputStyles } from './input.css'
 
-type ControlValue = string | string[] | boolean
-
-type ControlData = {
-  name: string
-  value: ControlValue
-}
-
-export type HandleChangeSignature = ({ name, value }: ControlData) => void
-
-type BaseControlProps = {
-  handleChange: HandleChangeSignature
+export type InputProps = {
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   isDisabled?: boolean
   name: string
   placeholder: string
-  value: ControlValue
-}
-
-export type InputProps = BaseControlProps & {
-  displayLabel?: boolean
-  options?: never
+  value: string
 }
 
 export const Input = ({
@@ -37,15 +23,10 @@ export const Input = ({
         disabled={isDisabled}
         id={name}
         name={name}
-        onChange={e => {
-          handleChange({
-            name,
-            value: e.target.value,
-          })
-        }}
+        onChange={e => handleChange(e)}
         placeholder={placeholder}
         type="text"
-        value={value as string}
+        value={value}
       />
     </div>
   )

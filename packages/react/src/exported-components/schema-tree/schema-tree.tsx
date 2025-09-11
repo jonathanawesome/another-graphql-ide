@@ -14,7 +14,7 @@ export type SchemaTreeProps = {
 }
 
 export const SchemaTree = ({ schema }: SchemaTreeProps) => {
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
   // Get data for all tabs
   const queryData = useSchemaTree(schema, searchTerm, 'query')
@@ -92,7 +92,8 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
     <div className={schemaTreeStyles.container}>
       <div className={schemaTreeStyles.header}>
         <Search
-          onChange={setSearchTerm}
+          handleChange={e => setSearchTerm(e.target.value)}
+          name="Search schema..."
           placeholder="Search schema..."
           value={searchTerm}
         />
