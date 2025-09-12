@@ -44,38 +44,30 @@ const slideLeftAndFade = keyframes({
   },
 })
 
-export const popoverStyles = {
+export const tooltipStyles = {
   content: style({
-    position: 'relative',
-    zIndex: 2,
-    width: 260,
-    padding: themeContract.px[20],
+    userSelect: 'none',
+    padding: themeContract.px[4],
+    fontSize: themeContract.px[12],
+    color: themeContract.colors.neutral8,
     backgroundColor: themeContract.colors.neutral1,
-    border: `1px solid ${themeContract.colors.neutral4}`,
-    borderRadius: themeContract.radii.large,
+    borderRadius: themeContract.radii.small,
     boxShadow: themeContract.shadows.box,
     animationDuration: '400ms',
-    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    animationTimingFunction: themeContract.motion.authentic,
     willChange: 'transform, opacity',
 
     selectors: {
-      '&:focus': {
-        boxShadow: themeContract.shadows.boxFocus,
-      },
-
-      '&[data-state="open"][data-side="top"]': {
+      '&[data-state="delayed-open"][data-side="top"]': {
         animationName: slideDownAndFade,
       },
-
-      '&[data-state="open"][data-side="right"]': {
+      '&[data-state="delayed-open"][data-side="right"]': {
         animationName: slideLeftAndFade,
       },
-
-      '&[data-state="open"][data-side="bottom"]': {
+      '&[data-state="delayed-open"][data-side="bottom"]': {
         animationName: slideUpAndFade,
       },
-
-      '&[data-state="open"][data-side="left"]': {
+      '&[data-state="delayed-open"][data-side="left"]': {
         animationName: slideRightAndFade,
       },
     },
@@ -83,11 +75,5 @@ export const popoverStyles = {
 
   arrow: style({
     fill: themeContract.colors.neutral1,
-  }),
-
-  close: style({
-    position: 'absolute',
-    top: themeContract.px[8],
-    right: themeContract.px[8],
   }),
 }

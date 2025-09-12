@@ -57,6 +57,7 @@ export const darkTheme = createTheme(themeContract, {
 
   shadows: {
     box: `${alpha.neutral5(0.35)} 0px 10px 38px -10px, ${alpha.neutral5(0.2)} 0px 10px 20px -15px`,
+    boxFocus: `${alpha.neutral5(0.35)} 0px 10px 38px -10px, ${alpha.neutral5(0.2)} 0px 10px 20px -15px, 0 0 0 2px ${themeContract.colors.brand}`,
   },
 })
 
@@ -68,7 +69,9 @@ export const lightTheme = createTheme(themeContract, {
   ...sharedTokens,
 
   shadows: {
-    box: `${alpha.neutral7(0.35)} 0px 10px 38px -10px, ${alpha.neutral7(0.2)} 0px 10px 20px -15px`,
+    box: `0px 10px 38px -10px orange, 0px 10px 20px -15px red`,
+    // box: '10px 5px 5px red',
+    boxFocus: `${alpha.neutral5(0.35)} 0px 10px 38px -10px, ${alpha.neutral5(0.2)} 0px 10px 20px -15px, 0 0 0 2px ${themeContract.colors.brand}`,
   },
 })
 

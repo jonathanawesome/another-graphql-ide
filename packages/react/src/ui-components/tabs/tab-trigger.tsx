@@ -1,4 +1,4 @@
-import { Tabs as RadixTabs } from 'radix-ui'
+import * as RadixTabs from '@radix-ui/react-tabs'
 
 import { IconButton, type IconButtonProps } from '../icon-button/icon-button'
 import { Pill, type PillProps } from '../pill/pill'

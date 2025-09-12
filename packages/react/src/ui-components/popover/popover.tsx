@@ -1,4 +1,4 @@
-import { Popover as RadixPopover } from 'radix-ui'
+import * as RadixPopover from '@radix-ui/react-popover'
 import { type ReactNode } from 'react'
 
 import { type IconNames } from '../icon/icon'

@@ -6,6 +6,7 @@ export const themeContract = createGlobalThemeContract(
   {
     shadows: {
       box: null,
+      boxFocus: null,
     },
 
     colors: {

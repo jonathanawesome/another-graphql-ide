@@ -18,7 +18,7 @@ const Wrapper = ({ placeholder }: Pick<SearchProps, 'placeholder'>) => {
 const preview = createPreview<SearchProps>({
   title: 'Search',
   component: Search,
-  category: 'UI Components',
+  category: 'Panes',
   demos: [
     {
       name: 'Schema search',
