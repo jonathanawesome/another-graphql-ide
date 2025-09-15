@@ -1,15 +1,15 @@
 import { createPreview } from '@another-graphql-ide/shared'
 
-import { EditorTabGroup } from './editor-tab-group'
+import { EditorGroupTabs } from './editor-group-tabs'
 
 const preview = createPreview({
-  title: 'EditorTabGroup',
-  component: EditorTabGroup,
+  title: 'EditorGroupTabs',
+  component: EditorGroupTabs,
   category: 'Navigation Components',
   demos: [
     {
       name: 'Example',
-      render: () => <EditorTabGroup />,
+      render: () => <EditorGroupTabs />,
     },
   ],
 })

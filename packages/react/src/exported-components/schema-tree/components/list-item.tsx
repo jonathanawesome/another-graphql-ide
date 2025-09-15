@@ -7,22 +7,13 @@ import { schemaTreeStyles } from '../schema-tree.css'
 import type { ListItemType } from '../utils/tree-utils'
 
 type ListItemProps = {
-  // expandedNodes: Record<string, boolean>
   node: ListItemType
-  // onToggleExpanded: (nodeId: string) => void
   depth?: number
 }
 
-export const ListItem = ({
-  // expandedNodes,
-  node,
-  // onToggleExpanded,
-  depth = 0,
-}: ListItemProps) => {
+export const ListItem = ({ node, depth = 0 }: ListItemProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [showActions, setShowActions] = useState<boolean>(false)
-
-  // const isExpanded = expandedNodes[node.id]
 
   // Check if node has children
   const hasChildren = node.children && node.children.length > 0
@@ -40,12 +31,11 @@ export const ListItem = ({
         {hasChildren ? (
           <IconButton
             action={() => setIsExpanded(!isExpanded)}
-            aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.name}`}
+            label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.name}`}
             ghost={true}
             name="Chevron"
             rotate={isExpanded ? '90' : undefined}
             size="mini"
-            title={isExpanded ? 'Collapse' : 'Expand'}
           />
         ) : (
           <div className={schemaTreeStyles.listItemLeafIndicatorContainer}>
@@ -77,18 +67,16 @@ export const ListItem = ({
                 <IconButtonGroup
                   icons={[
                     {
-                      ghost: true,
                       action: () => alert('Implement Quick Docs'),
+                      label: 'View Documentation',
                       name: 'BookOpenText',
                       size: 'mini',
-                      title: 'View Documentation',
                     },
                     {
-                      ghost: true,
                       action: () => alert('Implement Insert Code'),
+                      label: 'Insert Code',
                       name: 'InsertCode',
                       size: 'mini',
-                      title: 'Insert Code',
                     },
                   ]}
                 />
@@ -96,11 +84,10 @@ export const ListItem = ({
                 <IconButtonGroup
                   icons={[
                     {
-                      ghost: true,
                       action: () => alert('Implement Quick Docs'),
+                      label: 'View Documentation',
                       name: 'BookOpenText',
                       size: 'mini',
-                      title: 'View Documentation',
                     },
                   ]}
                 />
@@ -112,13 +99,7 @@ export const ListItem = ({
       {isExpanded && hasChildren && (
         <ul role="group" className={schemaTreeStyles.nestedList}>
           {node.children?.map(childNode => (
-            <ListItem
-              key={childNode.id}
-              node={childNode}
-              // expandedNodes={expandedNodes}
-              // onToggleExpanded={onToggleExpanded}
-              depth={depth + 1}
-            />
+            <ListItem key={childNode.id} node={childNode} depth={depth + 1} />
           ))}
         </ul>
       )}

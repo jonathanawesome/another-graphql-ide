@@ -1,11 +1,11 @@
 import { IconButton } from '../../ui-components/icon-button/icon-button'
 import { Tabs } from '../../ui-components/tabs/tabs'
 
-import { editorTabGroupStyles } from './editor-tab-group.css'
+import { editorGroupTabsStyles } from './editor-group-tabs.css'
 
-export const EditorTabGroup = () => {
+export const EditorGroupTabs = () => {
   return (
-    <div className={editorTabGroupStyles}>
+    <div className={editorGroupTabsStyles}>
       <Tabs
         items={[
           {
@@ -14,10 +14,11 @@ export const EditorTabGroup = () => {
             trigger: {
               text: 'OperationName',
               actionIconButton: {
-                name: 'X',
-                title: 'X',
-                size: 'mini',
                 action: () => alert('Hi from Tab1'),
+                ghost: true,
+                label: 'X',
+                name: 'X',
+                size: 'mini',
               },
             },
           },
@@ -27,10 +28,11 @@ export const EditorTabGroup = () => {
             trigger: {
               text: 'Untitled',
               actionIconButton: {
-                name: 'X',
-                title: 'X',
-                size: 'mini',
                 action: () => alert('Hi from Tab2'),
+                ghost: true,
+                label: 'X',
+                name: 'X',
+                size: 'mini',
               },
             },
           },
@@ -40,10 +42,11 @@ export const EditorTabGroup = () => {
             trigger: {
               text: 'MyQuery',
               actionIconButton: {
-                name: 'X',
-                title: 'X',
-                size: 'mini',
                 action: () => alert('Hi from Tab3'),
+                ghost: true,
+                label: 'X',
+                name: 'X',
+                size: 'mini',
               },
             },
           },
@@ -51,7 +54,7 @@ export const EditorTabGroup = () => {
         label="Demo Tabs"
         defaultActiveTab="trigger1"
       />
-      <IconButton name="Plus" title="Add Tab" size="mini" />
+      <IconButton name="Plus" label="Add Tab" size="mini" ghost={true} />
     </div>
   )
 }

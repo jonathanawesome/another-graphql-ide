@@ -45,7 +45,7 @@ export const closeButton = style({
   cursor: 'pointer',
   padding: themeContract.px[8],
   borderRadius: themeContract.px[4],
-  color: themeContract.colors.textStrong,
+  color: themeContract.colors.neutral8,
   selectors: {
     '&:hover': {
       background: themeContract.colors.neutral3,

@@ -1,34 +1,20 @@
 import * as RadixTooltip from '@radix-ui/react-tooltip'
 
-import { type IconNames } from '../icon/icon'
-import { IconButton } from '../icon-button/icon-button'
-
 import { tooltipStyles } from './tooltip.css'
 
 export type TooltipProps = {
   content: string
-  triggerIcon: IconNames
-  triggerLabel: string
+  side?: RadixTooltip.TooltipContentProps['side']
+  trigger: React.ReactNode
 }
 
-export const Tooltip = ({
-  content,
-  triggerIcon,
-  triggerLabel,
-}: TooltipProps) => {
+export const Tooltip = ({ content, side = 'top', trigger }: TooltipProps) => {
   return (
     <RadixTooltip.Provider>
-      <RadixTooltip.Root open={true} delayDuration={100}>
-        <RadixTooltip.Trigger>
-          <IconButton
-            aria-label={triggerLabel}
-            ghost={true}
-            name={triggerIcon}
-            title={triggerLabel}
-          />
-        </RadixTooltip.Trigger>
+      <RadixTooltip.Root delayDuration={0}>
+        <RadixTooltip.Trigger asChild>{trigger}</RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content className={tooltipStyles.content}>
+          <RadixTooltip.Content className={tooltipStyles.content} side={side}>
             {content}
             <RadixTooltip.Arrow className={tooltipStyles.arrow} />
           </RadixTooltip.Content>

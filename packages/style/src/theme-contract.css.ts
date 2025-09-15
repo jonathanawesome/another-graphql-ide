@@ -5,8 +5,8 @@ import { arrayToKebabString } from './utils'
 export const themeContract = createGlobalThemeContract(
   {
     shadows: {
-      box: null,
-      boxFocus: null,
+      tight: null,
+      wide: null,
     },
 
     colors: {
@@ -19,11 +19,6 @@ export const themeContract = createGlobalThemeContract(
       neutral6: null,
       neutral7: null,
       neutral8: null,
-
-      // text
-      textStrong: null,
-      textRegular: null,
-      textLight: null,
 
       // brand
       brand: null,
@@ -75,22 +70,4 @@ export const themeContract = createGlobalThemeContract(
     },
   },
   (_value, path) => `agi${arrayToKebabString(path)}`
-)
-
-export const colorValuesContract = createGlobalThemeContract(
-  {
-    neutral1: null,
-    neutral2: null,
-    neutral3: null,
-    neutral4: null,
-    neutral5: null,
-    neutral6: null,
-    neutral7: null,
-    neutral8: null,
-    textStrong: null,
-    textRegular: null,
-    textLight: null,
-    brand: null,
-  },
-  (_value, path) => `agi-color-values-${arrayToKebabString(path)}`
 )

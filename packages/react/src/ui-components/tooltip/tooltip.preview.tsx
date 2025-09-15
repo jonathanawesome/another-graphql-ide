@@ -4,6 +4,7 @@ import {
   DemoGrid,
   DemoGridItem,
 } from '../../utility-components/previews/components'
+import { IconButton } from '../icon-button/icon-button'
 
 import { Tooltip, type TooltipProps } from './tooltip'
 
@@ -13,21 +14,20 @@ const preview = createPreview<TooltipProps>({
   category: 'UI Components',
   demos: [
     {
-      name: 'Examples',
+      name: 'Sides',
       render: () => (
         <DemoGrid gap={64}>
           <DemoGridItem>
             <Tooltip
-              content="213"
-              triggerIcon="Settings2"
-              triggerLabel="A cool popover"
-            />
-          </DemoGridItem>
-          <DemoGridItem>
-            <Tooltip
-              content="243637"
-              triggerIcon="Settings2"
-              triggerLabel="A cool popover"
+              content={'This is a cool tooltip'}
+              side="top"
+              trigger={
+                <IconButton
+                  ghost={true}
+                  label={'A cool popover'}
+                  name={'Settings2'}
+                />
+              }
             />
           </DemoGridItem>
         </DemoGrid>

@@ -3,27 +3,31 @@ import { RecipeVariants } from '@another-graphql-ide/style'
 import { Icon, type IconNames } from '../icon/icon'
 import { Tooltip, TooltipProps } from '../tooltip/tooltip'
 
-import { iconButtonClass } from './icon-button.css'
+import { buttonClass } from './button.css'
 
-type IconButtonVariants = RecipeVariants<typeof iconButtonClass>
+type ButtonVariants = RecipeVariants<typeof buttonClass>
 
-export type IconButtonProps = IconButtonVariants & {
+export type ButtonProps = ButtonVariants & {
   action?: () => void
   /**
    * label used as aria-label
    */
   label: string
-  name: IconNames
   ref?: React.Ref<HTMLButtonElement>
+  text: string
+  /**
+   * if passed will utitize a tooltip with these settings
+   */
   tooltipOptions?: {
     side: TooltipProps['side']
   }
+  /**
+   * if passed will include a mini icon on the left
+   */
+  withLeftIcon?: IconNames
 }
 
-export const IconButton = ({
-  tooltipOptions,
-  ...restProps
-}: IconButtonProps) => {
+export const Button = ({ tooltipOptions, ...restProps }: ButtonProps) => {
   if (tooltipOptions) {
     return (
       <Tooltip
@@ -39,21 +43,16 @@ export const IconButton = ({
 
 const Component = ({
   action,
-  ghost = false,
-  name,
-  ref,
-  rotate,
-  size = 'small',
-  state,
   label,
+  ref,
+  state,
+  text,
+  withLeftIcon,
   ...props
-}: IconButtonProps) => {
+}: ButtonProps) => {
   return (
     <button
-      className={iconButtonClass({
-        ghost,
-        rotate,
-        size,
+      className={buttonClass({
         state,
       })}
       aria-label={label}
@@ -62,7 +61,8 @@ const Component = ({
       ref={ref}
       {...props}
     >
-      <Icon name={name} size={size === 'large' ? 'large' : 'medium'} />
+      {withLeftIcon && <Icon name={withLeftIcon} size={'small'} />}
+      {text}
     </button>
   )
 }

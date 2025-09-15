@@ -1,11 +1,6 @@
 import { createContext, useEffect, useState, type ReactNode } from 'react'
 
-import {
-  lightTheme,
-  darkTheme,
-  lightColorValues,
-  darkColorValues,
-} from './themes.css'
+import { lightTheme, darkTheme } from './themes.css'
 
 export type Theme = 'light' | 'dark' | 'system'
 
@@ -90,18 +85,13 @@ export function ThemeProvider({
     const root = document.documentElement
 
     // Remove existing theme classes
-    root.classList.remove(
-      lightTheme,
-      darkTheme,
-      lightColorValues,
-      darkColorValues
-    )
+    root.classList.remove(lightTheme, darkTheme)
 
     // Add the appropriate theme class
     if (resolvedTheme === 'dark') {
-      root.classList.add(darkTheme, darkColorValues)
+      root.classList.add(darkTheme)
     } else {
-      root.classList.add(lightTheme, lightColorValues)
+      root.classList.add(lightTheme)
     }
   }, [resolvedTheme])
 

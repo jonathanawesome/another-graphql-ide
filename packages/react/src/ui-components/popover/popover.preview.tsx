@@ -4,6 +4,7 @@ import {
   DemoGrid,
   DemoGridItem,
 } from '../../utility-components/previews/components'
+import { IconButton } from '../icon-button/icon-button'
 
 import { Popover, type PopoverProps } from './popover'
 
@@ -19,8 +20,13 @@ const preview = createPreview<PopoverProps>({
           <DemoGridItem>
             <Popover
               content={<>content</>}
-              triggerIcon="Settings2"
-              triggerLabel="A cool popover"
+              trigger={
+                <IconButton
+                  ghost={true}
+                  label={'A cool popover'}
+                  name={'Settings2'}
+                />
+              }
             />
           </DemoGridItem>
         </DemoGrid>

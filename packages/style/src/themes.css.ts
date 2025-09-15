@@ -1,8 +1,58 @@
 import { createTheme } from '@vanilla-extract/css'
 
-import { alpha } from './alpha'
-import { colors } from './theme-colors'
-import { colorValuesContract, themeContract } from './theme-contract.css'
+import { themeContract } from './theme-contract.css'
+import { transformColors } from './utils'
+
+const colorTokens = {
+  dark: {
+    neutral1: '14.6% 0 0',
+    neutral2: '17.4% 0 0',
+    neutral3: '21.6% 0 0',
+    neutral4: '23.8% 0 0',
+    neutral5: '30.1% 0 0',
+    neutral6: '62.5% 0 0',
+    neutral7: '90% 0.002575 15.9',
+    neutral8: '97.7% 0 0',
+    brand: '62.1% 0.289482 350.9',
+  },
+  light: {
+    neutral1: '98.5% 0 0',
+    neutral2: '97% 0 0',
+    neutral3: '94.7% 0 0',
+    neutral4: '91.6% 0 0',
+    neutral5: '86.5% 0 0',
+    neutral6: '52.8% 0 0',
+    neutral7: '34.1% 0 0',
+    neutral8: '11.6% 0 0',
+    brand: '62.1% 0.289482 350.9',
+  },
+}
+
+const colors = {
+  dark: {
+    neutral1: colorTokens.dark.neutral1,
+    neutral2: colorTokens.dark.neutral2,
+    neutral3: colorTokens.dark.neutral3,
+    neutral4: colorTokens.dark.neutral4,
+    neutral5: colorTokens.dark.neutral5,
+    neutral6: colorTokens.dark.neutral6,
+    neutral7: colorTokens.dark.neutral7,
+    neutral8: colorTokens.dark.neutral8,
+
+    brand: colorTokens.dark.brand,
+  },
+  light: {
+    neutral1: colorTokens.light.neutral1,
+    neutral2: colorTokens.light.neutral2,
+    neutral3: colorTokens.light.neutral3,
+    neutral4: colorTokens.light.neutral4,
+    neutral5: colorTokens.light.neutral5,
+    neutral6: colorTokens.light.neutral6,
+    neutral7: colorTokens.light.neutral7,
+    neutral8: colorTokens.light.neutral8,
+    brand: colorTokens.light.brand,
+  },
+}
 
 // Shared tokens that don't change between themes
 const sharedTokens = {
@@ -51,31 +101,23 @@ const sharedTokens = {
 }
 
 export const darkTheme = createTheme(themeContract, {
-  colors: colors.dark.oklch,
+  colors: transformColors(colors.dark),
 
   ...sharedTokens,
 
   shadows: {
-    box: `${alpha.neutral5(0.35)} 0px 10px 38px -10px, ${alpha.neutral5(0.2)} 0px 10px 20px -15px`,
-    boxFocus: `${alpha.neutral5(0.35)} 0px 10px 38px -10px, ${alpha.neutral5(0.2)} 0px 10px 20px -15px, 0 0 0 2px ${themeContract.colors.brand}`,
+    tight: `oklch(${colors.dark.neutral5} / 0.45) 0px 1px 5px 1px`,
+    wide: `oklch(${colors.dark.neutral5} / 0.35) 0px 10px 38px -10px, oklch(${colors.dark.neutral5} / 0.2) 0px 10px 20px -15px`,
   },
 })
-
-export const darkColorValues = createTheme(colorValuesContract, colors.dark.raw)
 
 export const lightTheme = createTheme(themeContract, {
-  colors: colors.light.oklch,
+  colors: transformColors(colors.light),
 
   ...sharedTokens,
 
   shadows: {
-    box: `0px 10px 38px -10px orange, 0px 10px 20px -15px red`,
-    // box: '10px 5px 5px red',
-    boxFocus: `${alpha.neutral5(0.35)} 0px 10px 38px -10px, ${alpha.neutral5(0.2)} 0px 10px 20px -15px, 0 0 0 2px ${themeContract.colors.brand}`,
+    tight: `oklch(${colors.light.neutral5} / 0.75) 0px 1px 5px 1px`,
+    wide: `oklch(${colors.light.neutral7} / 0.35) 0px 10px 38px -10px, oklch(${colors.light.neutral7} / 0.2) 0px 10px 20px -15px`,
   },
 })
-
-export const lightColorValues = createTheme(
-  colorValuesContract,
-  colors.light.raw
-)

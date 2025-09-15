@@ -23,6 +23,7 @@ import { Search } from './icons/search'
 import { SeparatorRound } from './icons/separator-round'
 import { SeparatorSquare } from './icons/separator-square'
 import { Settings2 } from './icons/settings-2'
+import { Star } from './icons/star'
 import { Sun } from './icons/sun'
 import { Tabs } from './icons/tabs'
 import { X } from './icons/x'
@@ -53,6 +54,7 @@ export const IconMap = {
   SeparatorRound,
   SeparatorSquare,
   Settings2,
+  Star,
   Sun,
   Tabs,
   X,

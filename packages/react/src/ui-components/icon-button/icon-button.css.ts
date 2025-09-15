@@ -33,12 +33,6 @@ export const iconButtonClass = recipe({
         },
       },
     },
-    isDisabled: {
-      true: {
-        cursor: 'not-allowed',
-        opacity: 0.65,
-      },
-    },
     rotate: {
       '90': {
         transform: 'rotate(90deg)',
@@ -73,6 +67,9 @@ export const iconButtonClass = recipe({
     state: {
       active: {},
       highlight: {},
+      disabled: {
+        ':hover': { backgroundColor: 'transparent' },
+      },
     },
   },
 })
@@ -87,6 +84,13 @@ globalStyle(`${iconButtonClass()}:hover ${iconClass()}`, {
   transform: `scale(1.1)`,
 })
 
+globalStyle(
+  `${iconButtonClass.classNames.variants.state.disabled}:hover ${iconClass()}`,
+  {
+    transform: `none`,
+  }
+)
+
 globalStyle(`${iconButtonClass.classNames.variants.state.highlight} svg path`, {
   fill: themeContract.colors.brand,
 })
@@ -94,3 +98,14 @@ globalStyle(`${iconButtonClass.classNames.variants.state.highlight} svg path`, {
 globalStyle(`${iconButtonClass.classNames.variants.state.active} svg path`, {
   fill: themeContract.colors.neutral8,
 })
+
+globalStyle(`${iconButtonClass.classNames.variants.state.disabled} svg path`, {
+  fill: themeContract.colors.neutral6,
+})
+
+globalStyle(
+  `${iconButtonClass.classNames.variants.state.disabled}:hover svg path`,
+  {
+    fill: themeContract.colors.neutral6,
+  }
+)

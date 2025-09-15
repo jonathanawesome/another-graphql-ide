@@ -16,11 +16,11 @@ export const appNavigationItemClass = recipe({
   variants: {
     active: {
       false: {
-        color: themeContract.colors.textLight,
+        color: themeContract.colors.neutral6,
         fontWeight: 500,
       },
       true: {
-        color: themeContract.colors.textStrong,
+        color: themeContract.colors.neutral8,
         fontWeight: 600,
       },
     },

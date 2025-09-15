@@ -10,7 +10,7 @@ export const schemaTreeStyles = {
       borderRadius: themeContract.radii.medium,
       overflow: 'hidden',
       height: '100%',
-      boxShadow: themeContract.shadows.box,
+      // boxShadow: themeContract.shadows.tight,
     },
     'schema-tree-container'
   ),
@@ -45,6 +45,7 @@ export const schemaTreeStyles = {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'center',
+      alignItems: 'center',
       width: themeContract.px[40],
       height: themeContract.px[40],
       flexShrink: 0,
@@ -70,7 +71,7 @@ export const schemaTreeStyles = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: themeContract.px[32],
-    color: themeContract.colors.textLight,
+    color: themeContract.colors.neutral6,
     fontSize: themeContract.px[14],
     fontStyle: 'italic',
     textAlign: 'center',
@@ -177,13 +178,13 @@ export const schemaTreeStyles = {
 
   listItemName: style(
     {
-      color: themeContract.colors.textRegular,
+      color: themeContract.colors.neutral7,
       cursor: 'pointer',
       fontVariationSettings: `"wght" 400`,
       transition: `all 0.1s ${themeContract.motion.authentic}`,
 
       ':hover': {
-        color: themeContract.colors.textStrong,
+        color: themeContract.colors.neutral8,
         fontVariationSettings: `"wght" 600`,
       },
     },
@@ -192,7 +193,7 @@ export const schemaTreeStyles = {
 
   listItemArgumentsLabel: style(
     {
-      color: themeContract.colors.textLight,
+      color: themeContract.colors.neutral6,
       fontSize: themeContract.px[9],
       fontWeight: 600,
       textTransform: 'uppercase',

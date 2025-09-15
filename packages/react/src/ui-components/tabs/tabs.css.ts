@@ -18,6 +18,7 @@ export const tabsStyles = {
       gap: themeContract.px[8],
       paddingLeft: themeContract.px[8],
       paddingRight: themeContract.px[8],
+
       borderBottom: `1px solid ${themeContract.colors.neutral4}`,
     },
     'list'
@@ -45,13 +46,13 @@ export const tabsStyles = {
 
         selectors: {
           '&[data-state="inactive"]': {
-            color: themeContract.colors.textLight,
+            color: themeContract.colors.neutral6,
           },
           '&[data-state="inactive"]:hover': {
-            color: themeContract.colors.textStrong,
+            color: themeContract.colors.neutral8,
           },
           '&[data-state="active"]': {
-            color: themeContract.colors.textStrong,
+            color: themeContract.colors.neutral8,
           },
           '&[data-state="active"]::after': {
             content: '',
@@ -69,7 +70,7 @@ export const tabsStyles = {
         withActionIcon: {
           false: {},
           true: {
-            paddingRight: 24,
+            paddingRight: 28,
           },
         },
       },

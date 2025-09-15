@@ -10,7 +10,7 @@ export const editorGroupStyles = {
       borderRadius: themeContract.radii.medium,
       overflow: 'hidden',
       height: '100%',
-      boxShadow: themeContract.shadows.box,
+      // boxShadow: themeContract.shadows.tight,
     },
     'editor-group-container'
   ),

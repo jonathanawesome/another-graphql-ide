@@ -14,15 +14,15 @@ const preview = createPreview<IconButtonProps>({
   variants: [
     {
       name: 'default',
-      props: { name: 'BowArrow', title: 'BowArrow' },
+      props: { name: 'BowArrow', label: 'BowArrow' },
     },
     {
       name: 'active',
-      props: { name: 'BowArrow', title: 'BowArrow', state: 'active' },
+      props: { name: 'BowArrow', label: 'BowArrow', state: 'active' },
     },
     {
       name: 'highlight',
-      props: { name: 'BowArrow', title: 'BowArrow', state: 'highlight' },
+      props: { name: 'BowArrow', label: 'BowArrow', state: 'highlight' },
     },
   ],
   demos: [
@@ -33,75 +33,75 @@ const preview = createPreview<IconButtonProps>({
           <DemoGrid>
             <DemoGridItem>
               <IconButton
-                name="BowArrow"
                 ghost={true}
+                label="BowArrow ghost"
+                name="BowArrow"
                 size="large"
-                title="BowArrow"
               />
-              <span>large</span>
+              <span>large - ghost</span>
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                name="BowArrow"
                 ghost={true}
+                label="BowArrow ghost"
+                name="BowArrow"
                 size="medium"
-                title="BowArrow"
               />
-              <span>medium</span>
+              <span>medium - ghost</span>
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                name="BowArrow"
                 ghost={true}
+                label="BowArrow ghost"
+                name="BowArrow"
                 size="small"
-                title="BowArrow"
               />
-              <span>small</span>
+              <span>small - ghost</span>
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                name="BowArrow"
                 ghost={true}
+                label="BowArrow ghost"
+                name="BowArrow"
                 size="mini"
-                title="BowArrow"
               />
-              <span>mini</span>
+              <span>mini - ghost</span>
             </DemoGridItem>
           </DemoGrid>
           <DemoGrid>
             <DemoGridItem>
               <IconButton
-                name="BowArrow"
                 ghost={false}
+                label="BowArrow"
+                name="BowArrow"
                 size="large"
-                title="BowArrow"
               />
               <span>large</span>
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                name="BowArrow"
                 ghost={false}
+                label="BowArrow"
+                name="BowArrow"
                 size="medium"
-                title="BowArrow"
               />
               <span>medium</span>
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                name="BowArrow"
                 ghost={false}
+                label="BowArrow"
+                name="BowArrow"
                 size="small"
-                title="BowArrow"
               />
               <span>small</span>
             </DemoGridItem>
             <DemoGridItem>
               <IconButton
-                name="BowArrow"
                 ghost={false}
+                label="BowArrow"
+                name="BowArrow"
                 size="mini"
-                title="BowArrow"
               />
               <span>mini</span>
             </DemoGridItem>

@@ -1,7 +1,8 @@
 import { GraphQLSchema } from 'graphql'
 import { useState } from 'react'
 
-import { Search } from '../../panes/search/search'
+import { IconButton } from '../../ui-components/icon-button/icon-button'
+import { Input } from '../../ui-components/input/input'
 import { Popover } from '../../ui-components/popover/popover'
 import { Tabs } from '../../ui-components/tabs/tabs'
 
@@ -91,17 +92,24 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   return (
     <div className={schemaTreeStyles.container}>
       <div className={schemaTreeStyles.header}>
-        <Search
+        <Input
           handleChange={e => setSearchTerm(e.target.value)}
+          leftIcon="Search"
           name="Search schema..."
           placeholder="Search schema..."
           value={searchTerm}
+          withClearValue
         />
         <div className={schemaTreeStyles.headerActionContainer}>
           <Popover
             content={<>CONTENT</>}
-            triggerIcon="Settings2"
-            triggerLabel="Open schema tree settings"
+            trigger={
+              <IconButton
+                ghost={true}
+                label={'A cool popover'}
+                name={'Settings2'}
+              />
+            }
           />
         </div>
       </div>

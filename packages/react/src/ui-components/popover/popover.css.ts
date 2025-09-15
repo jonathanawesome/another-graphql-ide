@@ -53,14 +53,14 @@ export const popoverStyles = {
     backgroundColor: themeContract.colors.neutral1,
     border: `1px solid ${themeContract.colors.neutral4}`,
     borderRadius: themeContract.radii.large,
-    boxShadow: themeContract.shadows.box,
+    boxShadow: themeContract.shadows.wide,
     animationDuration: '400ms',
     animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
     willChange: 'transform, opacity',
 
     selectors: {
       '&:focus': {
-        boxShadow: themeContract.shadows.boxFocus,
+        // boxShadow: themeContract.shadows.boxFocus,
       },
 
       '&[data-state="open"][data-side="top"]': {
