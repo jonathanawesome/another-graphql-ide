@@ -40,7 +40,7 @@ export const inputStyles = {
       border: '1px solid transparent',
       height: '100%',
       width: '100%',
-      paddingLeft: themeContract.px[12],
+      paddingLeft: themeContract.px[8],
       backgroundColor: themeContract.colors.neutral1,
       color: themeContract.colors.neutral7,
 

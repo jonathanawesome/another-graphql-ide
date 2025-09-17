@@ -29,6 +29,9 @@ export default [
       },
     },
     rules: {
+      ...jsxA11y.flatConfigs.strict.rules,
+      ...reactHooks.configs.recommended.rules,
+
       // React specific rules
       'react/react-in-jsx-scope': 'off', // Not needed in React 17+
       'react/prop-types': 'off', // Using TypeScript
@@ -49,17 +52,6 @@ export default [
       'react/no-unknown-property': 'error',
       'react/require-render-return': 'error',
       'react/self-closing-comp': 'error',
-
-      // React Hooks
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-
-      // Accessibility
-      'jsx-a11y/alt-text': 'error',
-      'jsx-a11y/anchor-has-content': 'error',
-      'jsx-a11y/anchor-is-valid': 'error',
-      'jsx-a11y/click-events-have-key-events': 'warn',
-      'jsx-a11y/no-noninteractive-element-interactions': 'warn',
     },
   },
 ]

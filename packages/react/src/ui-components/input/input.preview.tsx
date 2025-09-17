@@ -39,13 +39,13 @@ const preview = createPreview<InputProps>({
         <DemoGrid>
           <DemoGridItem>
             <span>default</span>
-            <Wrapper name="some-cool-input1" placeholder="some-cool-input1" />
+            <Wrapper name="some-cool-input1" placeholder="placeholder..." />
           </DemoGridItem>
           <DemoGridItem>
             <span>leftIcon & withClearValue</span>
             <Wrapper
               name="some-cool-input1"
-              placeholder="some-cool-input1"
+              placeholder="placeholder..."
               withClearValue
               leftIcon="BowArrow"
             />
@@ -54,7 +54,7 @@ const preview = createPreview<InputProps>({
             <span>withLeftIcon</span>
             <Wrapper
               name="some-cool-input1"
-              placeholder="some-cool-input1"
+              placeholder="placeholder..."
               leftIcon="Search"
             />
           </DemoGridItem>
@@ -62,7 +62,7 @@ const preview = createPreview<InputProps>({
             <span>withClearValue</span>
             <Wrapper
               name="some-cool-input1"
-              placeholder="some-cool-input1"
+              placeholder="placeholder..."
               withClearValue={true}
             />
           </DemoGridItem>
@@ -74,7 +74,7 @@ const preview = createPreview<InputProps>({
       render: () => (
         <DemoGrid>
           <DemoGridItem>
-            <Wrapper name="some-cool-input1" placeholder="some-cool-input1" />
+            <Wrapper name="some-cool-input1" placeholder="placeholder..." />
           </DemoGridItem>
         </DemoGrid>
       ),
@@ -86,7 +86,7 @@ const preview = createPreview<InputProps>({
           <DemoGridItem>
             <Wrapper
               name="some-cool-input1"
-              placeholder="some-cool-input1"
+              placeholder="placeholder..."
               leftIcon="Settings2"
             />
           </DemoGridItem>
@@ -100,7 +100,7 @@ const preview = createPreview<InputProps>({
           <DemoGridItem>
             <Wrapper
               name="some-cool-input1"
-              placeholder="some-cool-input1"
+              placeholder="placeholder..."
               withClearValue={true}
             />
           </DemoGridItem>
@@ -114,7 +114,7 @@ const preview = createPreview<InputProps>({
           <DemoGridItem>
             <Wrapper
               name="some-cool-input1"
-              placeholder="some-cool-input1"
+              placeholder="placeholder..."
               withClearValue={true}
               leftIcon={'BookOpenText'}
             />
