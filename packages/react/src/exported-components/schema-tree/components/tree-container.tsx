@@ -35,20 +35,20 @@ export const TreeContainer = ({ nodes }: TreeContainerProps) => {
           }}
         >
           <ul
-            role="tree"
+            role="list"
             aria-label="Schema tree view"
             className={schemaTreeStyles.treeList}
           >
             {virtualItems.map(virtualItem => {
               const node = nodes[virtualItem.index]
               return (
-                <div
+                <ListItem
+                  node={node}
+                  depth={0}
                   key={virtualItem.key}
                   data-index={virtualItem.index}
                   ref={virtualizer.measureElement}
-                >
-                  <ListItem node={node} depth={0} />
-                </div>
+                />
               )
             })}
           </ul>

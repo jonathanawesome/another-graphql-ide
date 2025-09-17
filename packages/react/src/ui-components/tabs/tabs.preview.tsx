@@ -1,7 +1,5 @@
 import { createPreview } from '@another-graphql-ide/shared'
 
-import { DemoGrid } from '../../utility-components/previews/components'
-
 import { Tabs, type TabsProps } from './tabs'
 
 const preview = createPreview<TabsProps>({
@@ -36,85 +34,89 @@ const preview = createPreview<TabsProps>({
   ],
   demos: [
     {
-      name: 'Example',
+      name: 'with action button',
       render: () => (
-        <DemoGrid>
-          <Tabs
-            items={[
-              {
-                name: 'tab1',
-                content: <div>Content1</div>,
-                trigger: {
-                  text: 'OperationName',
-                  actionIconButton: {
-                    name: 'X',
-                    title: 'X',
-                    size: 'mini',
-                    action: () => alert('Hi from Tab1'),
-                  },
+        <Tabs
+          items={[
+            {
+              name: 'tab1',
+              content: <div>Content1</div>,
+              trigger: {
+                text: 'OperationName',
+                actionIconButton: {
+                  ghost: true,
+                  name: 'X',
+                  label: 'X',
+                  size: 'mini',
+                  action: () => alert('Hi from Tab1'),
                 },
               },
-              {
-                name: 'tab2',
-                content: <div>Content2</div>,
-                trigger: {
-                  text: 'Untitled',
-                  actionIconButton: {
-                    name: 'X',
-                    title: 'X',
-                    size: 'mini',
-                    action: () => alert('Hi from Tab2'),
-                  },
+            },
+            {
+              name: 'tab2',
+              content: <div>Content2</div>,
+              trigger: {
+                text: 'Untitled',
+                actionIconButton: {
+                  name: 'X',
+                  label: 'X',
+                  size: 'mini',
+                  action: () => alert('Hi from Tab2'),
                 },
               },
-              {
-                name: 'tab3',
-                content: <div>Content3</div>,
-                trigger: {
-                  text: 'MyQuery',
-                  actionIconButton: {
-                    name: 'X',
-                    title: 'X',
-                    size: 'mini',
-                    action: () => alert('Hi from Tab3'),
-                  },
+            },
+            {
+              name: 'tab3',
+              content: <div>Content3</div>,
+              trigger: {
+                text: 'MyQuery',
+                actionIconButton: {
+                  name: 'X',
+                  label: 'X',
+                  size: 'mini',
+                  action: () => alert('Hi from Tab3'),
                 },
               },
-            ]}
-            label="Demo Tabs"
-            defaultActiveTab="trigger1"
-          />
-          <Tabs
-            items={[
-              {
-                name: 'tab1',
-                content: <div>Content1</div>,
-                trigger: {
-                  text: 'Query',
-                  pill: { text: '234' },
-                },
+            },
+          ]}
+          label="Demo Tabs"
+          defaultActiveTab="trigger1"
+        />
+      ),
+    },
+    {
+      name: 'with pills',
+      render: () => (
+        <Tabs
+          items={[
+            {
+              name: 'tab1',
+              content: <div>Content1</div>,
+              trigger: {
+                text: 'Query',
+                pill: { text: '234' },
               },
-              {
-                name: 'tab2',
-                content: <div>Content2</div>,
-                trigger: {
-                  text: 'Mutation',
-                  pill: { text: '765' },
-                },
+            },
+            {
+              name: 'tab2',
+              content: <div>Content2</div>,
+              trigger: {
+                text: 'Mutation',
+                pill: { text: '765' },
               },
-              {
-                name: 'tab3',
-                content: <div>Content3</div>,
-                trigger: {
-                  text: 'Subscription',
-                  pill: { text: '99' },
-                },
+            },
+            {
+              name: 'tab3',
+              content: <div>Content3</div>,
+              trigger: {
+                text: 'Subscription',
+                pill: { text: '99' },
               },
-            ]}
-            label="Demo Tabs"
-            defaultActiveTab="trigger1"
-          />
-        </DemoGrid>
+            },
+          ]}
+          label="Demo Tabs"
+          defaultActiveTab="trigger1"
+        />
       ),
     },
   ],

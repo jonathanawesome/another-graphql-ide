@@ -62,16 +62,25 @@ importers:
       '@vanilla-extract/sprinkles':
         specifier: ^1.6.5
         version: 1.6.5(@vanilla-extract/css@1.17.4)
+      axe-core:
+        specifier: ^4.10.3
+        version: 4.10.3
       react:
         specifier: ^19.1.1
         version: 19.1.1
       react-dom:
         specifier: ^19.1.1
         version: 19.1.1(react@19.1.1)
+      zustand:
+        specifier: ^5.0.8
+        version: 5.0.8(@types/react@19.1.12)(react@19.1.1)(use-sync-external-store@1.5.0(react@19.1.1))
     devDependencies:
       '@another-graphql-ide/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@types/axe-core':
+        specifier: ^3.0.6
+        version: 3.0.6
       '@types/react':
         specifier: ^19.1.12
         version: 19.1.12
@@ -1162,6 +1171,10 @@ packages:
 
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
+
+  '@types/axe-core@3.0.6':
+    resolution: {integrity: sha512-ylZS0Xj8zg8zhYDEdetfU3/M4LUN93lY31G9OA5PiCBkIudggiisq+CCYNwc05ghlYs+vGSTNEHmgDoPZk1Wuw==}
+    deprecated: This is a stub types definition. axe-core provides its own type definitions, so you do not need this installed.
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -2755,6 +2768,24 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zustand@5.0.8:
+    resolution: {integrity: sha512-gyPKpIaxY9XcO2vSMrLbiER7QMAMGOQZVRdJ6Zi782jkbzZygq5GI9nG8g+sMgitRtndwaBSl7uiqC49o1SSiw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+
 snapshots:
 
   '@babel/code-frame@7.27.1':
@@ -3657,6 +3688,10 @@ snapshots:
   '@tsconfig/node14@1.0.3': {}
 
   '@tsconfig/node16@1.0.4': {}
+
+  '@types/axe-core@3.0.6':
+    dependencies:
+      axe-core: 4.10.3
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -5606,3 +5641,9 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@3.25.76: {}
+
+  zustand@5.0.8(@types/react@19.1.12)(react@19.1.1)(use-sync-external-store@1.5.0(react@19.1.1)):
+    optionalDependencies:
+      '@types/react': 19.1.12
+      react: 19.1.1
+      use-sync-external-store: 1.5.0(react@19.1.1)

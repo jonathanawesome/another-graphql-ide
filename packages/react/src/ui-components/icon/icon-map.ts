@@ -1,3 +1,4 @@
+import { Accessibility } from './icons/accessibility'
 import { BookOpenText } from './icons/book-open-text'
 import { BowArrow } from './icons/bow-arrow'
 // import { Cable } from './icons/cable'
@@ -29,6 +30,7 @@ import { Tabs } from './icons/tabs'
 import { X } from './icons/x'
 
 export const IconMap = {
+  Accessibility,
   BookOpenText,
   BowArrow,
   // Cable,

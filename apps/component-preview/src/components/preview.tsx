@@ -1,6 +1,10 @@
+import { useRef } from 'react'
+
+import { useUIStore } from '../state'
 import { ComponentPreview } from '../types'
 
-import * as styles from './preview.css'
+import { AccessibilityChecker } from './accessibility-checker'
+import { previewStyles } from './preview.css'
 
 interface PreviewProps {
   preview: ComponentPreview | null
@@ -9,12 +13,21 @@ interface PreviewProps {
 }
 
 export function Preview({ preview, selectedItem, selectedType }: PreviewProps) {
+  const previewPaneRef = useRef<HTMLDivElement>(null)
+
+  const { isAccessibilityEnabled, isShelfOpen } = useUIStore()
+
   if (!preview) {
     return (
-      <div className={styles.previewContainer}>
-        <div className={styles.noSelection}>
+      <div className={previewStyles.previewContainer}>
+        <div className={previewStyles.noSelection}>
           Select a component from the sidebar to preview
         </div>
+        <AccessibilityChecker
+          targetRef={previewPaneRef}
+          isEnabled={isAccessibilityEnabled}
+          isShelfOpen={isShelfOpen}
+        />
       </div>
     )
   }
@@ -22,10 +35,15 @@ export function Preview({ preview, selectedItem, selectedType }: PreviewProps) {
   // If no selection, prompt user to select something
   if (!selectedItem || !selectedType) {
     return (
-      <div className={styles.previewContainer}>
-        <div className={styles.noSelection}>
+      <div className={previewStyles.previewContainer}>
+        <div className={previewStyles.noSelection}>
           Select a variant or demo to preview
         </div>
+        <AccessibilityChecker
+          targetRef={previewPaneRef}
+          isEnabled={isAccessibilityEnabled}
+          isShelfOpen={isShelfOpen}
+        />
       </div>
     )
   }
@@ -35,8 +53,15 @@ export function Preview({ preview, selectedItem, selectedType }: PreviewProps) {
     const currentDemo = preview.demos.find(d => d.name === selectedItem)
     if (currentDemo) {
       return (
-        <div className={styles.previewContainer}>
-          <div className={styles.previewPane}>{currentDemo.render()}</div>
+        <div className={previewStyles.previewContainer}>
+          <div className={previewStyles.previewPane} ref={previewPaneRef}>
+            {currentDemo.render()}
+          </div>
+          <AccessibilityChecker
+            targetRef={previewPaneRef}
+            isEnabled={isAccessibilityEnabled}
+            isShelfOpen={isShelfOpen}
+          />
         </div>
       )
     }
@@ -45,10 +70,15 @@ export function Preview({ preview, selectedItem, selectedType }: PreviewProps) {
     if (currentVariant) {
       const Component = preview.component
       return (
-        <div className={styles.previewContainer}>
-          <div className={styles.previewPane}>
+        <div className={previewStyles.previewContainer}>
+          <div className={previewStyles.previewPane} ref={previewPaneRef}>
             <Component {...currentVariant.props} />
           </div>
+          <AccessibilityChecker
+            targetRef={previewPaneRef}
+            isEnabled={isAccessibilityEnabled}
+            isShelfOpen={isShelfOpen}
+          />
         </div>
       )
     }
@@ -56,8 +86,13 @@ export function Preview({ preview, selectedItem, selectedType }: PreviewProps) {
 
   // Fallback if nothing found
   return (
-    <div className={styles.previewContainer}>
-      <div className={styles.noSelection}>Preview not found</div>
+    <div className={previewStyles.previewContainer}>
+      <div className={previewStyles.noSelection}>Preview not found</div>
+      <AccessibilityChecker
+        targetRef={previewPaneRef}
+        isEnabled={isAccessibilityEnabled}
+        isShelfOpen={isShelfOpen}
+      />
     </div>
   )
 }
