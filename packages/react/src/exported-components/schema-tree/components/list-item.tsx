@@ -9,9 +9,11 @@ import type { ListItemType } from '../utils/tree-utils'
 type ListItemProps = {
   node: ListItemType
   depth?: number
+  ref?: React.Ref<HTMLLIElement>
+  'data-index'?: number
 }
 
-export const ListItem = ({ node, depth = 0 }: ListItemProps) => {
+export const ListItem = ({ node, depth = 0, ref, 'data-index': dataIndex }: ListItemProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [showActions, setShowActions] = useState<boolean>(false)
 
@@ -22,7 +24,7 @@ export const ListItem = ({ node, depth = 0 }: ListItemProps) => {
   const isArgumentsNode = node.type === 'arguments'
 
   return (
-    <li className={schemaTreeStyles.listItem}>
+    <li className={schemaTreeStyles.listItem} ref={ref} data-index={dataIndex}>
       <div
         className={schemaTreeStyles.listItemInner({
           withIndentLine: depth !== 0,
