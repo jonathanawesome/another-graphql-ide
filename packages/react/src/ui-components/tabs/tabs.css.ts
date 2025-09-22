@@ -32,17 +32,23 @@ export const tabsStyles = {
   trigger: recipe(
     {
       base: {
-        width: ' 100%',
+        width: '100%',
         height: themeContract.px[40],
         display: 'flex',
         flex: 0,
         flexDirection: 'row',
         alignItems: 'center',
         gap: themeContract.px[2],
-        position: 'relative',
         paddingLeft: themeContract.px[8],
         paddingRight: themeContract.px[8],
         fontSize: themeContract.px[13],
+        border: '1px solid transparent',
+
+        position: 'relative',
+
+        ':focus': {
+          border: `1px dashed ${themeContract.colors.neutral5}`,
+        },
 
         selectors: {
           '&[data-state="inactive"]': {

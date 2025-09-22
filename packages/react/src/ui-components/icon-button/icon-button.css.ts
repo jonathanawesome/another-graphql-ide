@@ -13,6 +13,10 @@ export const iconButtonClass = recipe({
       border: `1px solid transparent`,
       transform: 'rotate(0deg)',
       transition: `all .15s ${themeContract.motion.authentic}`,
+
+      ':focus': {
+        border: `1px dashed ${themeContract.colors.neutral5}`,
+      },
     },
   ],
 

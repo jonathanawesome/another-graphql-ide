@@ -15,6 +15,7 @@ export type IconButtonProps = IconButtonVariants & {
   label: string
   name: IconNames
   ref?: React.Ref<HTMLButtonElement>
+  tabIndex?: number
   tooltipOptions?: {
     side: TooltipProps['side']
   }
@@ -46,6 +47,7 @@ const Component = ({
   size = 'small',
   state,
   label,
+  tabIndex = 0,
   ...props
 }: IconButtonProps) => {
   return (
@@ -60,6 +62,7 @@ const Component = ({
       disabled={state === 'disabled'}
       onClick={action}
       ref={ref}
+      tabIndex={tabIndex}
       {...props}
     >
       <Icon name={name} size={size === 'large' ? 'large' : 'medium'} />

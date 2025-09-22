@@ -10,6 +10,7 @@ export type TabTriggerProps = {
   pill?: PillProps
   tabName: string
   text: string
+  isActive?: boolean
 }
 
 export const TabTrigger = ({
@@ -17,6 +18,7 @@ export const TabTrigger = ({
   actionIconButton,
   pill,
   text,
+  isActive,
 }: TabTriggerProps) => (
   <div className={tabsStyles.triggerContainer}>
     <RadixTabs.Trigger
@@ -31,7 +33,7 @@ export const TabTrigger = ({
 
     {actionIconButton && (
       <div className={tabsStyles.triggerAction}>
-        <IconButton {...actionIconButton} />
+        <IconButton {...actionIconButton} tabIndex={isActive ? 0 : -1} />
       </div>
     )}
   </div>
