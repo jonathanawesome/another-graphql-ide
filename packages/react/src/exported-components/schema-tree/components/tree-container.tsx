@@ -35,7 +35,6 @@ export const TreeContainer = ({ nodes }: TreeContainerProps) => {
           }}
         >
           <ul
-            role="list"
             aria-label="Schema tree view"
             className={schemaTreeStyles.treeList}
           >

@@ -21,7 +21,7 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
         name="GraphQL"
         size="large"
         state="highlight"
-        title="GraphQL"
+        label="GraphQL"
       />
       <Separator
         orientation={orientation === 'horizontal' ? 'vertical' : 'horizontal'}
@@ -34,7 +34,7 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
             name: 'Compass',
             size: orientation === 'horizontal' ? 'small' : 'large',
             state: 'active',
-            title: 'Compass',
+            label: 'Compass',
           }}
           orientation={orientation}
           text="IDE"
@@ -45,7 +45,7 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
             ghost: true,
             name: 'BookOpenText',
             size: orientation === 'horizontal' ? 'small' : 'large',
-            title: 'BookOpenText',
+            label: 'BookOpenText',
           }}
           orientation={orientation}
           text="Reference"
@@ -56,7 +56,7 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
             ghost: true,
             name: 'Code',
             size: orientation === 'horizontal' ? 'small' : 'large',
-            title: 'Code',
+            label: 'Code',
           }}
           orientation={orientation}
           text="SDL"

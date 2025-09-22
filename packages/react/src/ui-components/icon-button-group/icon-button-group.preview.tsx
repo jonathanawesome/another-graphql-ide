@@ -11,10 +11,10 @@ const preview = createPreview<IconButtonGroupProps>({
       name: 'default',
       props: {
         icons: [
-          { name: 'BookOpenText', size: 'mini', title: 'BookOpenText' },
-          { name: 'Caret', size: 'mini', title: 'Caret' },
-          { name: 'Combine', size: 'mini', title: 'Combine' },
-          { name: 'Settings2', size: 'mini', title: 'Settings2' },
+          { name: 'BookOpenText', size: 'mini', label: 'BookOpenText' },
+          { name: 'Caret', size: 'mini', label: 'Caret' },
+          { name: 'Combine', size: 'mini', label: 'Combine' },
+          { name: 'Settings2', size: 'mini', label: 'Settings2' },
         ],
       },
     },
@@ -25,10 +25,10 @@ const preview = createPreview<IconButtonGroupProps>({
       render: () => (
         <IconButtonGroup
           icons={[
-            { name: 'BookOpenText', size: 'mini', title: 'BookOpenText' },
-            { name: 'Caret', size: 'mini', title: 'Caret' },
-            { name: 'Combine', size: 'mini', title: 'Combine' },
-            { name: 'Settings2', size: 'mini', title: 'Settings2' },
+            { name: 'BookOpenText', size: 'mini', label: 'BookOpenText' },
+            { name: 'Caret', size: 'mini', label: 'Caret' },
+            { name: 'Combine', size: 'mini', label: 'Combine' },
+            { name: 'Settings2', size: 'mini', label: 'Settings2' },
           ]}
         />
       ),
