@@ -1,10 +1,9 @@
 import { createServer } from 'node:http'
+import { type AddressInfo } from 'node:net'
 
 import { graphiqlTestSchema } from '@another-graphql-ide/shared'
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
 import { createYoga } from 'graphql-yoga'
-
-import { PORT } from './constants'
 
 // Create a Yoga instance with a GraphQL schema.
 const yoga = createYoga({
@@ -16,7 +15,10 @@ const yoga = createYoga({
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 const server = createServer(yoga)
 
-// Start the server and you're done!
-server.listen(PORT, () => {
-  console.info(`Server is running on http://localhost:${PORT}/graphql`)
+server.listen(0, () => {
+  const address = server.address() as AddressInfo
+  const port = address.port
+  console.log(
+    `🚀 GraphQL Yoga server running on http://localhost:${port}/graphql`
+  )
 })
