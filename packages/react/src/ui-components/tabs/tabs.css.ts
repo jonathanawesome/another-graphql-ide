@@ -73,10 +73,11 @@ export const tabsStyles = {
       },
 
       variants: {
-        withActionIcon: {
+        withAction: {
           false: {},
           true: {
-            paddingRight: 28,
+            // marginRight: 28,
+            paddingRight: 34,
           },
         },
       },
@@ -98,7 +99,7 @@ export const tabsStyles = {
   triggerAction: style(
     {
       position: 'absolute',
-      right: 0,
+      right: 8,
     },
     'trigger-action'
   ),

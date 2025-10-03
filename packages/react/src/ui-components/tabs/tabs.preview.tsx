@@ -43,7 +43,7 @@ const preview = createPreview<TabsProps>({
               content: <div>Content1</div>,
               trigger: {
                 text: 'OperationName',
-                actionIconButton: {
+                actionButton: {
                   ghost: true,
                   name: 'X',
                   label: 'X',
@@ -57,7 +57,8 @@ const preview = createPreview<TabsProps>({
               content: <div>Content2</div>,
               trigger: {
                 text: 'Untitled',
-                actionIconButton: {
+                actionButton: {
+                  ghost: true,
                   name: 'X',
                   label: 'X',
                   size: 'mini',
@@ -70,7 +71,8 @@ const preview = createPreview<TabsProps>({
               content: <div>Content3</div>,
               trigger: {
                 text: 'MyQuery',
-                actionIconButton: {
+                actionButton: {
+                  ghost: true,
                   name: 'X',
                   label: 'X',
                   size: 'mini',
