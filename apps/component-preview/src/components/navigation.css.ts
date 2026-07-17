@@ -3,9 +3,10 @@ import { style, themeContract } from '@another-graphql-ide/style'
 export const navigationStyles = {
   container: style({
     display: 'flex',
+    flexDirection: 'column',
     gap: 8,
     position: 'fixed',
-    top: 16,
+    bottom: 16,
     right: 16,
     zIndex: 1000,
   }),
@@ -19,14 +20,14 @@ export const navigationStyles = {
     height: themeContract.px[32],
 
     borderRadius: '50%',
-    background: themeContract.colors.neutral1,
+    background: themeContract.colors.neutral2,
     border: `1px solid ${themeContract.colors.neutral5}`,
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     cursor: 'pointer',
     transition: `all 0.15s ${themeContract.motion.authentic}`,
 
     ':hover': {
-      background: themeContract.colors.neutral3,
+      background: themeContract.colors.neutral1,
       boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
       transform: 'translateY(-2px)',
     },

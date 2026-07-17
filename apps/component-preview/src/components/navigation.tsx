@@ -43,6 +43,14 @@ export const Navigation = () => {
 
   return (
     <div className={navigationStyles.container}>
+      {isShelfOpen && !isShelfPinned && (
+        <NavigationItem
+          icon="Pin"
+          onClick={() => setIsShelfPinned(true)}
+          title={isShelfPinned ? 'Unpin and close shelf' : 'Pin shelf'}
+        />
+      )}
+
       <NavigationItem
         icon="Settings2"
         onClick={() => {
@@ -55,14 +63,6 @@ export const Navigation = () => {
         }}
         title="Open Component List"
       />
-
-      {isShelfOpen && !isShelfPinned && (
-        <NavigationItem
-          icon="Pin"
-          onClick={() => setIsShelfPinned(true)}
-          title={isShelfPinned ? 'Unpin and close shelf' : 'Pin shelf'}
-        />
-      )}
 
       <NavigationItem
         icon={theme === 'dark' ? 'Sun' : 'Moon'}

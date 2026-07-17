@@ -13,7 +13,12 @@ type ListItemProps = {
   'data-index'?: number
 }
 
-export const ListItem = ({ node, depth = 0, ref, 'data-index': dataIndex }: ListItemProps) => {
+export const ListItem = ({
+  node,
+  depth = 0,
+  ref,
+  'data-index': dataIndex,
+}: ListItemProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [showActions, setShowActions] = useState<boolean>(false)
 
@@ -73,12 +78,14 @@ export const ListItem = ({ node, depth = 0, ref, 'data-index': dataIndex }: List
                       label: 'View Documentation',
                       name: 'BookOpenText',
                       size: 'mini',
+                      tooltipOptions: { side: 'bottom' },
                     },
                     {
                       action: () => alert('Implement Insert Code'),
                       label: 'Insert Code',
                       name: 'InsertCode',
                       size: 'mini',
+                      tooltipOptions: { side: 'bottom' },
                     },
                   ]}
                 />

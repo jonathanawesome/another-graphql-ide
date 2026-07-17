@@ -32,7 +32,7 @@ export const DocumentHeader = () => {
               state: 'disabled',
             },
             {
-              label: '',
+              label: 'Favorite highlighted operation',
               name: 'Star',
               size: 'mini',
             },
