@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@vanilla-extract/vite-plugin": "catalog:",
+    "typescript": "catalog:",
     "vite": "catalog:"
   }
 }

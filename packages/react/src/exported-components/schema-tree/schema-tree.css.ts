@@ -1,5 +1,16 @@
 import { recipe, style, themeContract } from '@another-graphql-ide/style'
 
+// Hoisted so the actions container can reveal on its hover/focus-within.
+const listItemDetail = style(
+  {
+    display: 'flex',
+    alignItems: 'center',
+    gap: themeContract.px[6],
+    flex: 1,
+  },
+  'schema-tree-list-item-detail'
+)
+
 export const schemaTreeStyles = {
   container: style(
     {
@@ -166,15 +177,7 @@ export const schemaTreeStyles = {
     'schema-tree-list-item-leaf-indicator-container'
   ),
 
-  listItemDetail: style(
-    {
-      display: 'flex',
-      alignItems: 'center',
-      gap: themeContract.px[6],
-      flex: 1,
-    },
-    'schema-tree-list-item-detail'
-  ),
+  listItemDetail,
 
   listItemName: style(
     {
@@ -202,18 +205,17 @@ export const schemaTreeStyles = {
     'schema-tree-list-item-arguments-label'
   ),
 
-  listItemActionsContainer: recipe(
+  // Hidden by default; revealed on row hover or keyboard focus-within.
+  listItemActionsContainer: style(
     {
-      base: {
-        transition: `all .35s ${themeContract.motion.authentic}`,
-      },
-      variants: {
-        showActions: {
-          false: { opacity: 0, visibility: 'hidden' },
-          true: {
-            opacity: 1,
-            visibility: 'visible',
-          },
+      transition: `all .35s ${themeContract.motion.authentic}`,
+      opacity: 0,
+      visibility: 'hidden',
+      selectors: {
+        [`${listItemDetail}:hover &`]: { opacity: 1, visibility: 'visible' },
+        [`${listItemDetail}:focus-within &`]: {
+          opacity: 1,
+          visibility: 'visible',
         },
       },
     },

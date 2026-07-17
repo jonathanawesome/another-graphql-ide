@@ -30,5 +30,8 @@
     "cm6-graphql": "0.2.1",
     "codemirror": "6.0.2",
     "codemirror-json5": "1.0.3"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
   }
 }

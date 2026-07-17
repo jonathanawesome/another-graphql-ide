@@ -13,7 +13,7 @@ export const EditorGroupTabs = () => {
             content: <div>Content1</div>,
             trigger: {
               text: 'OperationName',
-              actionIconButton: {
+              actionButton: {
                 action: () => alert('Hi from Tab1'),
                 ghost: true,
                 label: 'X',
@@ -27,7 +27,7 @@ export const EditorGroupTabs = () => {
             content: <div>Content2</div>,
             trigger: {
               text: 'Untitled',
-              actionIconButton: {
+              actionButton: {
                 action: () => alert('Hi from Tab2'),
                 ghost: true,
                 label: 'X',
@@ -41,7 +41,7 @@ export const EditorGroupTabs = () => {
             content: <div>Content3</div>,
             trigger: {
               text: 'MyQuery',
-              actionIconButton: {
+              actionButton: {
                 action: () => alert('Hi from Tab3'),
                 ghost: true,
                 label: 'X',

@@ -10,6 +10,8 @@ import {
 
 import { resizerStyles } from './resizer.css'
 
+const KEYBOARD_STEP = 2
+
 export type ResizerProps = {
   orientation: Pick<
     NonNullable<RecipeVariants<typeof resizerStyles.container>>,
@@ -96,6 +98,22 @@ export const Resizer = ({
     }
   }, [])
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      const decKey = orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp'
+      const incKey = orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown'
+      let next: number | null = null
+      if (e.key === decKey) next = currentSizeRef.current - KEYBOARD_STEP
+      else if (e.key === incKey) next = currentSizeRef.current + KEYBOARD_STEP
+      else if (e.key === 'Home') next = minSizePercent
+      else if (e.key === 'End') next = maxSizePercent
+      if (next === null) return
+      e.preventDefault()
+      updateSize(Math.max(minSizePercent, Math.min(maxSizePercent, next)))
+    },
+    [orientation, minSizePercent, maxSizePercent, updateSize]
+  )
+
   useEffect(() => {
     if (isDragging) {
       const handleMouseMoveWrapper = (e: MouseEvent) => handleMouseMove(e)
@@ -143,9 +161,23 @@ export const Resizer = ({
       <div className={resizerStyles.pane} style={firstPaneStyle}>
         {firstPane}
       </div>
+      {/* WAI-ARIA window-splitter: focusable separator with keyboard resize.
+          jsx-a11y does not model focusable separators as interactive. */}
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <div
         className={resizerStyles.handle({ orientation, isDragging })}
+        role="separator"
+        aria-orientation={
+          orientation === 'horizontal' ? 'vertical' : 'horizontal'
+        }
+        aria-valuenow={Math.round(sizePercent)}
+        aria-valuemin={minSizePercent}
+        aria-valuemax={maxSizePercent}
+        aria-label="Resize panes"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+        tabIndex={0}
         onMouseDown={handleMouseDown}
+        onKeyDown={handleKeyDown}
       />
       <div className={resizerStyles.pane} style={secondPaneStyle}>
         {secondPane}

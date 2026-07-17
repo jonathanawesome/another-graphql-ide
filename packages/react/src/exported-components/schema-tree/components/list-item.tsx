@@ -20,7 +20,6 @@ export const ListItem = ({
   'data-index': dataIndex,
 }: ListItemProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
-  const [showActions, setShowActions] = useState<boolean>(false)
 
   // Check if node has children
   const hasChildren = node.children && node.children.length > 0
@@ -50,11 +49,7 @@ export const ListItem = ({
           </div>
         )}
 
-        <div
-          className={schemaTreeStyles.listItemDetail}
-          onMouseEnter={() => setShowActions(true)}
-          onMouseLeave={() => setShowActions(false)}
-        >
+        <div className={schemaTreeStyles.listItemDetail}>
           <span
             className={
               isArgumentsNode
@@ -65,11 +60,7 @@ export const ListItem = ({
             {node.name}
           </span>
           {!isArgumentsNode && (
-            <div
-              className={schemaTreeStyles.listItemActionsContainer({
-                showActions,
-              })}
-            >
+            <div className={schemaTreeStyles.listItemActionsContainer}>
               {depth === 0 ? (
                 <IconButtonGroup
                   icons={[
