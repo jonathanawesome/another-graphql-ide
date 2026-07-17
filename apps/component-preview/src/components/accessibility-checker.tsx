@@ -53,17 +53,13 @@ export function AccessibilityChecker({
   }, [targetRef, isEnabled])
 
   useEffect(() => {
-    if (!isEnabled) {
-      setViolations([])
-      return
-    }
+    if (!isEnabled) return
 
-    // Clear any existing timeout
     if (scanTimeoutRef.current) {
       clearTimeout(scanTimeoutRef.current)
     }
 
-    // Debounce the scan to avoid performance issues
+    // Debounce the scan.
     scanTimeoutRef.current = setTimeout(() => {
       void runAccessibilityCheck()
     }, 500)

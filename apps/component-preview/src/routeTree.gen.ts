@@ -49,14 +49,10 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/$componentId/demo/$demoName'
-    | '/$componentId/variant/$variantName'
+    '/' | '/$componentId/demo/$demoName' | '/$componentId/variant/$variantName'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/$componentId/demo/$demoName'
-    | '/$componentId/variant/$variantName'
+    '/' | '/$componentId/demo/$demoName' | '/$componentId/variant/$variantName'
   id:
     | '__root__'
     | '/'

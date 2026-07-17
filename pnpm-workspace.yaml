@@ -1,3 +1,19 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+
+# Single source of truth for versions shared across packages.
+# Reference from a package.json with "<name>": "catalog:".
+catalog:
+  graphql: 16.14.2
+  react: 19.2.7
+  react-dom: 19.2.7
+  '@types/react': 19.2.17
+  '@types/react-dom': 19.2.3
+  typescript: 5.9.3
+  vite: 8.1.5
+  zustand: 5.0.14
+  '@vanilla-extract/css': 1.21.1
+  '@vanilla-extract/recipes': 0.5.7
+  '@vanilla-extract/sprinkles': 1.7.0
+  '@vanilla-extract/vite-plugin': 5.2.5
