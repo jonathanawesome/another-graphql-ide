@@ -4,6 +4,7 @@ export const iconClass = recipe({
   base: {
     display: 'flex',
     transform: 'rotate(0deg)',
+    transition: `all .15s ${themeContract.motion.authentic}`,
   },
 
   variants: {
@@ -20,10 +21,14 @@ export const iconClass = recipe({
     },
     size: {
       small: {
+        height: themeContract.px[12],
+        width: themeContract.px[12],
+      },
+      medium: {
         height: themeContract.px[16],
         width: themeContract.px[16],
       },
-      medium: {
+      large: {
         height: themeContract.px[20],
         width: themeContract.px[20],
       },

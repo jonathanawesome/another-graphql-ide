@@ -1,5 +1,7 @@
 import { themeContract, recipe, globalStyle } from '@another-graphql-ide/style'
 
+import { iconClass } from '../icon/icon.css'
+
 export const iconButtonClass = recipe({
   base: [
     {
@@ -7,17 +9,32 @@ export const iconButtonClass = recipe({
       alignItems: 'center',
       justifyContent: 'center',
       flexShrink: 0,
-      borderRadius: themeContract.px[4],
+      borderRadius: themeContract.radii.small,
+      border: `1px solid transparent`,
       transform: 'rotate(0deg)',
       transition: `all .15s ${themeContract.motion.authentic}`,
+
+      ':focus': {
+        border: `1px dashed ${themeContract.colors.neutral5}`,
+      },
     },
   ],
 
   variants: {
-    isDisabled: {
+    ghost: {
+      false: {
+        border: `1px solid ${themeContract.colors.neutral4}`,
+        backgroundColor: themeContract.colors.neutral1,
+
+        ':hover': {
+          border: `1px solid ${themeContract.colors.neutral5}`,
+          backgroundColor: themeContract.colors.neutral4,
+        },
+      },
       true: {
-        cursor: 'not-allowed',
-        opacity: 0.65,
+        ':hover': {
+          backgroundColor: themeContract.colors.neutral3,
+        },
       },
     },
     rotate: {
@@ -44,22 +61,19 @@ export const iconButtonClass = recipe({
         height: themeContract.px[40],
         width: themeContract.px[40],
         borderRadius: themeContract.radii.medium,
-        border: `1px solid ${themeContract.colors.neutral4}`,
-        backgroundColor: themeContract.colors.neutral1,
-
-        ':hover': {
-          border: `1px solid ${themeContract.colors.neutral5}`,
-          backgroundColor: themeContract.colors.neutral4,
-        },
       },
       large: {
         height: themeContract.px[40],
         width: themeContract.px[40],
+        borderRadius: themeContract.radii.medium,
       },
     },
     state: {
       active: {},
       highlight: {},
+      disabled: {
+        ':hover': { backgroundColor: 'transparent' },
+      },
     },
   },
 })
@@ -68,16 +82,34 @@ globalStyle(`${iconButtonClass()}:hover svg path`, {
   fill: themeContract.colors.neutral8,
 })
 
-export const highlightIconStyles = globalStyle(
-  `${iconButtonClass.classNames.variants.state.highlight} svg path`,
+// hover over icon-button scales the underlying icon
+// transition is in iconClass.css.ts
+globalStyle(`${iconButtonClass()}:hover ${iconClass()}`, {
+  transform: `scale(1.1)`,
+})
+
+globalStyle(
+  `${iconButtonClass.classNames.variants.state.disabled}:hover ${iconClass()}`,
   {
-    fill: themeContract.colors.brand,
+    transform: `none`,
   }
 )
 
-export const activeIconStyles = globalStyle(
-  `${iconButtonClass.classNames.variants.state.active} svg path`,
+globalStyle(`${iconButtonClass.classNames.variants.state.highlight} svg path`, {
+  fill: themeContract.colors.brand,
+})
+
+globalStyle(`${iconButtonClass.classNames.variants.state.active} svg path`, {
+  fill: themeContract.colors.neutral8,
+})
+
+globalStyle(`${iconButtonClass.classNames.variants.state.disabled} svg path`, {
+  fill: themeContract.colors.neutral6,
+})
+
+globalStyle(
+  `${iconButtonClass.classNames.variants.state.disabled}:hover svg path`,
   {
-    fill: themeContract.colors.neutral8,
+    fill: themeContract.colors.neutral6,
   }
 )

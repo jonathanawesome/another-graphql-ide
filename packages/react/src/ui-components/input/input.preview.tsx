@@ -1,4 +1,5 @@
 import { createPreview } from '@another-graphql-ide/shared'
+import { useState } from 'react'
 
 import {
   DemoGrid,
@@ -7,26 +8,116 @@ import {
 
 import { Input, type InputProps } from './input'
 
+const Wrapper = ({
+  leftIcon,
+  name,
+  placeholder,
+  withClearValue,
+}: Omit<InputProps, 'handleChange' | 'value'>) => {
+  const [value, setValue] = useState<string>('')
+  return (
+    <Input
+      handleChange={e => setValue(e.target.value)}
+      leftIcon={leftIcon}
+      name={name}
+      placeholder={placeholder}
+      value={value}
+      withClearValue={withClearValue}
+    />
+  )
+}
+
 const preview = createPreview<InputProps>({
   title: 'Input',
   component: Input,
   category: 'UI Components',
+
   demos: [
     {
-      name: 'Examples',
+      name: 'All variants',
       render: () => (
         <DemoGrid>
           <DemoGridItem>
-            <Input text="213" />
+            <span>default</span>
+            <Wrapper name="some-cool-input1" placeholder="placeholder..." />
           </DemoGridItem>
           <DemoGridItem>
-            <Input text="243637" />
+            <span>leftIcon & withClearValue</span>
+            <Wrapper
+              name="some-cool-input1"
+              placeholder="placeholder..."
+              withClearValue
+              leftIcon="BowArrow"
+            />
           </DemoGridItem>
           <DemoGridItem>
-            <Input text="Some Cool Input" />
+            <span>withLeftIcon</span>
+            <Wrapper
+              name="some-cool-input1"
+              placeholder="placeholder..."
+              leftIcon="Search"
+            />
           </DemoGridItem>
           <DemoGridItem>
-            <Input text="987" />
+            <span>withClearValue</span>
+            <Wrapper
+              name="some-cool-input1"
+              placeholder="placeholder..."
+              withClearValue={true}
+            />
+          </DemoGridItem>
+        </DemoGrid>
+      ),
+    },
+    {
+      name: 'default',
+      render: () => (
+        <DemoGrid>
+          <DemoGridItem>
+            <Wrapper name="some-cool-input1" placeholder="placeholder..." />
+          </DemoGridItem>
+        </DemoGrid>
+      ),
+    },
+    {
+      name: 'withLeftIcon',
+      render: () => (
+        <DemoGrid>
+          <DemoGridItem>
+            <Wrapper
+              name="some-cool-input1"
+              placeholder="placeholder..."
+              leftIcon="Settings2"
+            />
+          </DemoGridItem>
+        </DemoGrid>
+      ),
+    },
+    {
+      name: 'withClearValue',
+      render: () => (
+        <DemoGrid>
+          <DemoGridItem>
+            <Wrapper
+              name="some-cool-input1"
+              placeholder="placeholder..."
+              withClearValue={true}
+            />
+          </DemoGridItem>
+        </DemoGrid>
+      ),
+    },
+    {
+      name: 'withClearValue and leftIcon',
+      render: () => (
+        <DemoGrid>
+          <DemoGridItem>
+            <Wrapper
+              name="some-cool-input1"
+              placeholder="placeholder..."
+              withClearValue={true}
+              leftIcon={'BookOpenText'}
+            />
           </DemoGridItem>
         </DemoGrid>
       ),

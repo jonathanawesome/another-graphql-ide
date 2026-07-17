@@ -5,7 +5,8 @@ import { arrayToKebabString } from './utils'
 export const themeContract = createGlobalThemeContract(
   {
     shadows: {
-      box: null,
+      tight: null,
+      wide: null,
     },
 
     colors: {
@@ -18,11 +19,6 @@ export const themeContract = createGlobalThemeContract(
       neutral6: null,
       neutral7: null,
       neutral8: null,
-
-      // text
-      textStrong: null,
-      textRegular: null,
-      textLight: null,
 
       // brand
       brand: null,

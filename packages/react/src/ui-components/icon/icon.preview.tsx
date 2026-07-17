@@ -35,108 +35,40 @@ const preview = createPreview<IconProps>({
     {
       name: 'Size Comparison',
       render: () => (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '24px',
-            padding: '24px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <Icon name="Gear" size="small" />
-            <span>Small</span>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <Icon name="Gear" size="medium" />
-            <span>Medium</span>
-          </div>
-        </div>
+        <DemoGrid>
+          <Icon name="Gear" size="small" />
+          <span>Small</span>
+
+          <Icon name="Gear" size="medium" />
+          <span>Medium</span>
+
+          <Icon name="Gear" size="large" />
+          <span>Large</span>
+        </DemoGrid>
       ),
     },
     {
       name: 'Rotation Examples',
       render: () => (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '24px',
-            padding: '24px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <Icon name="Caret" />
-            <span style={{ fontSize: '12px' }}>0°</span>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <Icon name="Caret" rotate="90" />
-            <span style={{ fontSize: '12px' }}>90°</span>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <Icon name="Caret" rotate="180" />
-            <span style={{ fontSize: '12px' }}>180°</span>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <Icon name="Caret" rotate="270" />
-            <span style={{ fontSize: '12px' }}>270°</span>
-          </div>
-        </div>
+        <DemoGrid>
+          <Icon name="Caret" />
+          <span style={{ fontSize: '12px' }}>0°</span>
+
+          <Icon name="Caret" rotate="90" />
+          <span style={{ fontSize: '12px' }}>90°</span>
+
+          <Icon name="Caret" rotate="180" />
+          <span style={{ fontSize: '12px' }}>180°</span>
+
+          <Icon name="Caret" rotate="270" />
+          <span style={{ fontSize: '12px' }}>270°</span>
+        </DemoGrid>
       ),
     },
     {
       name: 'Interface Examples',
       render: () => (
-        <div
-          style={{
-            padding: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-          }}
-        >
+        <DemoGrid>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Icon name="Search" size="small" />
             <span>Search for components...</span>
@@ -153,7 +85,7 @@ const preview = createPreview<IconProps>({
             <Icon name="Play" size="small" />
             <span>Run query</span>
           </div>
-        </div>
+        </DemoGrid>
       ),
     },
   ],

@@ -1,13 +1,61 @@
 import { createTheme } from '@vanilla-extract/css'
 
 import { themeContract } from './theme-contract.css'
+import { transformColors } from './utils'
+
+const colorTokens = {
+  dark: {
+    neutral1: '14.6% 0 0',
+    neutral2: '17.4% 0 0',
+    neutral3: '21.6% 0 0',
+    neutral4: '23.8% 0 0',
+    neutral5: '30.1% 0 0',
+    neutral6: '62.5% 0 0',
+    neutral7: '90% 0.002575 15.9',
+    neutral8: '97.7% 0 0',
+    brand: '62.1% 0.289482 350.9',
+  },
+  light: {
+    neutral1: '98.5% 0 0',
+    neutral2: '97% 0 0',
+    neutral3: '94.7% 0 0',
+    neutral4: '91.6% 0 0',
+    neutral5: '86.5% 0 0',
+    neutral6: '52.8% 0 0',
+    neutral7: '34.1% 0 0',
+    neutral8: '11.6% 0 0',
+    brand: '62.1% 0.289482 350.9',
+  },
+}
+
+const colors = {
+  dark: {
+    neutral1: colorTokens.dark.neutral1,
+    neutral2: colorTokens.dark.neutral2,
+    neutral3: colorTokens.dark.neutral3,
+    neutral4: colorTokens.dark.neutral4,
+    neutral5: colorTokens.dark.neutral5,
+    neutral6: colorTokens.dark.neutral6,
+    neutral7: colorTokens.dark.neutral7,
+    neutral8: colorTokens.dark.neutral8,
+
+    brand: colorTokens.dark.brand,
+  },
+  light: {
+    neutral1: colorTokens.light.neutral1,
+    neutral2: colorTokens.light.neutral2,
+    neutral3: colorTokens.light.neutral3,
+    neutral4: colorTokens.light.neutral4,
+    neutral5: colorTokens.light.neutral5,
+    neutral6: colorTokens.light.neutral6,
+    neutral7: colorTokens.light.neutral7,
+    neutral8: colorTokens.light.neutral8,
+    brand: colorTokens.light.brand,
+  },
+}
 
 // Shared tokens that don't change between themes
 const sharedTokens = {
-  shadows: {
-    box: `0px 0px 0px 1px ${themeContract.colors.neutral4}, 0px 0px 32px 2px ${themeContract.colors.neutral4}`,
-  },
-
   px: {
     1: '0.0625rem',
     2: '0.125rem',
@@ -52,48 +100,24 @@ const sharedTokens = {
   },
 }
 
-// Light theme
-export const lightTheme = createTheme(themeContract, {
-  colors: {
-    neutral1: 'color(display-p3 0.9803 0.9803 0.9803)',
-    neutral2: 'color(display-p3 0.9606 0.9606 0.9606)',
-    neutral3: 'color(display-p3 0.9306 0.9306 0.9306)',
-    neutral4: 'color(display-p3 0.8904 0.8904 0.8904)',
-    neutral5: 'color(display-p3 0.8251 0.8251 0.8251)',
-    neutral6: 'color(display-p3 0.4198 0.4198 0.4198)',
-    neutral7: 'color(display-p3 0.2199 0.2199 0.2199)',
-    neutral8: 'color(display-p3 0.0202 0.0202 0.0202)',
+export const darkTheme = createTheme(themeContract, {
+  colors: transformColors(colors.dark),
 
-    textLight: 'color(display-p3 0.4198 0.4198 0.4198)', // neutral6
-    textRegular: 'color(display-p3 0.2199 0.2199 0.2199)', // neutral7
-    textStrong: 'color(display-p3 0.0202 0.0202 0.0202)', // neutral8
-
-    brand: 'color(display-p3 0.8823 0.0003 0.5961)',
-  },
-
-  // Use shared tokens
   ...sharedTokens,
+
+  shadows: {
+    tight: `oklch(${colors.dark.neutral5} / 0.45) 0px 1px 5px 1px`,
+    wide: `oklch(${colors.dark.neutral5} / 0.35) 0px 10px 38px -10px, oklch(${colors.dark.neutral5} / 0.2) 0px 10px 20px -15px`,
+  },
 })
 
-// Dark theme
-export const darkTheme = createTheme(themeContract, {
-  colors: {
-    neutral1: 'color(display-p3 0.0402 0.0402 0.0402)',
-    neutral2: 'color(display-p3 0.0636 0.0636 0.0636)',
-    neutral3: 'color(display-p3 0.08 0.08 0.08)',
-    neutral4: 'color(display-p3 0.1103 0.1103 0.1103)',
-    neutral5: 'color(display-p3 0.1802 0.1802 0.1802)',
-    neutral6: 'color(display-p3 0.5313 0.5313 0.5313)',
-    neutral7: 'color(display-p3 0.8751 0.8677 0.8677)',
-    neutral8: 'color(display-p3 0.9698 0.9698 0.9698)',
+export const lightTheme = createTheme(themeContract, {
+  colors: transformColors(colors.light),
 
-    textLight: 'color(display-p3 0.5313 0.5313 0.5313)', // neutral6
-    textRegular: 'color(display-p3 0.8751 0.8677 0.8677)', // neutral7
-    textStrong: 'color(display-p3 0.9698 0.9698 0.9698)', // neutral8
-
-    brand: 'color(display-p3 0.8823 0.0003 0.5961)',
-  },
-
-  // Use shared tokens
   ...sharedTokens,
+
+  shadows: {
+    tight: `oklch(${colors.light.neutral5} / 0.75) 0px 1px 5px 1px`,
+    wide: `oklch(${colors.light.neutral7} / 0.35) 0px 10px 38px -10px, oklch(${colors.light.neutral7} / 0.2) 0px 10px 20px -15px`,
+  },
 })

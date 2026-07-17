@@ -11,12 +11,27 @@ const preview = createPreview<IconButtonGroupProps>({
       name: 'default',
       props: {
         icons: [
-          { iconName: 'BookOpenText', size: 'mini', title: 'BookOpenText' },
-          { iconName: 'Caret', size: 'mini', title: 'Caret' },
-          { iconName: 'Combine', size: 'mini', title: 'Combine' },
-          { iconName: 'Settings2', size: 'mini', title: 'Settings2' },
+          { name: 'BookOpenText', size: 'mini', label: 'BookOpenText' },
+          { name: 'Caret', size: 'mini', label: 'Caret' },
+          { name: 'Combine', size: 'mini', label: 'Combine' },
+          { name: 'Settings2', size: 'mini', label: 'Settings2' },
         ],
       },
+    },
+  ],
+  demos: [
+    {
+      name: 'Example',
+      render: () => (
+        <IconButtonGroup
+          icons={[
+            { name: 'BookOpenText', size: 'mini', label: 'BookOpenText' },
+            { name: 'Caret', size: 'mini', label: 'Caret' },
+            { name: 'Combine', size: 'mini', label: 'Combine' },
+            { name: 'Settings2', size: 'mini', label: 'Settings2' },
+          ]}
+        />
+      ),
     },
   ],
 })

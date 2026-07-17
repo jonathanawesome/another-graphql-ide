@@ -17,10 +17,11 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
   return (
     <div className={appNavigationStyles.container({ orientation })}>
       <IconButton
-        iconName="GraphQL"
+        ghost={true}
+        name="GraphQL"
         size="large"
         state="highlight"
-        title="GraphQL"
+        label="GraphQL"
       />
       <Separator
         orientation={orientation === 'horizontal' ? 'vertical' : 'horizontal'}
@@ -29,10 +30,11 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
         <AppNavigationItem
           active={true}
           icon={{
-            state: 'active',
-            iconName: 'Compass',
+            ghost: true,
+            name: 'Compass',
             size: orientation === 'horizontal' ? 'small' : 'large',
-            title: 'Compass',
+            state: 'active',
+            label: 'Compass',
           }}
           orientation={orientation}
           text="IDE"
@@ -40,9 +42,10 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
         <AppNavigationItem
           active={false}
           icon={{
-            iconName: 'BookOpenText',
+            ghost: true,
+            name: 'BookOpenText',
             size: orientation === 'horizontal' ? 'small' : 'large',
-            title: 'BookOpenText',
+            label: 'BookOpenText',
           }}
           orientation={orientation}
           text="Reference"
@@ -50,9 +53,10 @@ export const AppNavigation = ({ orientation }: AppNavigationProps) => {
         <AppNavigationItem
           active={false}
           icon={{
-            iconName: 'Code',
+            ghost: true,
+            name: 'Code',
             size: orientation === 'horizontal' ? 'small' : 'large',
-            title: 'Code',
+            label: 'Code',
           }}
           orientation={orientation}
           text="SDL"

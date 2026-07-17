@@ -1,11 +1,11 @@
-import { ThemeProvider, useTheme } from '@another-graphql-ide/style'
+import { ThemeProvider } from '@another-graphql-ide/style'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
-import { FloatingToggle } from '../components/floating-toggle'
 import { Layout } from '../components/layout'
+import { Navigation } from '../components/navigation'
 import { Shelf } from '../components/shelf'
-import { Sidebar } from '../components/sidebar'
+import { useUIStore } from '../state'
 import { discoverComponents } from '../utils/discovery'
 
 export const Route = createRootRoute({
@@ -22,81 +22,15 @@ function RootLayout() {
 
 function RootContent() {
   const components = useMemo(() => discoverComponents(), [])
-  const [isShelfOpen, setIsShelfOpen] = useState(true)
-  const [isShelfPinned, setIsShelfPinned] = useState(true)
-  const { theme, setTheme, resolvedTheme } = useTheme()
-
-  const handleToggleShelf = () => {
-    setIsShelfOpen(!isShelfOpen)
-  }
-
-  const handleCloseShelf = () => {
-    if (!isShelfPinned) {
-      setIsShelfOpen(false)
-    }
-  }
-
-  const handleTogglePin = () => {
-    if (isShelfPinned) {
-      // When unpinning, also close the shelf
-      setIsShelfPinned(false)
-      setIsShelfOpen(false)
-    } else {
-      // When pinning, open and pin the shelf
-      setIsShelfPinned(true)
-      setIsShelfOpen(true)
-    }
-  }
-
-  const handleToggleTheme = () => {
-    if (theme === 'system') {
-      setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
-    } else {
-      setTheme(theme === 'dark' ? 'light' : 'dark')
-    }
-  }
+  const { isShelfPinned } = useUIStore()
 
   return (
     <Layout isShelfPinned={isShelfPinned}>
       <Outlet />
 
-      <FloatingToggle
-        isShelfOpen={isShelfOpen}
-        isShelfPinned={isShelfPinned}
-        onClick={() => {
-          if (isShelfPinned) {
-            handleToggleShelf()
-            handleTogglePin()
-          } else {
-            handleToggleShelf()
-          }
-        }}
-        title="Open Component List"
-        type="shelf"
-      />
-      <FloatingToggle
-        isShelfOpen={isShelfOpen}
-        isShelfPinned={isShelfPinned}
-        onClick={handleToggleTheme}
-        theme={resolvedTheme}
-        title="Toggle Theme"
-        type="theme"
-      />
-      <FloatingToggle
-        isShelfOpen={isShelfOpen}
-        isShelfPinned={isShelfPinned}
-        onClick={handleTogglePin}
-        title={isShelfPinned ? 'Unpin and close shelf' : 'Pin shelf'}
-        type="pin"
-      />
+      <Navigation />
 
-      <Shelf
-        isOpen={isShelfOpen}
-        onClose={handleCloseShelf}
-        isPinned={isShelfPinned}
-      >
-        <Sidebar components={components} />
-      </Shelf>
+      <Shelf components={components} />
     </Layout>
   )
 }
