@@ -3,7 +3,7 @@ import { useTheme } from '@another-graphql-ide/style'
 import {
   Icon,
   IconNames,
-} from '../../../../packages/react/src/ui-components/icon/icon'
+} from '../../../../packages/react/src/components/ui-components/icon/icon'
 import { useUIStore } from '../state'
 
 import { navigationStyles } from './navigation.css'
