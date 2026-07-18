@@ -8,7 +8,9 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "test:once": "vitest run",
+    "test:watch": "vitest"
   },
   "peerDependencies": {
     "graphql": "^16"
@@ -19,6 +21,7 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
