@@ -201,6 +201,9 @@ importers:
       '@another-graphql-ide/shared':
         specifier: workspace:*
         version: link:../shared
+      '@another-graphql-ide/state':
+        specifier: workspace:*
+        version: link:../state
       '@another-graphql-ide/style':
         specifier: workspace:*
         version: link:../style
@@ -258,6 +261,9 @@ importers:
       react-dom:
         specifier: ^19
         version: 19.2.7(react@19.2.7)
+      zustand:
+        specifier: 'catalog:'
+        version: 5.0.14(@types/react@19.2.17)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
     devDependencies:
       typescript:
         specifier: 'catalog:'

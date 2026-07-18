@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     "./style": "./src/style/index.ts",
+    "./state": "./src/state/index.ts",
     "./components": "./src/components/index.ts"
   },
   "sideEffects": [
@@ -22,6 +23,7 @@
   "dependencies": {
     "@another-graphql-ide/eslint-config": "workspace:*",
     "@another-graphql-ide/shared": "workspace:*",
+    "@another-graphql-ide/state": "workspace:*",
     "@another-graphql-ide/style": "workspace:*",
     "@codemirror/autocomplete": "6.20.3",
     "@codemirror/commands": "6.10.4",
@@ -37,7 +39,8 @@
     "@tanstack/react-virtual": "3.14.6",
     "cm6-graphql": "0.2.1",
     "codemirror": "6.0.2",
-    "codemirror-json5": "1.0.3"
+    "codemirror-json5": "1.0.3",
+    "zustand": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:"
