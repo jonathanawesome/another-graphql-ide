@@ -1,9 +1,10 @@
 import { Icon } from '@another-graphql-ide/react/components'
 import { Link, useParams } from '@tanstack/react-router'
-import { useState, ReactElement } from 'react'
+import type { ReactElement } from 'react'
+import { useState } from 'react'
 
 import { useUIStore } from '../state'
-import { DiscoveredComponent } from '../utils/discovery'
+import type { DiscoveredComponent } from '../utils/discovery'
 
 import { shelfStyles } from './shelf.css'
 
@@ -256,10 +257,7 @@ export const Shelf = ({ components }: ShelfProps) => {
   // Group components by category
   const grouped = components.reduce<Record<string, DiscoveredComponent[]>>(
     (acc, comp) => {
-      if (!acc[comp.category]) {
-        acc[comp.category] = []
-      }
-      acc[comp.category].push(comp)
+      ;(acc[comp.category] ??= []).push(comp)
       return acc
     },
     {}

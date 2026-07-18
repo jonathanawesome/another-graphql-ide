@@ -1,7 +1,8 @@
-import { RecipeVariants } from '@another-graphql-ide/style'
+import type { RecipeVariants } from '@another-graphql-ide/style'
 
 import { Icon } from '../icon/icon'
-import { IconButton, IconButtonProps } from '../icon-button/icon-button'
+import type { IconButtonProps } from '../icon-button/icon-button'
+import { IconButton } from '../icon-button/icon-button'
 
 import { appNavigationItemClass } from './app-navigation-item.css'
 

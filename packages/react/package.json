@@ -1,6 +1,7 @@
 {
   "name": "@another-graphql-ide/react",
   "version": "0.0.1",
+  "private": true,
   "type": "module",
   "exports": {
     "./style": "./src/style/index.ts",
@@ -45,6 +46,7 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
+    "@another-graphql-ide/tsconfig": "workspace:*",
     "@testing-library/dom": "10.4.1",
     "@testing-library/react": "16.3.2",
     "@vanilla-extract/css": "catalog:",

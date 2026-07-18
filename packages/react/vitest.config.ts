@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [vanillaExtractPlugin()],
   test: {
     environment: 'jsdom',
-    globals: true,
+    setupFiles: ['./src/test-setup.ts'],
   },
 })

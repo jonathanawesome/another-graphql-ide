@@ -40,6 +40,7 @@ export const TreeContainer = ({ nodes }: TreeContainerProps) => {
           >
             {virtualItems.map(virtualItem => {
               const node = nodes[virtualItem.index]
+              if (!node) return null
               return (
                 <ListItem
                   node={node}

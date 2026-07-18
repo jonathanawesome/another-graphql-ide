@@ -12,10 +12,7 @@
   "files": [
     "index.js",
     "react.js",
-    "node.js",
-    "tsconfig.base.json",
-    "tsconfig.react.json",
-    "tsconfig.node.json"
+    "node.js"
   ],
   "scripts": {
     "lint": "eslint ."

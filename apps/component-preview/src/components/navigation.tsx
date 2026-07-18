@@ -1,4 +1,5 @@
-import { Icon, IconNames } from '@another-graphql-ide/react/components'
+import type { IconNames } from '@another-graphql-ide/react/components'
+import { Icon } from '@another-graphql-ide/react/components'
 import { useTheme } from '@another-graphql-ide/react/style'
 
 import { useUIStore } from '../state'

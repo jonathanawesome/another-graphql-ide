@@ -1,0 +1,9 @@
+{
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "files.associations": {
+    "**/packages/tsconfig/base.json": "jsonc",
+    "**/packages/tsconfig/node.json": "jsonc",
+    "**/packages/tsconfig/react.json": "jsonc",
+    "turbo.json": "jsonc"
+  }
+}

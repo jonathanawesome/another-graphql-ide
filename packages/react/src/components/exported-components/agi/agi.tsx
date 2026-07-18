@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql'
+import type { GraphQLSchema } from 'graphql'
 
 type Connection = {
   endpoint: string

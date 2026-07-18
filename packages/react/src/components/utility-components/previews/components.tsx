@@ -1,4 +1,4 @@
-import { RecipeVariants } from '@another-graphql-ide/style'
+import type { RecipeVariants } from '@another-graphql-ide/style'
 
 import { previewsStyles } from './previews.css'
 

@@ -1,4 +1,4 @@
-import { ComponentType, ReactElement } from 'react'
+import type { ComponentType, ReactElement } from 'react'
 
 type TypedComponentPreview<TProps> = {
   title: string

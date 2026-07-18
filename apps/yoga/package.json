@@ -10,6 +10,7 @@
   "devDependencies": {
     "@another-graphql-ide/eslint-config": "workspace:*",
     "@another-graphql-ide/shared": "workspace:*",
+    "@another-graphql-ide/tsconfig": "workspace:*",
     "@graphql-yoga/plugin-defer-stream": "3.21.2",
     "graphql": "catalog:",
     "graphql-yoga": "5.21.2",

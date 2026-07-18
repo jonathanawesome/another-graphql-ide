@@ -1,4 +1,4 @@
 {
-  "extends": "../../packages/eslint-config/tsconfig.react.json",
+  "extends": "@another-graphql-ide/tsconfig/react.json",
   "include": ["src/**/*"]
 }

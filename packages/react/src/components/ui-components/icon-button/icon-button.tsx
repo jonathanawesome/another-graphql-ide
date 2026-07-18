@@ -1,7 +1,8 @@
-import { RecipeVariants } from '@another-graphql-ide/style'
+import type { RecipeVariants } from '@another-graphql-ide/style'
 
 import { Icon, type IconNames } from '../icon/icon'
-import { Tooltip, TooltipProps } from '../tooltip/tooltip'
+import type { TooltipProps } from '../tooltip/tooltip'
+import { Tooltip } from '../tooltip/tooltip'
 
 import { iconButtonClass } from './icon-button.css'
 
