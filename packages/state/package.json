@@ -1,0 +1,27 @@
+{
+  "name": "@another-graphql-ide/state",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "graphql": "^16"
+  },
+  "dependencies": {
+    "@another-graphql-ide/eslint-config": "workspace:*",
+    "@graphql-tools/executor-http": "3.3.0",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

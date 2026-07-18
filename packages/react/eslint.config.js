@@ -6,6 +6,7 @@ export default [
     languageOptions: {
       parserOptions: {
         project: './tsconfig.json',
+        tsconfigRootDir: import.meta.dirname,
       },
     },
   },
@@ -13,6 +14,6 @@ export default [
     files: ['src/**/*.ts'],
   },
   {
-    ignores: ['dist/', 'node_modules/', '*.config.js'],
+    ignores: ['dist/', 'node_modules/', '*.config.js', '*.config.ts'],
   },
 ]

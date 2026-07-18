@@ -1,8 +1,7 @@
+import { Icon } from '@another-graphql-ide/react/components'
 import { useLocation } from '@tanstack/react-router'
 import axe, { NodeResult } from 'axe-core'
 import { useEffect, useState, useRef, useCallback } from 'react'
-
-import { Icon } from '../../../../packages/react/src/ui-components/icon/icon'
 
 import { accessibilityCheckerStyles } from './accessibility-checker.css'
 
@@ -53,17 +52,13 @@ export function AccessibilityChecker({
   }, [targetRef, isEnabled])
 
   useEffect(() => {
-    if (!isEnabled) {
-      setViolations([])
-      return
-    }
+    if (!isEnabled) return
 
-    // Clear any existing timeout
     if (scanTimeoutRef.current) {
       clearTimeout(scanTimeoutRef.current)
     }
 
-    // Debounce the scan to avoid performance issues
+    // Debounce the scan.
     scanTimeoutRef.current = setTimeout(() => {
       void runAccessibilityCheck()
     }, 500)

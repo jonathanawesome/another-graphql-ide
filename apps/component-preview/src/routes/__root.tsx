@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@another-graphql-ide/style'
+import { ThemeProvider } from '@another-graphql-ide/react/style'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { useMemo } from 'react'
 

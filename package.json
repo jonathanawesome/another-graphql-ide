@@ -8,7 +8,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "types": "turbo run types",
-    "test:once": "turbo run test:once",
+    "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "react:build": "pnpm --filter @another-graphql-ide/react build",
     "react:build:workers": "pnpm --filter @another-graphql-ide/react build:workers",
@@ -24,19 +24,24 @@
   ],
   "packageManager": "pnpm@10.11.0",
   "engines": {
-    "node": "22.x",
+    "node": "24.x",
     "pnpm": "10.x"
   },
   "dependencies": {
-    "@types/node": "^24.3.1",
-    "@types/react": "^19.1.12",
-    "@types/react-dom": "^19.1.9",
-    "eslint": "^9.15.0",
-    "graphql": "^16.11.0",
-    "prettier": "^3.6.2",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "turbo": "^2.5.6",
-    "typescript": "^5.9.2"
+    "@types/node": "24.13.3",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "eslint": "9.39.5",
+    "graphql": "catalog:",
+    "prettier": "3.9.5",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "turbo": "2.10.5",
+    "typescript": "catalog:"
+  },
+  "pnpm": {
+    "overrides": {
+      "graphql": "16.14.2"
+    }
   }
 }

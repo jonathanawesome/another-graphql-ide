@@ -1,6 +1,6 @@
 import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
-import importPlugin from 'eslint-plugin-import'
+import importX from 'eslint-plugin-import-x'
 
 export default [
   js.configs.recommended,
@@ -9,7 +9,7 @@ export default [
   {
     files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     plugins: {
-      import: importPlugin,
+      'import-x': importX,
     },
     rules: {
       // Code quality rules (not formatting)
@@ -24,7 +24,7 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'warn',
 
       // Import organization
-      'import/order': [
+      'import-x/order': [
         'error',
         {
           groups: [
@@ -42,8 +42,8 @@ export default [
           },
         },
       ],
-      'import/no-duplicates': 'error',
-      'import/no-unresolved': 'off', // TypeScript handles this
+      'import-x/no-duplicates': 'error',
+      'import-x/no-unresolved': 'off', // TypeScript handles this
 
       // General code quality
       'no-console': 'warn',

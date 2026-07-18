@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { style } from '@vanilla-extract/css'
 
 export const layout = style({
   height: '100vh',
@@ -6,10 +6,10 @@ export const layout = style({
   overflow: 'hidden',
   position: 'relative',
   display: 'flex',
-  
+
   selectors: {
     '&[data-shelf-pinned="true"]': {
       paddingRight: '320px',
     },
   },
-});
+})

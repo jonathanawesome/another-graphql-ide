@@ -1,7 +1,7 @@
+import { Icon } from '@another-graphql-ide/react/components'
 import { Link, useParams } from '@tanstack/react-router'
-import { useState, useEffect, ReactElement } from 'react'
+import { useState, ReactElement } from 'react'
 
-import { Icon } from '../../../../packages/react/src/ui-components/icon/icon'
 import { useUIStore } from '../state'
 import { DiscoveredComponent } from '../utils/discovery'
 
@@ -21,8 +21,11 @@ function useExpandState(
     new Set()
   )
 
-  // Auto-expand sections based on current route
-  useEffect(() => {
+  // Auto-expand route sections by adjusting state during render on route change.
+  const routeKey = `${routeComponentId}|${routeVariantName}|${routeDemoName}`
+  const [prevRouteKey, setPrevRouteKey] = useState(routeKey)
+  if (routeKey !== prevRouteKey) {
+    setPrevRouteKey(routeKey)
     if (routeComponentId) {
       setExpandedSections(prev => {
         const newSet = new Set(prev)
@@ -42,7 +45,7 @@ function useExpandState(
         return newSet
       })
     }
-  }, [routeComponentId, routeVariantName, routeDemoName])
+  }
 
   const toggleExpanded = (sectionId: string) => {
     setExpandedSections(prev => {
