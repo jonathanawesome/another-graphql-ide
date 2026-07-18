@@ -1,0 +1,39 @@
+name: Static
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: static-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: lint / prettier / types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # version comes from packageManager in package.json
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Prettier
+        run: pnpm prettier:check
+
+      # keep going so one failure doesn't hide the rest
+      - name: Lint
+        if: '!cancelled()'
+        run: pnpm lint
+
+      - name: Types
+        if: '!cancelled()'
+        run: pnpm types
