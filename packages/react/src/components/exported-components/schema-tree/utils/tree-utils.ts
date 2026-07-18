@@ -135,7 +135,7 @@ function createArgumentNodes(
   parentId: string,
   field: GraphQLField<unknown, unknown>
 ): ListItemType[] {
-  const args = field.args || []
+  const args = field.args
 
   if (args.length === 0) return []
 

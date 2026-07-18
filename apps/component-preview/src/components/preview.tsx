@@ -6,7 +6,7 @@ import { ComponentPreview } from '../types'
 import { AccessibilityChecker } from './accessibility-checker'
 import { previewStyles } from './preview.css'
 
-interface PreviewProps {
+type PreviewProps = {
   preview: ComponentPreview | null
   selectedItem: string | null
   selectedType: 'variant' | 'demo' | null

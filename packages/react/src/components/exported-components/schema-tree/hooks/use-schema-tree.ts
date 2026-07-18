@@ -43,12 +43,12 @@ export function useSchemaTree(
 
   // Get current tab data with filtering
   const tabData = useMemo(() => {
-    let rootNode: ListItemType | null = null
+    let rootNode: ListItemType | null
 
     if (activeTab === 'query') rootNode = schemaData.query
     else if (activeTab === 'mutation') rootNode = schemaData.mutation
     else if (activeTab === 'subscription') rootNode = schemaData.subscription
-    else if (activeTab === 'favorites') return null // TODO: implement favorites
+    else return null // 'favorites' — TODO: implement favorites
 
     if (!rootNode) return null
 

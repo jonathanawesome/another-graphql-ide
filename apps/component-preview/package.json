@@ -24,7 +24,6 @@
   },
   "devDependencies": {
     "@another-graphql-ide/eslint-config": "workspace:*",
-    "@types/axe-core": "3.0.6",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vanilla-extract/vite-plugin": "catalog:",

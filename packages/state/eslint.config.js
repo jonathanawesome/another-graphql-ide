@@ -1,19 +1,12 @@
+import { defineConfig } from 'eslint/config'
+
 import baseConfig from '@another-graphql-ide/eslint-config'
 
-export default [
-  ...baseConfig,
+export default defineConfig([
+  baseConfig,
   {
     languageOptions: {
-      parserOptions: {
-        project: './tsconfig.json',
-        tsconfigRootDir: import.meta.dirname,
-      },
+      parserOptions: { tsconfigRootDir: import.meta.dirname },
     },
   },
-  {
-    files: ['src/**/*.ts'],
-  },
-  {
-    ignores: ['dist/', 'node_modules/', '*.config.js'],
-  },
-]
+])

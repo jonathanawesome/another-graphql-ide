@@ -15,7 +15,7 @@ function DemoRoute() {
   return (
     <Preview
       preview={preview}
-      selectedItem={demoName || null}
+      selectedItem={demoName ?? null}
       selectedType="demo"
     />
   )

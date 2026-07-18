@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 
 import * as styles from './layout.css'
 
-interface LayoutProps {
+type LayoutProps = {
   children: ReactNode
   isShelfPinned?: boolean
 }

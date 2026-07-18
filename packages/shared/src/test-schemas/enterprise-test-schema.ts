@@ -22,7 +22,7 @@ import {
 } from './scalar-stubs'
 
 // TypeScript Interfaces
-interface IUser {
+type IUser = {
   id: string
   email: string
   firstName: string
@@ -37,7 +37,7 @@ interface IUser {
   updatedAt?: string
 }
 
-interface IOrganization {
+type IOrganization = {
   id: string
   name: string
   slug: string
@@ -51,7 +51,7 @@ interface IOrganization {
   updatedAt?: string
 }
 
-interface IProject {
+type IProject = {
   id: string
   name: string
   description?: string
@@ -69,7 +69,7 @@ interface IProject {
   organizationId?: string
 }
 
-interface ITask {
+type ITask = {
   id: string
   title: string
   description?: string
@@ -85,7 +85,7 @@ interface ITask {
   projectId?: string
 }
 
-interface IDocument {
+type IDocument = {
   id: string
   name: string
   description?: string
@@ -98,7 +98,7 @@ interface IDocument {
   tags?: string[]
 }
 
-interface IComment {
+type IComment = {
   id: string
   content: string
   createdAt?: string
@@ -106,7 +106,7 @@ interface IComment {
   editedAt?: string
 }
 
-interface INotification {
+type INotification = {
   id: string
   type: string
   title: string
@@ -118,7 +118,7 @@ interface INotification {
   relatedObjectType?: string
 }
 
-interface IBillingInfo {
+type IBillingInfo = {
   id: string
   paymentMethod?: string
   billingEmail: string
@@ -128,7 +128,7 @@ interface IBillingInfo {
   currentBalance?: number
 }
 
-interface IInvoice {
+type IInvoice = {
   id: string
   invoiceNumber: string
   amount: number
@@ -139,14 +139,14 @@ interface IInvoice {
   createdAt: string
 }
 
-interface IInvoiceItem {
+type IInvoiceItem = {
   description: string
   quantity: number
   unitPrice: number
   total: number
 }
 
-interface ICreateUserInput {
+type ICreateUserInput = {
   email: string
   firstName: string
   lastName: string
@@ -154,7 +154,7 @@ interface ICreateUserInput {
   organizationId?: string
 }
 
-interface ICreateProjectInput {
+type ICreateProjectInput = {
   name: string
   description?: string
   organizationId: string
@@ -165,7 +165,7 @@ interface ICreateProjectInput {
   endDate?: string
 }
 
-interface ICreateTaskInput {
+type ICreateTaskInput = {
   title: string
   description?: string
   projectId: string
@@ -1089,7 +1089,7 @@ const MutationType = new GraphQLObjectType({
           name: input.name,
           description: input.description,
           code: 'PROJ-001',
-          status: input.status || 'PLANNING',
+          status: input.status ?? 'PLANNING',
           organizationId: input.organizationId,
         }
       },
@@ -1126,8 +1126,8 @@ const MutationType = new GraphQLObjectType({
           title: input.title,
           description: input.description,
           projectId: input.projectId,
-          status: input.status || 'TODO',
-          priority: input.priority || 'MEDIUM',
+          status: input.status ?? 'TODO',
+          priority: input.priority ?? 'MEDIUM',
         }
       },
     },

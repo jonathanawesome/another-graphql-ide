@@ -31,7 +31,7 @@
     "@types/node": "24.13.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "eslint": "9.39.5",
+    "eslint": "catalog:",
     "graphql": "catalog:",
     "prettier": "3.9.5",
     "react": "catalog:",
@@ -42,6 +42,12 @@
   "pnpm": {
     "overrides": {
       "graphql": "16.14.2"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "eslint-plugin-react>eslint": "10",
+        "eslint-plugin-jsx-a11y>eslint": "10"
+      }
     }
   }
 }

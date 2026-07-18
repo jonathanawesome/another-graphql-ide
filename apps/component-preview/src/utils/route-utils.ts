@@ -45,13 +45,13 @@ export function usePreviewComponent(componentId: string) {
  */
 type PreviewType = 'variant' | 'demo'
 
-export interface LoaderParams {
+export type LoaderParams = {
   componentId: string
   variantName?: string
   demoName?: string
 }
 
-export function createPreviewLoader<T extends PreviewType>(type: T) {
+export function createPreviewLoader(type: PreviewType) {
   return ({ params }: { params: LoaderParams }) => {
     const component = getComponentById(params.componentId)
 

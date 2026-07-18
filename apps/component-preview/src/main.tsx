@@ -12,6 +12,9 @@ const router = createRouter({ routeTree })
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
+  // must be an interface: module augmentation relies on declaration merging,
+  // which type aliases don't do. a `type` here silently breaks route param
+  // inference and makes every useParams() result `any`.
   interface Register {
     router: typeof router
   }

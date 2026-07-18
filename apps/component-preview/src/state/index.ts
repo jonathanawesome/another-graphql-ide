@@ -21,16 +21,16 @@ const uiStore = create<UIStore>()((set, get) => ({
 
   toggleAccessibility: () => {
     const isAccessibilityEnabled = get().isAccessibilityEnabled
-    return set({ isAccessibilityEnabled: !isAccessibilityEnabled })
+    set({ isAccessibilityEnabled: !isAccessibilityEnabled })
   },
 
   setIsShelfPinned: bool => {
-    return set({ isShelfPinned: bool })
+    set({ isShelfPinned: bool })
   },
 
   toggleShelf: () => {
     const isShelfOpen = get().isShelfOpen
-    return set({ isShelfOpen: !isShelfOpen })
+    set({ isShelfOpen: !isShelfOpen })
   },
 }))
 
