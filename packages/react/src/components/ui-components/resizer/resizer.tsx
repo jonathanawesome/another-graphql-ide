@@ -1,12 +1,6 @@
-import { RecipeVariants } from '@another-graphql-ide/style'
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import type { RecipeVariants } from '@another-graphql-ide/style'
+import type { ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { resizerStyles } from './resizer.css'
 

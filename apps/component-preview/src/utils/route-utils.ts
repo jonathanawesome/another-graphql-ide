@@ -2,7 +2,8 @@
 import { redirect } from '@tanstack/react-router'
 import { useMemo } from 'react'
 
-import { DiscoveredComponent, discoverComponents } from '../utils/discovery'
+import type { DiscoveredComponent } from '../utils/discovery'
+import { discoverComponents } from '../utils/discovery'
 
 /**
  * Get a component by ID from the discovered components
@@ -74,19 +75,16 @@ export function createPreviewLoader(type: PreviewType) {
       return { component, variant }
     }
 
-    if (type === 'demo') {
-      if (!component.demos) {
-        throw redirect({ to: '/' })
-      }
-
-      const demo = component.demos.find(d => d.name === params.demoName)
-      if (!demo) {
-        throw redirect({ to: '/' })
-      }
-
-      return { component, demo }
+    // type is narrowed to 'demo' here
+    if (!component.demos) {
+      throw redirect({ to: '/' })
     }
 
-    throw redirect({ to: '/' })
+    const demo = component.demos.find(d => d.name === params.demoName)
+    if (!demo) {
+      throw redirect({ to: '/' })
+    }
+
+    return { component, demo }
   }
 }

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 
 import { useUIStore } from '../state'
-import { ComponentPreview } from '../types'
+import type { ComponentPreview } from '../types'
 
 import { AccessibilityChecker } from './accessibility-checker'
 import { previewStyles } from './preview.css'

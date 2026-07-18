@@ -1,4 +1,4 @@
-import { RecipeVariants } from '@another-graphql-ide/style'
+import type { RecipeVariants } from '@another-graphql-ide/style'
 
 import { AppNavigationItem } from '../../ui-components/app-navigation-item/app-navigation-item'
 import { IconButton } from '../../ui-components/icon-button/icon-button'

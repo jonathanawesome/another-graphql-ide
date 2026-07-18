@@ -35,6 +35,12 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'warn',
 
+      // pairs with verbatimModuleSyntax in the tsconfig base
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
+      ],
+
       // interpolating a number is safe and idiomatic
       '@typescript-eslint/restrict-template-expressions': [
         'error',
@@ -49,11 +55,6 @@ export default defineConfig([
       // `type` breaks module augmentation, which needs interface declaration
       // merging (see the Register block in component-preview's main.tsx)
       '@typescript-eslint/consistent-type-definitions': 'off',
-
-      // off until tsconfig enables noUncheckedIndexedAccess. without it, TS
-      // types `arr[i]` as always-defined, so this rule flags correct runtime
-      // guards as unnecessary. turn both on together.
-      '@typescript-eslint/no-unnecessary-condition': 'off',
 
       'import-x/order': [
         'error',
@@ -75,7 +76,10 @@ export default defineConfig([
 
       'no-console': 'warn',
       'no-debugger': 'error',
-      'no-duplicate-imports': 'error',
+      // core no-duplicate-imports predates type-only imports and flags the
+      // value+type pair from one module. import-x/no-duplicates above knows
+      // the difference, so use that instead.
+      'no-duplicate-imports': 'off',
       'prefer-const': 'error',
       'no-var': 'error',
     },

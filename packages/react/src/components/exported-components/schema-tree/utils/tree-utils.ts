@@ -1,9 +1,11 @@
-import {
+import type {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLField,
   GraphQLType,
   GraphQLArgument,
+} from 'graphql'
+import {
   isObjectType,
   isUnionType,
   isInterfaceType,
@@ -57,8 +59,7 @@ function createChildrenFromType(
   // Handle object types that have fields
   if (isObjectType(namedType)) {
     const fields = namedType.getFields()
-    const nodes = Object.keys(fields).map(fieldName => {
-      const childField = fields[fieldName]
+    const nodes = Object.entries(fields).map(([fieldName, childField]) => {
       const childId = `${parentId}.${fieldName}`
 
       return {
@@ -76,8 +77,7 @@ function createChildrenFromType(
   // Handle interface types - interfaces have fields just like object types
   if (isInterfaceType(namedType)) {
     const fields = namedType.getFields()
-    const nodes = Object.keys(fields).map(fieldName => {
-      const childField = fields[fieldName]
+    const nodes = Object.entries(fields).map(([fieldName, childField]) => {
       const childId = `${parentId}.${fieldName}`
 
       return {
@@ -102,11 +102,11 @@ function createChildrenFromType(
       let children: ListItemType[] = []
       if (isObjectType(possibleType)) {
         const fields = possibleType.getFields()
-        children = Object.keys(fields).map(fieldName =>
+        children = Object.entries(fields).map(([fieldName, field]) =>
           createFieldNode(
             `${childId}.${fieldName}`,
             fieldName,
-            fields[fieldName],
+            field,
             depth + 1
           )
         )
@@ -191,8 +191,8 @@ function createRootNode(
 ): ListItemType {
   const fields = type.getFields()
   const children = sortTreeNodes(
-    Object.keys(fields).map(fieldName =>
-      createFieldNode(`${id}.${fieldName}`, fieldName, fields[fieldName])
+    Object.entries(fields).map(([fieldName, field]) =>
+      createFieldNode(`${id}.${fieldName}`, fieldName, field)
     )
   )
 

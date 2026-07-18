@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql'
+import type { GraphQLSchema } from 'graphql'
 import { useState } from 'react'
 
 import { IconButton } from '../../ui-components/icon-button/icon-button'

@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion --
+   generated fixture: every array index below is modulo-bounded against an
+   array populated immediately above, so it is in range by construction.
+   noUncheckedIndexedAccess can't see that. */
 import {
   GraphQLBoolean,
   GraphQLEnumType,
@@ -242,7 +246,7 @@ const generateUnionTypes = (objectTypes: GraphQLObjectType[]) => {
     const memberTypes: GraphQLObjectType[] = []
     for (let j = 0; j < 5; j++) {
       const typeIndex = (i * 5 + j) % objectTypes.length
-      memberTypes.push(objectTypes[typeIndex])
+      memberTypes.push(objectTypes[typeIndex]!)
     }
 
     unionTypes.push(
@@ -250,7 +254,7 @@ const generateUnionTypes = (objectTypes: GraphQLObjectType[]) => {
         name: `TestUnion${i}`,
         description: `Test union type number ${i}`,
         types: memberTypes,
-        resolveType: () => memberTypes[0].name,
+        resolveType: () => memberTypes[0]!.name,
       })
     )
   }
@@ -300,7 +304,7 @@ const QueryType = new GraphQLObjectType({
 
     // Add a general search field that can return any type
     fields.search = {
-      type: new GraphQLList(unionTypes[0]),
+      type: new GraphQLList(unionTypes[0]!),
       args: {
         query: { type: new GraphQLNonNull(GraphQLString) },
         limit: { type: GraphQLInt, defaultValue: 10 },
@@ -366,7 +370,7 @@ const MutationType = new GraphQLObjectType({
       fields[`create${type.name}`] = {
         type,
         args: {
-          input: { type: new GraphQLNonNull(inputTypes[inputIndex]) },
+          input: { type: new GraphQLNonNull(inputTypes[inputIndex]!) },
         },
         description: `Create a new ${type.name}`,
         resolve: () => ({

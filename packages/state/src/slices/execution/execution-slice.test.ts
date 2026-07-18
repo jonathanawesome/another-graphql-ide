@@ -79,7 +79,7 @@ describe('execution slice', () => {
     await store.getState().execute()
 
     expect(executeMock).toHaveBeenCalledTimes(1)
-    const [request, options] = executeMock.mock.calls[0]
+    const [request, options] = executeMock.mock.calls[0] ?? []
     expect(request).toEqual({
       query: 'query ($id: ID) { a }',
       variables: { id: '42' },

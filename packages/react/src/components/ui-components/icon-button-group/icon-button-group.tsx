@@ -1,4 +1,5 @@
-import { IconButton, IconButtonProps } from '../icon-button/icon-button'
+import type { IconButtonProps } from '../icon-button/icon-button'
+import { IconButton } from '../icon-button/icon-button'
 
 import { iconButtonGroupClass } from './icon-button-group.css'
 

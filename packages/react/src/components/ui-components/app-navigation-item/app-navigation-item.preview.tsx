@@ -5,10 +5,8 @@ import {
   DemoGridItem,
 } from '../../utility-components/previews/components'
 
-import {
-  AppNavigationItem,
-  AppNavigationItemProps,
-} from './app-navigation-item'
+import type { AppNavigationItemProps } from './app-navigation-item'
+import { AppNavigationItem } from './app-navigation-item'
 
 const preview = createPreview<AppNavigationItemProps>({
   title: 'AppNavigationItem',

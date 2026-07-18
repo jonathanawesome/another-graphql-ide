@@ -1,7 +1,8 @@
 import * as RadixTabs from '@radix-ui/react-tabs'
 import { useState, type ReactNode } from 'react'
 
-import { TabTrigger, TabTriggerProps } from './tab-trigger'
+import type { TabTriggerProps } from './tab-trigger'
+import { TabTrigger } from './tab-trigger'
 import { tabsStyles } from './tabs.css'
 
 export type TabsProps = {

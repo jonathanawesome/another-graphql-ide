@@ -21,6 +21,7 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
+    "@another-graphql-ide/tsconfig": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

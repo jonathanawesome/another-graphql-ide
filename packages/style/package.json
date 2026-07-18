@@ -19,6 +19,7 @@
     "@vanilla-extract/sprinkles": "catalog:"
   },
   "devDependencies": {
+    "@another-graphql-ide/tsconfig": "workspace:*",
     "@vanilla-extract/vite-plugin": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"

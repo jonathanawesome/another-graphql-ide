@@ -1,7 +1,4 @@
 {
-  "extends": "../../packages/eslint-config/tsconfig.react.json",
-  "compilerOptions": {
-    "rootDir": "./src"
-  },
-  "include": ["src/**/*"]
+  "extends": "@another-graphql-ide/tsconfig/react.json",
+  "include": ["src/**/*", "vitest.config.ts"]
 }

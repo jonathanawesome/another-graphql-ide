@@ -1,5 +1,5 @@
+import type { GraphQLType } from 'graphql'
 import {
-  GraphQLType,
   isScalarType,
   isObjectType,
   isEnumType,

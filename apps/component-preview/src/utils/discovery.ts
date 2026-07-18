@@ -1,4 +1,4 @@
-import { ComponentType, ReactElement } from 'react'
+import type { ComponentType, ReactElement } from 'react'
 
 type PreviewModule = {
   default: {
@@ -46,8 +46,9 @@ export function discoverComponents(): DiscoveredComponent[] {
     // Find the index of 'packages' in the path and get the next part as package name
     const packagesIndex = pathParts.indexOf('packages')
     const packageName =
-      packagesIndex !== -1 ? pathParts[packagesIndex + 1] : 'unknown'
-    const fileName = pathParts[pathParts.length - 1].replace('.preview.tsx', '')
+      (packagesIndex !== -1 ? pathParts[packagesIndex + 1] : undefined) ??
+      'unknown'
+    const fileName = (pathParts.at(-1) ?? path).replace('.preview.tsx', '')
 
     components.push({
       id: fileName,

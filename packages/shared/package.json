@@ -15,6 +15,7 @@
     "@another-graphql-ide/eslint-config": "workspace:*"
   },
   "devDependencies": {
+    "@another-graphql-ide/tsconfig": "workspace:*",
     "typescript": "catalog:"
   }
 }

@@ -1,4 +1,4 @@
-import { RecipeVariants } from '@another-graphql-ide/style'
+import type { RecipeVariants } from '@another-graphql-ide/style'
 
 import { IconMap } from './icon-map'
 import { iconClass } from './icon.css'
