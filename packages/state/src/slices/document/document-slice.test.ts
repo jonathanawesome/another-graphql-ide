@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { createAppStore } from '../../store/create-app-store'
+import { createAGIStore } from '../../store/create-agi-store'
 
 describe('document slice', () => {
   it('starts with empty document state', () => {
-    const store = createAppStore()
+    const store = createAGIStore()
     const state = store.getState()
     expect(state.query).toBe('')
     expect(state.variables).toBe('')
@@ -12,7 +12,7 @@ describe('document slice', () => {
   })
 
   it('updates query, variables, and operationName', () => {
-    const store = createAppStore()
+    const store = createAGIStore()
     store.getState().setQuery('{ isTest }')
     store.getState().setVariables('{"id":1}')
     store.getState().setOperationName('Example')

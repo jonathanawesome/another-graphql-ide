@@ -10,7 +10,7 @@ vi.mock('../../transport/transport', () => ({
   createTransport: () => ({ execute: executeMock }),
 }))
 
-const { createAppStore } = await import('../../store/create-app-store')
+const { createAGIStore } = await import('../../store/create-agi-store')
 
 const iterableOf = (...results: ExecutionResult[]): AsyncIterable<ExecutionResult> =>
   (async function* () {
@@ -23,7 +23,7 @@ describe('execution slice', () => {
   })
 
   it('has sensible defaults', () => {
-    const store = createAppStore()
+    const store = createAGIStore()
     const state = store.getState()
     expect(state.status).toBe('idle')
     expect(state.endpoint).toBe('http://localhost:4000/graphql')
@@ -32,7 +32,7 @@ describe('execution slice', () => {
 
   it('executes and stores the final response', async () => {
     executeMock.mockReturnValue(iterableOf({ data: { isTest: true } }))
-    const store = createAppStore()
+    const store = createAGIStore()
     store.getState().setQuery('{ isTest }')
 
     await store.getState().execute()
@@ -47,7 +47,7 @@ describe('execution slice', () => {
     executeMock.mockReturnValue(
       iterableOf({ data: { n: 1 } }, { data: { n: 2 } })
     )
-    const store = createAppStore()
+    const store = createAGIStore()
     store.getState().setQuery('subscription { n }')
 
     await store.getState().execute()
@@ -56,7 +56,7 @@ describe('execution slice', () => {
   })
 
   it('errors on invalid variables JSON without calling transport', async () => {
-    const store = createAppStore()
+    const store = createAGIStore()
     store.getState().setQuery('{ isTest }')
     store.getState().setVariables('{ not valid')
 
@@ -69,7 +69,7 @@ describe('execution slice', () => {
 
   it('parses variables and forwards them to the transport', async () => {
     executeMock.mockReturnValue(iterableOf({ data: {} }))
-    const store = createAppStore()
+    const store = createAGIStore()
     store.getState().setQuery('query ($id: ID) { a }')
     store.getState().setVariables('{"id":"42"}')
     store.getState().setOperationName('Op')

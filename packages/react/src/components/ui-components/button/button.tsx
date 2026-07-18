@@ -52,6 +52,7 @@ const Component = ({
 }: ButtonProps) => {
   return (
     <button
+      {...props}
       className={buttonClass({
         state,
       })}
@@ -59,7 +60,6 @@ const Component = ({
       disabled={state === 'disabled'}
       onClick={action}
       ref={ref}
-      {...props}
     >
       {withLeftIcon && <Icon name={withLeftIcon} size={'small'} />}
       {text}

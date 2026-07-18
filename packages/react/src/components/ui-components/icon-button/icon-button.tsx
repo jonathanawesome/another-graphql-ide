@@ -52,6 +52,7 @@ const Component = ({
 }: IconButtonProps) => {
   return (
     <button
+      {...props}
       className={iconButtonClass({
         ghost,
         rotate,
@@ -63,7 +64,6 @@ const Component = ({
       onClick={action}
       ref={ref}
       tabIndex={tabIndex}
-      {...props}
     >
       <Icon name={name} size={size === 'large' ? 'large' : 'medium'} />
     </button>

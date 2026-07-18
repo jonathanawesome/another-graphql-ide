@@ -1,4 +1,4 @@
-export { createAppStore, appStore } from './store/create-app-store'
+export { createAGIStore, appStore } from './store/create-agi-store'
 export type { AppState } from './store/types'
 
 export type { DocumentSlice } from './slices/document/types'

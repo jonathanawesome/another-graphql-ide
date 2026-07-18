@@ -5,11 +5,11 @@ import { createExecutionSlice } from '../slices/execution/execution-slice'
 
 import type { AppState } from './types'
 
-export const createAppStore = () =>
+export const createAGIStore = () =>
   createStore<AppState>()((...args) => ({
     ...createDocumentSlice(...args),
     ...createExecutionSlice(...args),
   }))
 
 // Shared singleton store instance.
-export const appStore = createAppStore()
+export const appStore = createAGIStore()

@@ -13,7 +13,9 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "test:once": "vitest run",
+    "test:watch": "vitest"
   },
   "peerDependencies": {
     "graphql": "^16",
@@ -43,6 +45,13 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:"
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/react": "16.3.2",
+    "@vanilla-extract/css": "catalog:",
+    "@vanilla-extract/recipes": "catalog:",
+    "@vanilla-extract/vite-plugin": "catalog:",
+    "jsdom": "29.1.1",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
