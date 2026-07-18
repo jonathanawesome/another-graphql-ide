@@ -2,7 +2,11 @@ import { IconButtonGroup } from '../../ui-components/icon-button-group/icon-butt
 
 import { sharedStyles } from './shared.css'
 
-export const ResponseHeader = () => {
+export type ResponseHeaderProps = {
+  onCopy?: () => void
+}
+
+export const ResponseHeader = ({ onCopy }: ResponseHeaderProps) => {
   return (
     <div className={sharedStyles.container}>
       <div className={sharedStyles.left}>
@@ -12,6 +16,7 @@ export const ResponseHeader = () => {
         <IconButtonGroup
           icons={[
             {
+              action: onCopy,
               label: 'Copy response',
               name: 'Copy',
               size: 'mini',

@@ -4,7 +4,19 @@ import { Separator } from '../../ui-components/separator/separator'
 
 import { sharedStyles } from './shared.css'
 
-export const DocumentHeader = () => {
+export type DocumentHeaderProps = {
+  operationName?: string
+  onExecute?: () => void
+  onCopy?: () => void
+  onPrettify?: () => void
+}
+
+export const DocumentHeader = ({
+  operationName,
+  onExecute,
+  onCopy,
+  onPrettify,
+}: DocumentHeaderProps) => {
   return (
     <div className={sharedStyles.container}>
       <div className={sharedStyles.left}>
@@ -14,12 +26,14 @@ export const DocumentHeader = () => {
         <IconButtonGroup
           icons={[
             {
+              action: onCopy,
               label: 'Copy document',
               name: 'Copy',
               size: 'mini',
               tooltipOptions: { side: 'bottom' },
             },
             {
+              action: onPrettify,
               label: 'Prettify document',
               name: 'Prettier',
               size: 'mini',
@@ -55,8 +69,9 @@ export const DocumentHeader = () => {
           <Separator orientation="vertical" />
         </div>
         <Button
+          action={onExecute}
           label="Execute operation"
-          text="OperationName"
+          text={operationName ?? 'OperationName'}
           withLeftIcon="Play"
         />
       </div>

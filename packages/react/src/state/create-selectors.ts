@@ -1,7 +1,7 @@
 import { useStore } from 'zustand'
 import type { StoreApi } from 'zustand/vanilla'
 
-type WithSelectors<T> = { use: { [K in keyof T]: () => T[K] } }
+type WithSelectors<T> = { use: { [K in keyof T]-?: () => T[K] } }
 
 /**
  * Attaches a `use.<field>()` React hook per state key, backed by useStore over
