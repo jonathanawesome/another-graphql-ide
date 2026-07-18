@@ -1,8 +1,8 @@
+import { Icon } from '@another-graphql-ide/react/components'
 import { useLocation } from '@tanstack/react-router'
 import axe, { NodeResult } from 'axe-core'
 import { useEffect, useState, useRef, useCallback } from 'react'
 
-import { Icon } from '../../../../packages/react/src/components/ui-components/icon/icon'
 
 import { accessibilityCheckerStyles } from './accessibility-checker.css'
 

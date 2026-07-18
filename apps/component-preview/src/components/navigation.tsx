@@ -1,9 +1,6 @@
-import { useTheme } from '@another-graphql-ide/style'
+import { Icon, IconNames } from '@another-graphql-ide/react/components'
+import { useTheme } from '@another-graphql-ide/react/style'
 
-import {
-  Icon,
-  IconNames,
-} from '../../../../packages/react/src/components/ui-components/icon/icon'
 import { useUIStore } from '../state'
 
 import { navigationStyles } from './navigation.css'

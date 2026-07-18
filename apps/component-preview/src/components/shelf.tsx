@@ -1,7 +1,7 @@
+import { Icon } from '@another-graphql-ide/react/components'
 import { Link, useParams } from '@tanstack/react-router'
 import { useState, ReactElement } from 'react'
 
-import { Icon } from '../../../../packages/react/src/components/ui-components/icon/icon'
 import { useUIStore } from '../state'
 import { DiscoveredComponent } from '../utils/discovery'
 

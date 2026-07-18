@@ -2,6 +2,14 @@
   "name": "@another-graphql-ide/react",
   "version": "0.0.1",
   "type": "module",
+  "exports": {
+    "./style": "./src/style/index.ts",
+    "./components": "./src/components/index.ts"
+  },
+  "sideEffects": [
+    "*.css.ts",
+    "*.css"
+  ],
   "scripts": {
     "lint": "eslint .",
     "types": "tsc --noEmit"

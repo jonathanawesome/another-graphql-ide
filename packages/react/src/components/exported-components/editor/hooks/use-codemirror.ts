@@ -1,8 +1,8 @@
-import { useTheme } from '@another-graphql-ide/style'
 import type { EditorView } from '@codemirror/view'
 import type { GraphQLSchema } from 'graphql'
 import { useEffect, useRef } from 'react'
 
+import { useTheme } from '../../../../style'
 import {
   reconfigureLanguage,
   reconfigureReadOnly,
