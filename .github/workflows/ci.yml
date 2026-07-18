@@ -39,6 +39,7 @@ jobs:
         run: pnpm types
 
   test:
+    name: test
     needs: static
     runs-on: ubuntu-latest
     steps:
@@ -56,6 +57,7 @@ jobs:
       - run: pnpm test
 
   build:
+    name: build
     needs: test
     runs-on: ubuntu-latest
     steps:
