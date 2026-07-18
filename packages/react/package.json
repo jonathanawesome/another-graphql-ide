@@ -14,7 +14,7 @@
   "scripts": {
     "lint": "eslint .",
     "types": "tsc --noEmit",
-    "test:once": "vitest run",
+    "test": "vitest run",
     "test:watch": "vitest"
   },
   "peerDependencies": {

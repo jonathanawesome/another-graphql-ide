@@ -13,7 +13,6 @@
     "lint:fix": {},
     "types": {},
     "test": {},
-    "test:once": {},
     "test:watch": {
       "cache": false,
       "persistent": true
