@@ -15,8 +15,8 @@
     "preview": "pnpm --filter component-preview dev",
     "preview:build": "pnpm --filter component-preview build",
     "preview:serve": "pnpm --filter component-preview preview",
-    "prettier:check": "pnpm prettier --check ./",
-    "prettier:write": "pnpm prettier --write ./"
+    "prettier:check": "pnpm prettier --check --cache ./",
+    "prettier:write": "pnpm prettier --write --cache ./"
   },
   "keywords": [
     "graphql",
