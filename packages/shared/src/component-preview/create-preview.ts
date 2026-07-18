@@ -4,14 +4,14 @@ type TypedComponentPreview<TProps> = {
   title: string
   component: ComponentType<TProps>
   category?: string
-  variants?: Array<{
+  variants?: {
     name: string
     props: TProps
-  }>
-  demos?: Array<{
+  }[]
+  demos?: {
     name: string
     render: () => ReactElement
-  }>
+  }[]
 }
 
 /**

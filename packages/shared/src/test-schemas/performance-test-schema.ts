@@ -312,13 +312,10 @@ const QueryType = new GraphQLObjectType({
     // Add a field that uses all enum types as arguments
     fields.testEnums = {
       type: GraphQLString,
-      args: enums.reduce(
-        (acc, enumType, index) => {
-          acc[`enum${index}`] = { type: enumType }
-          return acc
-        },
-        {} as Record<string, any>
-      ),
+      args: enums.reduce<Record<string, any>>((acc, enumType, index) => {
+        acc[`enum${index}`] = { type: enumType }
+        return acc
+      }, {}),
       description: 'Test field that accepts all enum types as arguments',
       resolve: () => 'enum test result',
     }

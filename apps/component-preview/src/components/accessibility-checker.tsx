@@ -5,13 +5,13 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 
 import { accessibilityCheckerStyles } from './accessibility-checker.css'
 
-interface AccessibilityCheckerProps {
+type AccessibilityCheckerProps = {
   targetRef: React.RefObject<HTMLDivElement | null>
   isEnabled: boolean
   isShelfOpen?: boolean
 }
 
-interface Violation {
+type Violation = {
   id: string
   impact: 'critical' | 'serious' | 'moderate' | 'minor' | null
   description: string

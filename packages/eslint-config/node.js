@@ -1,22 +1,18 @@
-import baseConfig from './index.js'
+import { defineConfig } from 'eslint/config'
 import globals from 'globals'
 
-export default [
-  ...baseConfig,
+import baseConfig from './index.js'
+
+export default defineConfig([
+  baseConfig,
   {
-    files: ['**/*.{js,ts}'],
+    files: ['**/*.ts'],
     languageOptions: {
-      globals: {
-        ...globals.node,
-      },
+      globals: { ...globals.node },
     },
     rules: {
-      // Node.js specific rules
-      'no-console': 'off', // Console is fine in Node.js
-      'no-process-env': 'off',
-
-      // Prefer modern Node.js patterns
+      'no-console': 'off', // console is fine in Node
       'prefer-promise-reject-errors': 'error',
     },
   },
-]
+])

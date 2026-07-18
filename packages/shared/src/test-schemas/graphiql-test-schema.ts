@@ -360,7 +360,7 @@ const TestSubscriptionType = new GraphQLObjectType({
       },
       async *subscribe(_root, args) {
         for (const hi of ['Hi', 'Bonjour', 'Hola', 'Ciao', 'Zdravo']) {
-          if (args && args.delay) {
+          if (args?.delay) {
             await sleep(args.delay)
           }
           yield { hello: hi }
@@ -386,7 +386,7 @@ const TestSubscriptionType = new GraphQLObjectType({
           '9',
           '10',
         ]) {
-          if (args && args.delay) {
+          if (args?.delay) {
             await sleep(args.delay)
           }
           yield { count }

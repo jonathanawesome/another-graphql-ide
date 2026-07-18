@@ -1,18 +1,18 @@
 import { ComponentType, ReactElement } from 'react'
 
-interface PreviewModule {
+type PreviewModule = {
   default: {
     title: string
     component: ComponentType<Record<string, unknown>>
     category?: string
-    variants?: Array<{
+    variants?: {
       name: string
       props: Record<string, unknown>
-    }>
-    demos?: Array<{
+    }[]
+    demos?: {
       name: string
       render: () => ReactElement
-    }>
+    }[]
   }
 }
 
@@ -21,20 +21,20 @@ const previewModules = import.meta.glob<PreviewModule>(
   { eager: true }
 )
 
-export interface DiscoveredComponent {
+export type DiscoveredComponent = {
   id: string
   path: string
   title: string
   component: ComponentType<Record<string, unknown>>
   category: string
-  variants?: Array<{
+  variants?: {
     name: string
     props: Record<string, unknown>
-  }>
-  demos?: Array<{
+  }[]
+  demos?: {
     name: string
     render: () => ReactElement
-  }>
+  }[]
   name: string
 }
 
@@ -54,7 +54,7 @@ export function discoverComponents(): DiscoveredComponent[] {
       path,
       title: previewModule.default.title,
       component: previewModule.default.component,
-      category: previewModule.default.category || packageName,
+      category: previewModule.default.category ?? packageName,
       variants: previewModule.default.variants,
       demos: previewModule.default.demos,
       name: previewModule.default.title || fileName,

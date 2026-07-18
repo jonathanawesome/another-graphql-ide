@@ -1,16 +1,16 @@
 import { ComponentType, ReactElement } from 'react'
 
-export interface ComponentVariant {
+export type ComponentVariant = {
   name: string
   props: Record<string, unknown>
 }
 
-export interface ComponentDemo {
+export type ComponentDemo = {
   name: string
   render: () => ReactElement
 }
 
-export interface ComponentPreview {
+export type ComponentPreview = {
   title: string
   component: ComponentType<Record<string, unknown>>
   variants?: ComponentVariant[]
@@ -18,6 +18,6 @@ export interface ComponentPreview {
   category?: string
 }
 
-export interface PreviewModule {
+export type PreviewModule = {
   default: ComponentPreview
 }

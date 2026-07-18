@@ -3,7 +3,7 @@ import { createContext, useEffect, useState, type ReactNode } from 'react'
 
 export type Theme = 'light' | 'dark' | 'system'
 
-export interface ThemeContextValue {
+export type ThemeContextValue = {
   theme: Theme
   setTheme: (theme: Theme) => void
   resolvedTheme: 'light' | 'dark'
@@ -11,7 +11,7 @@ export interface ThemeContextValue {
 
 export const ThemeContext = createContext<ThemeContextValue | null>(null)
 
-interface ThemeProviderProps {
+type ThemeProviderProps = {
   children: ReactNode
   defaultTheme?: Theme
   storageKey?: string

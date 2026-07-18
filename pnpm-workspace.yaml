@@ -5,6 +5,19 @@ packages:
 # Single source of truth for versions shared across packages.
 # Reference from a package.json with "<name>": "catalog:".
 catalog:
+  eslint: 10.7.0
+  '@eslint/js': 10.0.1
+  typescript-eslint: 8.64.0
+  '@typescript-eslint/eslint-plugin': 8.64.0
+  '@typescript-eslint/parser': 8.64.0
+  eslint-config-prettier: 10.1.8
+  eslint-plugin-import-x: 4.17.1
+  eslint-plugin-jsx-a11y: 6.10.2
+  eslint-plugin-react: 7.37.5
+  eslint-plugin-react-hooks: 7.1.1
+  eslint-plugin-testing-library: 7.16.2
+  '@vitest/eslint-plugin': 1.6.23
+  globals: 17.7.0
   graphql: 16.14.2
   react: 19.2.7
   react-dom: 19.2.7

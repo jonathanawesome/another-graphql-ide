@@ -17,15 +17,27 @@
     "tsconfig.react.json",
     "tsconfig.node.json"
   ],
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "peerDependencies": {
+    "eslint": "^10"
+  },
   "dependencies": {
-    "@eslint/js": "9.39.5",
-    "@typescript-eslint/eslint-plugin": "8.64.0",
-    "@typescript-eslint/parser": "8.64.0",
-    "eslint-plugin-import-x": "4.17.1",
-    "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "7.1.1",
-    "eslint-plugin-jsx-a11y": "6.10.2",
-    "globals": "17.7.0",
-    "typescript-eslint": "8.64.0"
+    "@eslint/js": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "@vitest/eslint-plugin": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-import-x": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:",
+    "eslint-plugin-react": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "eslint-plugin-testing-library": "catalog:",
+    "globals": "catalog:",
+    "typescript-eslint": "catalog:"
+  },
+  "devDependencies": {
+    "eslint": "catalog:"
   }
 }

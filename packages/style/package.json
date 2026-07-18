@@ -8,8 +8,8 @@
     "./global.css": "./src/global-styles.css.ts"
   },
   "scripts": {
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "types": "tsc --noEmit"
   },
   "dependencies": {

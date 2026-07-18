@@ -15,7 +15,7 @@ function VariantRoute() {
   return (
     <Preview
       preview={preview}
-      selectedItem={variantName || null}
+      selectedItem={variantName ?? null}
       selectedType="variant"
     />
   )

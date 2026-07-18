@@ -7,7 +7,7 @@ import { DiscoveredComponent } from '../utils/discovery'
 
 import { shelfStyles } from './shelf.css'
 
-interface ShelfProps {
+type ShelfProps = {
   components: DiscoveredComponent[]
 }
 
@@ -85,7 +85,7 @@ const SectionHeader = ({
 )
 
 // Generic collapsible section component
-interface CollapsibleSectionProps {
+type CollapsibleSectionProps = {
   title: string
   sectionId: string
   componentId: string
@@ -121,7 +121,7 @@ const CollapsibleSection = ({
 )
 
 // Section item link component
-interface SectionItemProps {
+type SectionItemProps = {
   to: string
   params: Record<string, string>
   isActive: boolean
@@ -142,7 +142,7 @@ const SectionItem = ({ to, params, isActive, name }: SectionItemProps) => (
 )
 
 // Component item with sections
-interface ComponentItemProps {
+type ComponentItemProps = {
   component: DiscoveredComponent
   isComponentExpanded: boolean
   toggleExpanded: (id: string) => void
@@ -243,12 +243,9 @@ export const Shelf = ({ components }: ShelfProps) => {
   const params = useParams({ strict: false })
 
   // Extract route params more cleanly
-  const routeComponentId =
-    'componentId' in params ? (params.componentId as string) : null
-  const routeVariantName =
-    'variantName' in params ? (params.variantName as string) : null
-  const routeDemoName =
-    'demoName' in params ? (params.demoName as string) : null
+  const routeComponentId = 'componentId' in params ? params.componentId! : null
+  const routeVariantName = 'variantName' in params ? params.variantName! : null
+  const routeDemoName = 'demoName' in params ? params.demoName! : null
 
   const { isExpanded, toggleExpanded } = useExpandState(
     routeComponentId,
@@ -257,7 +254,7 @@ export const Shelf = ({ components }: ShelfProps) => {
   )
 
   // Group components by category
-  const grouped = components.reduce(
+  const grouped = components.reduce<Record<string, DiscoveredComponent[]>>(
     (acc, comp) => {
       if (!acc[comp.category]) {
         acc[comp.category] = []
@@ -265,7 +262,7 @@ export const Shelf = ({ components }: ShelfProps) => {
       acc[comp.category].push(comp)
       return acc
     },
-    {} as Record<string, DiscoveredComponent[]>
+    {}
   )
 
   return (
