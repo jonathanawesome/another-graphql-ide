@@ -3,7 +3,6 @@ import { useLocation } from '@tanstack/react-router'
 import axe, { NodeResult } from 'axe-core'
 import { useEffect, useState, useRef, useCallback } from 'react'
 
-
 import { accessibilityCheckerStyles } from './accessibility-checker.css'
 
 interface AccessibilityCheckerProps {

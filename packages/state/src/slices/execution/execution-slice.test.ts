@@ -12,7 +12,9 @@ vi.mock('../../transport/transport', () => ({
 
 const { createAGIStore } = await import('../../store/create-agi-store')
 
-const iterableOf = (...results: ExecutionResult[]): AsyncIterable<ExecutionResult> =>
+const iterableOf = (
+  ...results: ExecutionResult[]
+): AsyncIterable<ExecutionResult> =>
   (async function* () {
     for (const result of results) yield await Promise.resolve(result)
   })()

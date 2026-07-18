@@ -3,11 +3,7 @@ import { EditorState } from '@codemirror/state'
 import { EditorView, keymap } from '@codemirror/view'
 import { basicSetup } from 'codemirror'
 
-import {
-  initialLanguage,
-  initialReadOnly,
-  initialTheme,
-} from './compartments'
+import { initialLanguage, initialReadOnly, initialTheme } from './compartments'
 import { editorHighlight } from './highlight'
 import type { CreateEditorOptions } from './types'
 

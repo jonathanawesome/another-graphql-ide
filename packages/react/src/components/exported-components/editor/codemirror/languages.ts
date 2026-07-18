@@ -18,15 +18,13 @@ export { updateSchema } from 'cm6-graphql'
  * The GraphQL factory takes the schema so that, when provided, cm6-graphql
  * wires up schema-aware autocompletion, linting, and hover.
  */
-const LANGUAGES: Record<
-  EditorLanguage,
-  (schema?: GraphQLSchema) => Extension
-> = {
-  graphql: schema => graphql(schema),
-  json5: () => json5(),
-  javascript: () => javascript(),
-  typescript: () => javascript({ typescript: true }),
-}
+const LANGUAGES: Record<EditorLanguage, (schema?: GraphQLSchema) => Extension> =
+  {
+    graphql: schema => graphql(schema),
+    json5: () => json5(),
+    javascript: () => javascript(),
+    typescript: () => javascript({ typescript: true }),
+  }
 
 /**
  * Resolve the CodeMirror language extension for the given language, passing the

@@ -7,7 +7,8 @@ type BuildHTTPExecutorOptions = {
 }
 
 const { buildHTTPExecutorMock } = vi.hoisted(() => ({
-  buildHTTPExecutorMock: vi.fn<(options: BuildHTTPExecutorOptions) => unknown>(),
+  buildHTTPExecutorMock:
+    vi.fn<(options: BuildHTTPExecutorOptions) => unknown>(),
 }))
 
 vi.mock('@graphql-tools/executor-http', () => ({
@@ -58,7 +59,10 @@ describe('createTransport', () => {
 
   it('builds the executor with a headers function and no retry', () => {
     buildHTTPExecutorMock.mockReturnValue(() => Promise.resolve({}))
-    createTransport({ endpoint: 'http://localhost/graphql', headers: { a: '1' } })
+    createTransport({
+      endpoint: 'http://localhost/graphql',
+      headers: { a: '1' },
+    })
 
     const options = buildHTTPExecutorMock.mock.calls[0]?.[0]
     expect(options?.endpoint).toBe('http://localhost/graphql')

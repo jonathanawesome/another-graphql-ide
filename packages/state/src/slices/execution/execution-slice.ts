@@ -55,7 +55,10 @@ export const createExecutionSlice: StateCreator<
           { signal }
         )) {
           if (signal.aborted) return
-          set({ status: 'streaming', response: JSON.stringify(result, null, 2) })
+          set({
+            status: 'streaming',
+            response: JSON.stringify(result, null, 2),
+          })
         }
         if (!signal.aborted) set({ status: 'idle' })
       } catch (error) {
