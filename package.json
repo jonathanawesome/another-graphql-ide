@@ -10,8 +10,6 @@
     "types": "turbo run types",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
-    "react:build": "pnpm --filter @another-graphql-ide/react build",
-    "react:build:workers": "pnpm --filter @another-graphql-ide/react build:workers",
     "preview": "pnpm --filter component-preview dev",
     "preview:build": "pnpm --filter component-preview build",
     "preview:serve": "pnpm --filter component-preview preview",
