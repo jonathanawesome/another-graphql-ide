@@ -15,7 +15,7 @@ const yoga = createYoga({
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 const server = createServer(yoga)
 
-server.listen(0, () => {
+server.listen(4000, () => {
   const address = server.address() as AddressInfo
   const port = address.port
   console.log(
