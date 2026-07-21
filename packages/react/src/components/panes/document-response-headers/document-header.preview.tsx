@@ -1,23 +1,13 @@
-import { createPreview } from '@another-graphql-ide/shared'
+import { createPreview, type NavPath } from 'react-foundry'
 
 import { DemoGrid } from '../../utility-components/previews/components'
 
 import { DocumentHeader } from './document-header'
 
-const preview = createPreview({
-  title: 'DocumentHeader',
-  component: DocumentHeader,
-  category: 'Panes',
-  demos: [
-    {
-      name: 'Example',
-      render: () => (
-        <DemoGrid>
-          <DocumentHeader />
-        </DemoGrid>
-      ),
-    },
-  ],
-})
+export const nav: NavPath = 'Panes/Document Header'
 
-export default preview
+export const Example = createPreview(() => (
+  <DemoGrid>
+    <DocumentHeader />
+  </DemoGrid>
+))

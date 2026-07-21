@@ -1,4 +1,0 @@
-{
-  "extends": "@another-graphql-ide/tsconfig/react.json",
-  "include": ["src/**/*", "vite.config.ts", "*.d.ts"]
-}

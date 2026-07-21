@@ -1,5 +1,5 @@
-import { createPreview } from '@another-graphql-ide/shared'
 import { useState } from 'react'
+import { createPreview, type NavPath } from 'react-foundry'
 
 import {
   DemoGrid,
@@ -7,6 +7,8 @@ import {
 } from '../../utility-components/previews/components'
 
 import { Input, type InputProps } from './input'
+
+export const nav: NavPath = 'UI Components/Input'
 
 const Wrapper = ({
   leftIcon,
@@ -27,102 +29,96 @@ const Wrapper = ({
   )
 }
 
-const preview = createPreview<InputProps>({
-  title: 'Input',
-  component: Input,
-  category: 'UI Components',
-
-  demos: [
-    {
-      name: 'All variants',
-      render: () => (
-        <DemoGrid>
-          <DemoGridItem>
-            <span>default</span>
-            <Wrapper name="some-cool-input1" placeholder="placeholder..." />
-          </DemoGridItem>
-          <DemoGridItem>
-            <span>leftIcon & withClearValue</span>
-            <Wrapper
-              name="some-cool-input1"
-              placeholder="placeholder..."
-              withClearValue
-              leftIcon="BowArrow"
-            />
-          </DemoGridItem>
-          <DemoGridItem>
-            <span>withLeftIcon</span>
-            <Wrapper
-              name="some-cool-input1"
-              placeholder="placeholder..."
-              leftIcon="Search"
-            />
-          </DemoGridItem>
-          <DemoGridItem>
-            <span>withClearValue</span>
-            <Wrapper
-              name="some-cool-input1"
-              placeholder="placeholder..."
-              withClearValue={true}
-            />
-          </DemoGridItem>
-        </DemoGrid>
-      ),
-    },
-    {
-      name: 'default',
-      render: () => (
-        <DemoGrid>
-          <DemoGridItem>
-            <Wrapper name="some-cool-input1" placeholder="placeholder..." />
-          </DemoGridItem>
-        </DemoGrid>
-      ),
-    },
-    {
-      name: 'withLeftIcon',
-      render: () => (
-        <DemoGrid>
-          <DemoGridItem>
-            <Wrapper
-              name="some-cool-input1"
-              placeholder="placeholder..."
-              leftIcon="Settings2"
-            />
-          </DemoGridItem>
-        </DemoGrid>
-      ),
-    },
-    {
-      name: 'withClearValue',
-      render: () => (
-        <DemoGrid>
-          <DemoGridItem>
-            <Wrapper
-              name="some-cool-input1"
-              placeholder="placeholder..."
-              withClearValue={true}
-            />
-          </DemoGridItem>
-        </DemoGrid>
-      ),
-    },
-    {
-      name: 'withClearValue and leftIcon',
-      render: () => (
-        <DemoGrid>
-          <DemoGridItem>
-            <Wrapper
-              name="some-cool-input1"
-              placeholder="placeholder..."
-              withClearValue={true}
-              leftIcon={'BookOpenText'}
-            />
-          </DemoGridItem>
-        </DemoGrid>
-      ),
-    },
-  ],
+export const AllVariants = createPreview({
+  label: 'All variants',
+  render: () => (
+    <DemoGrid>
+      <DemoGridItem>
+        <span>default</span>
+        <Wrapper name="some-cool-input1" placeholder="placeholder..." />
+      </DemoGridItem>
+      <DemoGridItem>
+        <span>leftIcon & withClearValue</span>
+        <Wrapper
+          name="some-cool-input1"
+          placeholder="placeholder..."
+          withClearValue
+          leftIcon="BowArrow"
+        />
+      </DemoGridItem>
+      <DemoGridItem>
+        <span>withLeftIcon</span>
+        <Wrapper
+          name="some-cool-input1"
+          placeholder="placeholder..."
+          leftIcon="Search"
+        />
+      </DemoGridItem>
+      <DemoGridItem>
+        <span>withClearValue</span>
+        <Wrapper
+          name="some-cool-input1"
+          placeholder="placeholder..."
+          withClearValue={true}
+        />
+      </DemoGridItem>
+    </DemoGrid>
+  ),
 })
 
-export default preview
+export const Default = createPreview({
+  label: 'default',
+  render: () => (
+    <DemoGrid>
+      <DemoGridItem>
+        <Wrapper name="some-cool-input1" placeholder="placeholder..." />
+      </DemoGridItem>
+    </DemoGrid>
+  ),
+})
+
+export const WithLeftIcon = createPreview({
+  label: 'withLeftIcon',
+  render: () => (
+    <DemoGrid>
+      <DemoGridItem>
+        <Wrapper
+          name="some-cool-input1"
+          placeholder="placeholder..."
+          leftIcon="Settings2"
+        />
+      </DemoGridItem>
+    </DemoGrid>
+  ),
+})
+
+export const WithClearValue = createPreview({
+  label: 'withClearValue',
+  render: () => (
+    <DemoGrid>
+      <DemoGridItem>
+        <Wrapper
+          name="some-cool-input1"
+          placeholder="placeholder..."
+          withClearValue={true}
+        />
+      </DemoGridItem>
+    </DemoGrid>
+  ),
+})
+
+export const WithClearValueAndLeftIcon = createPreview({
+  label: 'withClearValue and leftIcon',
+  render: () => (
+    <DemoGrid>
+      <DemoGridItem>
+        <Wrapper
+          name="some-cool-input1"
+          placeholder="placeholder..."
+          withClearValue={true}
+          leftIcon={'BookOpenText'}
+        />
+      </DemoGridItem>
+    </DemoGrid>
+  ),
+})

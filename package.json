@@ -10,9 +10,9 @@
     "types": "turbo run types",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
-    "preview": "pnpm --filter component-preview dev",
-    "preview:build": "pnpm --filter component-preview build",
-    "preview:serve": "pnpm --filter component-preview preview",
+    "preview": "pnpm --filter foundry dev",
+    "preview:build": "pnpm --filter foundry build",
+    "preview:serve": "pnpm --filter foundry preview",
     "prettier:check": "pnpm prettier --check --cache ./",
     "prettier:write": "pnpm prettier --write --cache ./"
   },

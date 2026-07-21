@@ -1,4 +1,4 @@
-import { createPreview } from '@another-graphql-ide/shared'
+import { createPreview, type NavPath } from 'react-foundry'
 
 import {
   DemoGrid,
@@ -6,34 +6,24 @@ import {
 } from '../../utility-components/previews/components'
 import { IconButton } from '../icon-button/icon-button'
 
-import { Tooltip, type TooltipProps } from './tooltip'
+import { Tooltip } from './tooltip'
 
-const preview = createPreview<TooltipProps>({
-  title: 'Tooltip',
-  component: Tooltip,
-  category: 'UI Components',
-  demos: [
-    {
-      name: 'Sides',
-      render: () => (
-        <DemoGrid gap={64}>
-          <DemoGridItem>
-            <Tooltip
-              content={'This is a cool tooltip'}
-              side="top"
-              trigger={
-                <IconButton
-                  ghost={true}
-                  label={'A cool popover'}
-                  name={'Settings2'}
-                />
-              }
-            />
-          </DemoGridItem>
-        </DemoGrid>
-      ),
-    },
-  ],
-})
+export const nav: NavPath = 'UI Components/Tooltip'
 
-export default preview
+export const Sides = createPreview(() => (
+  <DemoGrid gap={64}>
+    <DemoGridItem>
+      <Tooltip
+        content={'This is a cool tooltip'}
+        side="top"
+        trigger={
+          <IconButton
+            ghost={true}
+            label={'A cool popover'}
+            name={'Settings2'}
+          />
+        }
+      />
+    </DemoGridItem>
+  </DemoGrid>
+))
