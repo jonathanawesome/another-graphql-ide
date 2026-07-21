@@ -1,17 +1,25 @@
 import type {
+  ArgumentNode,
   DefinitionNode,
   FieldNode,
   FragmentDefinitionNode,
+  GraphQLField,
+  GraphQLInputType,
   GraphQLNamedType,
   GraphQLSchema,
   NameNode,
   OperationDefinitionNode,
   SelectionNode,
   SelectionSetNode,
+  ValueNode,
 } from 'graphql'
 import {
   getNamedType,
+  isEnumType,
+  isInputObjectType,
   isInterfaceType,
+  isListType,
+  isNonNullType,
   isObjectType,
   isUnionType,
   Kind,
@@ -32,23 +40,21 @@ export type ComputeToggleParams = {
   mode: ObjectFieldInsertionMode
 }
 
-export type ComputeToggleResult = { query: string; selection?: number }
+export type ComputeToggleResult = {
+  query: string
+  selection?: { anchor: number; head: number }
+}
 
 // The only definition kinds we insert into: named/anonymous operations and
 // fragment definitions. Both carry a `selectionSet`.
 type TargetableDefinition = OperationDefinitionNode | FragmentDefinitionNode
 
-// Unique token inserted as the sole child of a new object field in
-// `empty-braces` mode. It forces `print` to emit braces (graphql prints
-// nothing for an empty selection set), then we splice it out and return its
-// offset so the caret lands between the braces.
-const CARET_SENTINEL = '__AGI_CARET__'
-
 /**
- * Toggle a field path into or out of the GraphQL document, targeting the
- * operation or fragment the cursor is inside. Pure: no CodeMirror, no store.
- * Returns the original query unchanged on any condition it cannot handle
- * safely (parse failure, unresolved path, unions/arguments, missing types).
+ * Toggle a field path (or one of its arguments) into or out of the GraphQL
+ * document, targeting the operation or fragment the cursor is inside. Pure: no
+ * CodeMirror, no store. Returns the original query unchanged on any condition
+ * it cannot handle safely (parse failure, unresolved path, unions, missing
+ * types or arguments).
  */
 export function computeToggle({
   query,
@@ -72,24 +78,31 @@ export function computeToggle({
     }
   }
 
-  // Find the active operation/fragment, or synthesize one when the doc is empty.
-  const targetable = definitions.filter(
-    (d): d is TargetableDefinition =>
-      d.kind === Kind.OPERATION_DEFINITION ||
-      d.kind === Kind.FRAGMENT_DEFINITION
+  // Add to the active (cursor) operation only when it is of the clicked field's
+  // root type; otherwise start a fresh named operation. Adding to some other
+  // existing operation requires the user to highlight it first.
+  const rootOp = target.rootOperation as OperationTypeNode
+  const operations = definitions.filter(
+    (d): d is OperationDefinitionNode => d.kind === Kind.OPERATION_DEFINITION
   )
+  const activeOp =
+    operations.length > 0
+      ? operations[selectActiveDefIndex(operations, cursor)]
+      : undefined
+
   let activeDef: TargetableDefinition
-  if (targetable.length === 0) {
+  let createdOpName: string | undefined
+  if (activeOp?.operation === rootOp) {
+    activeDef = activeOp
+  } else {
+    createdOpName = uniqueOperationName(definitions, rootOp)
     activeDef = {
       kind: Kind.OPERATION_DEFINITION,
-      operation: target.rootOperation as OperationTypeNode,
+      operation: rootOp,
+      name: makeName(createdOpName),
       selectionSet: makeSelectionSet([]),
     }
     definitions = [...definitions, activeDef]
-  } else {
-    const found = targetable[selectActiveDefIndex(targetable, cursor)]
-    if (!found) return { query }
-    activeDef = found
   }
 
   // Resolve the base type the path is relative to.
@@ -108,8 +121,35 @@ export function computeToggle({
   const names = target.path
 
   let newSelections: SelectionNode[]
-  let insertedCaret = false
-  if (pathExists(activeSelections, names, 0)) {
+
+  if (target.argument !== undefined) {
+    const arg = leaf.field.args.find(a => a.name === target.argument)
+    if (!arg) return { query }
+
+    const existingField = getFieldAtPath(activeSelections, names, 0)
+    const hasArg =
+      existingField?.arguments?.some(a => a.name.value === target.argument) ??
+      false
+
+    if (hasArg) {
+      newSelections = updateFieldAtPath(activeSelections, names, 0, field => ({
+        ...field,
+        arguments: (field.arguments ?? []).filter(
+          a => a.name.value !== target.argument
+        ),
+      }))
+    } else {
+      // Ensure the field exists, then add the argument with a placeholder value.
+      const ensured = existingField
+        ? activeSelections
+        : insertField(activeSelections, names, 0, leafNeedsSelection, mode)
+      const argNode = makeArgument(arg.name, placeholderValue(arg.type))
+      newSelections = updateFieldAtPath(ensured, names, 0, field => ({
+        ...field,
+        arguments: [...(field.arguments ?? []), argNode],
+      }))
+    }
+  } else if (pathExists(activeSelections, names, 0)) {
     newSelections = removeField(activeSelections, names, 0)
   } else {
     newSelections = insertField(
@@ -119,28 +159,29 @@ export function computeToggle({
       leafNeedsSelection,
       mode
     )
-    insertedCaret = leafNeedsSelection && mode === 'empty-braces'
   }
 
   const newDef = withSelections(activeDef, newSelections)
   const newDefinitions = definitions.map(d => (d === activeDef ? newDef : d))
   const printed = print({ kind: Kind.DOCUMENT, definitions: newDefinitions })
 
-  if (insertedCaret) {
-    const at = printed.indexOf(CARET_SENTINEL)
-    if (at !== -1) {
-      return {
-        query: printed.slice(0, at) + printed.slice(at + CARET_SENTINEL.length),
-        selection: at,
-      }
-    }
+  // Move the caret into a freshly created operation so it becomes the active
+  // (highlighted) one. The op is appended last, so its unique name is the last
+  // occurrence.
+  if (createdOpName !== undefined) {
+    const at = printed.lastIndexOf(createdOpName)
+    if (at !== -1) return { query: printed, selection: { anchor: at, head: at } }
   }
   return { query: printed }
 }
 
 // --- definition + type resolution ---------------------------------------
 
-type ResolvedStep = { name: string; namedType: GraphQLNamedType }
+type ResolvedStep = {
+  name: string
+  field: GraphQLField<unknown, unknown>
+  namedType: GraphQLNamedType
+}
 
 /** GraphiQL-style: the def containing the cursor, else the last starting before it, else the first. */
 function selectActiveDefIndex(
@@ -157,6 +198,31 @@ function selectActiveDefIndex(
     if (loc && loc.start <= cursor) before = i
   }
   return before === -1 ? 0 : before
+}
+
+/** A fresh operation name like `NewQuery`, suffixed to avoid collisions. */
+function uniqueOperationName(
+  definitions: readonly DefinitionNode[],
+  operation: OperationTypeNode
+): string {
+  const label =
+    operation === OperationTypeNode.MUTATION
+      ? 'Mutation'
+      : operation === OperationTypeNode.SUBSCRIPTION
+        ? 'Subscription'
+        : 'Query'
+  const base = `New${label}`
+
+  const taken = new Set<string>()
+  for (const def of definitions) {
+    if (def.kind === Kind.OPERATION_DEFINITION && def.name) {
+      taken.add(def.name.value)
+    }
+  }
+  if (!taken.has(base)) return base
+  let n = 2
+  while (taken.has(`${base}${n}`)) n++
+  return `${base}${n}`
 }
 
 function definitionBaseType(
@@ -184,7 +250,7 @@ function resolvePath(
     const field = currentType.getFields()[segment]
     if (!field) return null
     const namedType = getNamedType(field.type)
-    steps.push({ name: segment, namedType })
+    steps.push({ name: segment, field, namedType })
     currentType = namedType
   }
   return steps
@@ -269,16 +335,87 @@ function removeField(
   })
 }
 
+/** The field node at the given path, or null if any segment is absent. */
+function getFieldAtPath(
+  selections: readonly SelectionNode[],
+  names: string[],
+  i: number
+): FieldNode | null {
+  const field = selections.find(
+    (s): s is FieldNode => s.kind === Kind.FIELD && s.name.value === names[i]
+  )
+  if (!field) return null
+  if (i === names.length - 1) return field
+  return getFieldAtPath(field.selectionSet?.selections ?? [], names, i + 1)
+}
+
+/** Rebuild the selections applying `update` to the field node at the path. */
+function updateFieldAtPath(
+  selections: readonly SelectionNode[],
+  names: string[],
+  i: number,
+  update: (field: FieldNode) => FieldNode
+): SelectionNode[] {
+  const idx = selections.findIndex(
+    s => s.kind === Kind.FIELD && s.name.value === names[i]
+  )
+  if (idx === -1) return [...selections]
+
+  const field = selections[idx] as FieldNode
+  if (i === names.length - 1) {
+    return replaceAt(selections, idx, update(field))
+  }
+  const child = updateFieldAtPath(
+    field.selectionSet?.selections ?? [],
+    names,
+    i + 1,
+    update
+  )
+  return replaceAt(selections, idx, {
+    ...field,
+    selectionSet: makeSelectionSet(child),
+  })
+}
+
+/** A self-contained placeholder literal matching the argument type. */
+function placeholderValue(type: GraphQLInputType): ValueNode {
+  if (isNonNullType(type)) return placeholderValue(type.ofType)
+  if (isListType(type)) return { kind: Kind.LIST, values: [] }
+
+  const named = getNamedType(type)
+  if (isEnumType(named)) {
+    const first = named.getValues()[0]
+    return first ? { kind: Kind.ENUM, value: first.name } : { kind: Kind.NULL }
+  }
+  if (isInputObjectType(named)) return { kind: Kind.OBJECT, fields: [] }
+
+  switch (named.name) {
+    case 'Int':
+      return { kind: Kind.INT, value: '0' }
+    case 'Float':
+      return { kind: Kind.FLOAT, value: '0' }
+    case 'Boolean':
+      return { kind: Kind.BOOLEAN, value: false }
+    default:
+      // String, ID, and custom scalars get an empty string.
+      return { kind: Kind.STRING, value: '' }
+  }
+}
+
 // --- node builders ------------------------------------------------------
+
+function makeArgument(name: string, value: ValueNode): ArgumentNode {
+  return { kind: Kind.ARGUMENT, name: makeName(name), value }
+}
 
 function buildLeaf(
   name: string,
   needsSelection: boolean,
   mode: ObjectFieldInsertionMode
 ): FieldNode {
-  if (!needsSelection) return makeField(name)
-  const child = mode === 'typename' ? '__typename' : CARET_SENTINEL
-  return makeField(name, makeSelectionSet([makeField(child)]))
+  // `bare` leaves an object field with no subselection for the user to fill.
+  if (!needsSelection || mode === 'bare') return makeField(name)
+  return makeField(name, makeSelectionSet([makeField('__typename')]))
 }
 
 function makeName(value: string): NameNode {

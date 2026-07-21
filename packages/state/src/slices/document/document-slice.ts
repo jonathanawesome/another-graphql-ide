@@ -40,7 +40,11 @@ export const createDocumentSlice: StateCreator<
     const nonce = (get().pendingSelection?.nonce ?? 0) + 1
     set({
       query: result.query,
-      pendingSelection: { offset: result.selection, nonce },
+      pendingSelection: {
+        anchor: result.selection.anchor,
+        head: result.selection.head,
+        nonce,
+      },
     })
   },
 })

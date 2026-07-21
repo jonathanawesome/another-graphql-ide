@@ -18,6 +18,14 @@ export type EditorProps = {
    * change. Only meaningful when `language` is `graphql`.
    */
   onActiveOperationChange?: (name: string | undefined) => void
+  /** Called with the caret offset on cursor / doc change. */
+  onSelectionChange?: (offset: number) => void
+  /**
+   * A one-shot request to move the caret or select a range, applied once per
+   * `nonce`. Lets state-driven edits place the cursor or select a placeholder
+   * to type over (e.g. after a schema tree insert).
+   */
+  pendingSelection?: { anchor: number; head: number; nonce: number }
   /**
    * GraphQL schema powering schema-aware completion, linting, and hover.
    * Only used when `language` is `graphql`.
@@ -35,6 +43,8 @@ export const Editor = ({
   defaultValue,
   onChange,
   onActiveOperationChange,
+  onSelectionChange,
+  pendingSelection,
   schema,
   readOnly,
   className,
@@ -47,6 +57,8 @@ export const Editor = ({
     readOnly,
     onChange,
     onActiveOperationChange,
+    onSelectionChange,
+    pendingSelection,
   })
 
   return (

@@ -24,18 +24,25 @@ export const createEditorView = (options: CreateEditorOptions): EditorView => {
     dark,
     onChange,
     onActiveOperationChange,
+    onSelectionChange,
   } = options
 
   const updateListener = EditorView.updateListener.of(update => {
     if (update.docChanged) {
       onChange?.(update.state.doc.toString())
     }
-    // Emit only when the active operation name actually changes, so cursor
-    // moves within the same operation write nothing downstream.
     if (update.docChanged || update.selectionSet) {
+      // Emit the active operation name only when it actually changes, so cursor
+      // moves within the same operation write nothing downstream.
       const next = update.state.field(activeOperationField).name
       const prev = update.startState.field(activeOperationField).name
       if (next !== prev) onActiveOperationChange?.(next)
+
+      // Emit the caret offset on any move so state-driven edits (e.g. schema
+      // tree inserts) know where the cursor is.
+      const nextHead = update.state.selection.main.head
+      const prevHead = update.startState.selection.main.head
+      if (nextHead !== prevHead) onSelectionChange?.(nextHead)
     }
   })
 
@@ -57,9 +64,10 @@ export const createEditorView = (options: CreateEditorOptions): EditorView => {
 
   const view = new EditorView({ state, parent })
 
-  // Emit the initial name so a document present on mount labels the button
+  // Emit the initial name and caret so a document present on mount is reflected
   // before any interaction. The updateListener only fires on later changes.
   onActiveOperationChange?.(view.state.field(activeOperationField).name)
+  onSelectionChange?.(view.state.selection.main.head)
 
   return view
 }

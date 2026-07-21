@@ -49,8 +49,9 @@ const Component = ({
   state,
   label,
   tabIndex = 0,
+  onClick,
   ...props
-}: IconButtonProps) => {
+}: IconButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <button
       {...props}
@@ -62,7 +63,12 @@ const Component = ({
       })}
       aria-label={label}
       disabled={state === 'disabled'}
-      onClick={action}
+      // Compose any injected handler (e.g. a Base UI trigger opening a popover)
+      // with our own action so neither is dropped.
+      onClick={event => {
+        onClick?.(event)
+        action?.()
+      }}
       ref={ref}
       tabIndex={tabIndex}
     >

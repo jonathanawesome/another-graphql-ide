@@ -32,4 +32,6 @@ export type CreateEditorOptions = {
    * moves or the document changes. GraphQL only.
    */
   onActiveOperationChange?: (name: string | undefined) => void
+  /** Called with the caret offset whenever the cursor moves or the doc changes. */
+  onSelectionChange?: (offset: number) => void
 }

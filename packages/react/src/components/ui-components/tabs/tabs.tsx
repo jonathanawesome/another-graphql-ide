@@ -7,6 +7,9 @@ import { tabsStyles } from './tabs.css'
 
 export type TabsProps = {
   defaultActiveTab?: string
+  /** Controlled active tab. When provided (with `onValueChange`) the parent owns tab state. */
+  value?: string
+  onValueChange?: (value: string) => void
   items: {
     name: string
     content: ReactNode
@@ -15,14 +18,27 @@ export type TabsProps = {
   label: string
 }
 
-export const Tabs = ({ defaultActiveTab, items, label }: TabsProps) => {
-  const [activeTab, setActiveTab] = useState(defaultActiveTab ?? items[0]?.name)
+export const Tabs = ({
+  defaultActiveTab,
+  value,
+  onValueChange,
+  items,
+  label,
+}: TabsProps) => {
+  const [uncontrolled, setUncontrolled] = useState(
+    defaultActiveTab ?? items[0]?.name
+  )
+  const activeTab = value ?? uncontrolled
+  const handleChange = (next: string) => {
+    setUncontrolled(next)
+    onValueChange?.(next)
+  }
 
   return (
     <BaseTabs.Root
       className={tabsStyles.root}
       value={activeTab}
-      onValueChange={value => setActiveTab(value as string)}
+      onValueChange={next => handleChange(next as string)}
     >
       <BaseTabs.List className={tabsStyles.list} aria-label={label}>
         {items.map((item, i) => (

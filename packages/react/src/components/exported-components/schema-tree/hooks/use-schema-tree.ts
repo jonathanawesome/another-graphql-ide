@@ -11,12 +11,19 @@ import {
  * Hook for managing schema tree data and search filtering
  */
 export function useSchemaTree(
-  schema: GraphQLSchema,
+  schema: GraphQLSchema | undefined,
   searchTerm: string,
   activeTab: TabType
 ) {
-  // Parse schema into organized data by operation type
-  const schemaData = useMemo(() => createSchemaTreeData(schema), [schema])
+  // Parse schema into organized data by operation type. Empty when no schema
+  // is loaded yet, so the hook can be called unconditionally.
+  const schemaData = useMemo(
+    () =>
+      schema
+        ? createSchemaTreeData(schema)
+        : { query: null, mutation: null, subscription: null },
+    [schema]
+  )
 
   // Helper function to count fields matching search term
   const getFilteredFieldCount = useCallback(

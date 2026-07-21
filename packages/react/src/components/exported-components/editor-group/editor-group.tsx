@@ -21,6 +21,7 @@ export const EditorGroup = ({
 }: EditorGroupProps) => {
   const setEndpoint = useAppStore.use.setEndpoint()
   const setQuery = useAppStore.use.setQuery()
+  const setSchema = useAppStore.use.setSchema()
 
   useEffect(() => {
     if (endpoint) setEndpoint(endpoint)
@@ -30,11 +31,17 @@ export const EditorGroup = ({
     if (defaultQuery) setQuery(defaultQuery)
   }, [defaultQuery, setQuery])
 
+  // Bridge the schema prop into shared state so the editor and the schema tree
+  // read one instance. The tree reads it straight from the store.
+  useEffect(() => {
+    setSchema(schema)
+  }, [schema, setSchema])
+
   return (
     <div className={editorGroupStyles.container}>
       <Resizer
         orientation="horizontal"
-        firstPane={<DocumentPane schema={schema} />}
+        firstPane={<DocumentPane />}
         secondPane={<ResponsePane />}
       />
     </div>

@@ -40,6 +40,8 @@ export default defineConfig({
         { label: 'Editor' },
         { label: 'Editor Group' },
         { label: 'Schema Tree' },
+        { label: 'Schema Tree Settings' },
+        { label: 'Schema Tree + Editor' },
       ],
     },
   ],
