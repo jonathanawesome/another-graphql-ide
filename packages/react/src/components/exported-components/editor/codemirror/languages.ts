@@ -4,6 +4,7 @@ import { graphql } from 'cm6-graphql'
 import { json5 } from 'codemirror-json5'
 import type { GraphQLSchema } from 'graphql'
 
+import { graphqlHover } from './hover'
 import type { EditorLanguage } from './types'
 
 // Re-exported so the rest of the module never imports cm6-graphql directly —
@@ -16,11 +17,12 @@ export { updateSchema } from 'cm6-graphql'
  * here — nothing else in the module needs to change.
  *
  * The GraphQL factory takes the schema so that, when provided, cm6-graphql
- * wires up schema-aware autocompletion, linting, and hover.
+ * wires up schema-aware autocompletion and linting. cm6-graphql ships no hover,
+ * so graphqlHover is added alongside it to show type descriptions on hover.
  */
 const LANGUAGES: Record<EditorLanguage, (schema?: GraphQLSchema) => Extension> =
   {
-    graphql: schema => graphql(schema),
+    graphql: schema => [graphql(schema), graphqlHover()],
     json5: () => json5(),
     javascript: () => javascript(),
     typescript: () => javascript({ typescript: true }),
