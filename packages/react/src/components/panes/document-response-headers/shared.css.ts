@@ -10,6 +10,7 @@ export const sharedStyles = {
       width: '100%',
       height: themeContract.px[40],
       backgroundColor: themeContract.colors.neutral2,
+      borderBottom: `1px solid ${themeContract.colors.neutral4}`,
       paddingLeft: themeContract.px[12],
     },
     'document-response-headers-container'
