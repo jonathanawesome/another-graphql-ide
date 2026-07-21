@@ -1,0 +1,27 @@
+{
+  "name": "foundry",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "foundry dev",
+    "build": "foundry build",
+    "preview": "foundry preview",
+    "lint": "eslint .",
+    "types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@another-graphql-ide/react": "workspace:*",
+    "@another-graphql-ide/style": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-foundry": "0.0.5"
+  },
+  "devDependencies": {
+    "@another-graphql-ide/eslint-config": "workspace:*",
+    "@another-graphql-ide/tsconfig": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vanilla-extract/vite-plugin": "catalog:",
+    "typescript": "catalog:"
+  }
+}

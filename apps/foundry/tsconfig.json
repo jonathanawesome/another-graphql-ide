@@ -1,0 +1,4 @@
+{
+  "extends": "@another-graphql-ide/tsconfig/react.json",
+  "include": ["foundry.config.ts", "foundry.providers.tsx", "*.d.ts"]
+}

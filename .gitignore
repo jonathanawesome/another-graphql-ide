@@ -30,6 +30,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+# react-foundry generated nav types
+packages/react/src/foundry-nav.gen.d.ts
+
 # ide
 .idea
 .vscode/*

@@ -1,34 +1,25 @@
-import { createPreview } from '@another-graphql-ide/shared'
+import { createPreview, type NavPath } from 'react-foundry'
 
 import { DemoGrid } from '../../utility-components/previews/components'
 
-import { AppNavigation, type AppNavigationProps } from './app-navigation'
+import { AppNavigation } from './app-navigation'
 
-const preview = createPreview<AppNavigationProps>({
-  title: 'AppNavigation',
-  component: AppNavigation,
-  category: 'Navigation Components',
-  variants: [
-    {
-      name: 'Vertical',
-      props: { orientation: 'vertical' },
-    },
-    {
-      name: 'Horizontal',
-      props: { orientation: 'horizontal' },
-    },
-  ],
-  demos: [
-    {
-      name: 'Vertical & Horizontal',
-      render: () => (
-        <DemoGrid>
-          <AppNavigation orientation="horizontal" />
-          <AppNavigation orientation="vertical" />
-        </DemoGrid>
-      ),
-    },
-  ],
+export const nav: NavPath = 'Navigation/App Navigation'
+
+export const Vertical = createPreview(() => (
+  <AppNavigation orientation="vertical" />
+))
+
+export const Horizontal = createPreview(() => (
+  <AppNavigation orientation="horizontal" />
+))
+
+export const VerticalAndHorizontal = createPreview({
+  label: 'Vertical & Horizontal',
+  render: () => (
+    <DemoGrid>
+      <AppNavigation orientation="horizontal" />
+      <AppNavigation orientation="vertical" />
+    </DemoGrid>
+  ),
 })
-
-export default preview

@@ -1,17 +1,7 @@
-import { createPreview } from '@another-graphql-ide/shared'
+import { createPreview, type NavPath } from 'react-foundry'
 
 import { EditorGroupTabs } from './editor-group-tabs'
 
-const preview = createPreview({
-  title: 'EditorGroupTabs',
-  component: EditorGroupTabs,
-  category: 'Navigation Components',
-  demos: [
-    {
-      name: 'Example',
-      render: () => <EditorGroupTabs />,
-    },
-  ],
-})
+export const nav: NavPath = 'Navigation/Editor Group Tabs'
 
-export default preview
+export const Example = createPreview(() => <EditorGroupTabs />)
