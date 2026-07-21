@@ -1,25 +1,28 @@
-import * as RadixTooltip from '@radix-ui/react-tooltip'
+import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip'
+import { type ReactElement } from 'react'
 
 import { tooltipStyles } from './tooltip.css'
 
 export type TooltipProps = {
   content: string
-  side?: RadixTooltip.TooltipContentProps['side']
+  side?: 'top' | 'right' | 'bottom' | 'left'
   trigger: React.ReactNode
 }
 
 export const Tooltip = ({ content, side = 'top', trigger }: TooltipProps) => {
   return (
-    <RadixTooltip.Provider>
-      <RadixTooltip.Root delayDuration={0}>
-        <RadixTooltip.Trigger asChild>{trigger}</RadixTooltip.Trigger>
-        <RadixTooltip.Portal>
-          <RadixTooltip.Content className={tooltipStyles.content} side={side}>
-            {content}
-            <RadixTooltip.Arrow className={tooltipStyles.arrow} />
-          </RadixTooltip.Content>
-        </RadixTooltip.Portal>
-      </RadixTooltip.Root>
-    </RadixTooltip.Provider>
+    <BaseTooltip.Provider delay={0}>
+      <BaseTooltip.Root>
+        <BaseTooltip.Trigger render={trigger as ReactElement} />
+        <BaseTooltip.Portal>
+          <BaseTooltip.Positioner side={side}>
+            <BaseTooltip.Popup className={tooltipStyles.content}>
+              {content}
+              <BaseTooltip.Arrow className={tooltipStyles.arrow} />
+            </BaseTooltip.Popup>
+          </BaseTooltip.Positioner>
+        </BaseTooltip.Portal>
+      </BaseTooltip.Root>
+    </BaseTooltip.Provider>
   )
 }

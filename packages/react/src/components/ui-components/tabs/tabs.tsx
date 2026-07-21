@@ -1,4 +1,4 @@
-import * as RadixTabs from '@radix-ui/react-tabs'
+import { Tabs as BaseTabs } from '@base-ui/react/tabs'
 import { useState, type ReactNode } from 'react'
 
 import type { TabTriggerProps } from './tab-trigger'
@@ -19,12 +19,12 @@ export const Tabs = ({ defaultActiveTab, items, label }: TabsProps) => {
   const [activeTab, setActiveTab] = useState(defaultActiveTab ?? items[0]?.name)
 
   return (
-    <RadixTabs.Root
+    <BaseTabs.Root
       className={tabsStyles.root}
       value={activeTab}
-      onValueChange={setActiveTab}
+      onValueChange={value => setActiveTab(value as string)}
     >
-      <RadixTabs.List className={tabsStyles.list} aria-label={label}>
+      <BaseTabs.List className={tabsStyles.list} aria-label={label}>
         {items.map((item, i) => (
           <TabTrigger
             key={i}
@@ -33,16 +33,16 @@ export const Tabs = ({ defaultActiveTab, items, label }: TabsProps) => {
             {...item.trigger}
           />
         ))}
-      </RadixTabs.List>
+      </BaseTabs.List>
       {items.map((item, i) => (
-        <RadixTabs.Content
+        <BaseTabs.Panel
           className={tabsStyles.content}
           value={item.name}
           key={i}
         >
           {item.content}
-        </RadixTabs.Content>
+        </BaseTabs.Panel>
       ))}
-    </RadixTabs.Root>
+    </BaseTabs.Root>
   )
 }

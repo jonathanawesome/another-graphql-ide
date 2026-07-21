@@ -61,16 +61,16 @@ export const tooltipStyles = {
     willChange: 'transform, opacity',
 
     selectors: {
-      '&[data-state="delayed-open"][data-side="top"]': {
+      '&[data-open][data-side="top"]': {
         animationName: slideDownAndFade,
       },
-      '&[data-state="delayed-open"][data-side="right"]': {
+      '&[data-open][data-side="right"]': {
         animationName: slideLeftAndFade,
       },
-      '&[data-state="delayed-open"][data-side="bottom"]': {
+      '&[data-open][data-side="bottom"]': {
         animationName: slideUpAndFade,
       },
-      '&[data-state="delayed-open"][data-side="left"]': {
+      '&[data-open][data-side="left"]': {
         animationName: slideRightAndFade,
       },
     },
