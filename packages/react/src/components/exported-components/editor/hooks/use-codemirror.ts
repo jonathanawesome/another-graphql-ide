@@ -21,6 +21,7 @@ export type UseCodemirrorParams = {
   schema?: GraphQLSchema
   readOnly?: boolean
   onChange?: (value: string) => void
+  onActiveOperationChange?: (name: string | undefined) => void
 }
 
 /**
@@ -35,6 +36,7 @@ export const useCodemirror = ({
   schema,
   readOnly = false,
   onChange,
+  onActiveOperationChange,
 }: UseCodemirrorParams) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
@@ -44,6 +46,8 @@ export const useCodemirror = ({
   // value syncs from re-firing it.
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
+  const onActiveOperationChangeRef = useRef(onActiveOperationChange)
+  onActiveOperationChangeRef.current = onActiveOperationChange
   const isSyncingRef = useRef(false)
 
   // Track the previous language so a schema-only change can use the cheaper
@@ -64,6 +68,8 @@ export const useCodemirror = ({
       onChange: next => {
         if (!isSyncingRef.current) onChangeRef.current?.(next)
       },
+      onActiveOperationChange: (name: string | undefined) =>
+        onActiveOperationChangeRef.current?.(name),
     })
     viewRef.current = view
 

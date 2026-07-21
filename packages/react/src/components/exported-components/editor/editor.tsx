@@ -14,6 +14,11 @@ export type EditorProps = {
   /** Called with the new document text on every edit. */
   onChange?: (value: string) => void
   /**
+   * Called with the active operation name (or undefined) on cursor / doc
+   * change. Only meaningful when `language` is `graphql`.
+   */
+  onActiveOperationChange?: (name: string | undefined) => void
+  /**
    * GraphQL schema powering schema-aware completion, linting, and hover.
    * Only used when `language` is `graphql`.
    */
@@ -29,6 +34,7 @@ export const Editor = ({
   value,
   defaultValue,
   onChange,
+  onActiveOperationChange,
   schema,
   readOnly,
   className,
@@ -40,6 +46,7 @@ export const Editor = ({
     schema,
     readOnly,
     onChange,
+    onActiveOperationChange,
   })
 
   return (

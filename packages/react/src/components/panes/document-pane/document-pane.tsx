@@ -14,6 +14,7 @@ export const DocumentPane = ({ schema }: DocumentPaneProps) => {
   const query = useAppStore.use.query()
   const operationName = useAppStore.use.operationName()
   const setQuery = useAppStore.use.setQuery()
+  const setOperationName = useAppStore.use.setOperationName()
   const execute = useAppStore.use.execute()
 
   return (
@@ -29,6 +30,7 @@ export const DocumentPane = ({ schema }: DocumentPaneProps) => {
           schema={schema}
           value={query}
           onChange={setQuery}
+          onActiveOperationChange={setOperationName}
         />
       </div>
     </div>

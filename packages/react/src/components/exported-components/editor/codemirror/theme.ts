@@ -67,6 +67,10 @@ export const editorTheme = (dark: boolean) =>
         whiteSpace: 'pre-wrap',
         fontFamily: themeContract.fonts.mono,
       },
+      // De-emphasize operations the cursor is not inside.
+      '.cm-agi-dimmed': {
+        opacity: 0.4,
+      },
     },
     { dark }
   )
