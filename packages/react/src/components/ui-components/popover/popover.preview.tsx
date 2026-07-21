@@ -1,4 +1,4 @@
-import { createPreview } from '@another-graphql-ide/shared'
+import { createPreview, type NavPath } from 'react-foundry'
 
 import {
   DemoGrid,
@@ -6,33 +6,23 @@ import {
 } from '../../utility-components/previews/components'
 import { IconButton } from '../icon-button/icon-button'
 
-import { Popover, type PopoverProps } from './popover'
+import { Popover } from './popover'
 
-const preview = createPreview<PopoverProps>({
-  title: 'Popover',
-  component: Popover,
-  category: 'UI Components',
-  demos: [
-    {
-      name: 'Examples',
-      render: () => (
-        <DemoGrid>
-          <DemoGridItem>
-            <Popover
-              content={<>content</>}
-              trigger={
-                <IconButton
-                  ghost={true}
-                  label={'A cool popover'}
-                  name={'Settings2'}
-                />
-              }
-            />
-          </DemoGridItem>
-        </DemoGrid>
-      ),
-    },
-  ],
-})
+export const nav: NavPath = 'UI Components/Popover'
 
-export default preview
+export const Examples = createPreview(() => (
+  <DemoGrid>
+    <DemoGridItem>
+      <Popover
+        content={<>content</>}
+        trigger={
+          <IconButton
+            ghost={true}
+            label={'A cool popover'}
+            name={'Settings2'}
+          />
+        }
+      />
+    </DemoGridItem>
+  </DemoGrid>
+))

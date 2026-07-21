@@ -32,44 +32,6 @@ globalStyle('h1, h2, h3, h4, h5, h6', {
   fontFamily: themeContract.fonts.sans,
 })
 
-// globalStyle('h1', {
-//   fontSize: themeContract.fontSizes['4xl'],
-// })
-
-// globalStyle('h2', {
-//   fontSize: themeContract.fontSizes['3xl'],
-// })
-
-// globalStyle('h3', {
-//   fontSize: themeContract.fontSizes['2xl'],
-// })
-
-// globalStyle('h4', {
-//   fontSize: themeContract.fontSizes.xl,
-// })
-
-// globalStyle('h5', {
-//   fontSize: themeContract.fontSizes.lg,
-// })
-
-// globalStyle('h6', {
-//   fontSize: themeContract.fontSizes.md,
-// })
-
-// globalStyle('p', {
-//   marginBottom: themeContract.space[4],
-// })
-
-// globalStyle('a', {
-//   color: themeContract.colors.primary[11],
-//   textDecoration: 'none',
-// })
-
-// globalStyle('a:hover', {
-//   color: themeContract.colors.primary[12],
-//   textDecoration: 'underline',
-// })
-
 globalStyle('button', {
   all: 'unset',
   border: 'none',
@@ -118,12 +80,6 @@ globalStyle('*:focus:not(:focus-visible)', {
 globalStyle('html', {
   scrollBehavior: 'smooth',
 })
-
-// // Selection styles
-// globalStyle('::selection', {
-//   backgroundColor: themeContract.colors.primary[4],
-//   color: themeContract.colors.primary[12],
-// })
 
 // Code styles
 globalStyle('code, kbd, samp, pre', {

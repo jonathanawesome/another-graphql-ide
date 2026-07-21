@@ -1,8 +1,11 @@
-import { createPreview, graphiqlTestSchema } from '@another-graphql-ide/shared'
+import { graphiqlTestSchema } from '@another-graphql-ide/shared'
+import { createPreview, type NavPath } from 'react-foundry'
 
-import { Editor, type EditorProps } from './editor'
+import { Editor } from './editor'
 
-// The Editor fills its parent, so demos get a bounded box to render into.
+export const nav: NavPath = 'Exported Components/Editor'
+
+// The Editor fills its parent, so previews get a bounded box to render into.
 const EditorFrame = ({ children }: React.PropsWithChildren) => (
   <div style={{ height: 480, width: '100%' }}>{children}</div>
 )
@@ -42,56 +45,45 @@ const javascriptDoc = `const greet = (name) => {
 console.log(greet('world'))
 `
 
-const preview = createPreview<EditorProps>({
-  title: 'Editor',
-  component: Editor,
-  category: 'Exported Components',
-  demos: [
-    {
-      name: 'GraphQL (schema-aware)',
-      render: () => (
-        <EditorFrame key="graphql">
-          <Editor
-            language="graphql"
-            schema={graphiqlTestSchema}
-            defaultValue={graphqlDoc}
-          />
-        </EditorFrame>
-      ),
-    },
-    {
-      name: 'JSON5',
-      render: () => (
-        <EditorFrame key="json5">
-          <Editor language="json5" defaultValue={json5Doc} />
-        </EditorFrame>
-      ),
-    },
-    {
-      name: 'TypeScript',
-      render: () => (
-        <EditorFrame key="typescript">
-          <Editor language="typescript" defaultValue={typescriptDoc} />
-        </EditorFrame>
-      ),
-    },
-    {
-      name: 'JavaScript',
-      render: () => (
-        <EditorFrame key="javascript">
-          <Editor language="javascript" defaultValue={javascriptDoc} />
-        </EditorFrame>
-      ),
-    },
-    {
-      name: 'Read-only',
-      render: () => (
-        <EditorFrame key="readonly">
-          <Editor language="typescript" defaultValue={typescriptDoc} readOnly />
-        </EditorFrame>
-      ),
-    },
-  ],
+export const Graphql = createPreview({
+  label: 'GraphQL (schema-aware)',
+  render: () => (
+    <EditorFrame key="graphql">
+      <Editor
+        language="graphql"
+        schema={graphiqlTestSchema}
+        defaultValue={graphqlDoc}
+      />
+    </EditorFrame>
+  ),
 })
 
-export default preview
+export const Json5 = createPreview({
+  label: 'JSON5',
+  render: () => (
+    <EditorFrame key="json5">
+      <Editor language="json5" defaultValue={json5Doc} />
+    </EditorFrame>
+  ),
+})
+
+export const TypeScript = createPreview(() => (
+  <EditorFrame key="typescript">
+    <Editor language="typescript" defaultValue={typescriptDoc} />
+  </EditorFrame>
+))
+
+export const JavaScript = createPreview(() => (
+  <EditorFrame key="javascript">
+    <Editor language="javascript" defaultValue={javascriptDoc} />
+  </EditorFrame>
+))
+
+export const ReadOnly = createPreview({
+  label: 'Read-only',
+  render: () => (
+    <EditorFrame key="readonly">
+      <Editor language="typescript" defaultValue={typescriptDoc} readOnly />
+    </EditorFrame>
+  ),
+})
