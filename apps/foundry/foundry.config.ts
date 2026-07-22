@@ -48,9 +48,11 @@ export default defineConfig({
     },
   ],
   viteConfig: {
-    // Served from a project-site sub-path on GitHub Pages
-    // (<user>.github.io/another-graphql-ide/). Passed straight through to Vite.
-    base: '/another-graphql-ide/',
+    // The GitHub Pages project site serves from a sub-path
+    // (<user>.github.io/another-graphql-ide/), so the Pages build sets
+    // PAGES_BASE. Dev and normal builds stay at the root so localhost is
+    // http://localhost:5173/, not /another-graphql-ide/.
+    base: process.env.PAGES_BASE ?? '/',
     // Our components author styles with vanilla-extract (.css.ts); foundry does
     // not bundle the plugin. Symlinked workspace sources are served automatically
     // (foundry allow-lists the detected workspace root).

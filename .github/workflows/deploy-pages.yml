@@ -43,7 +43,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # The project site lives under /another-graphql-ide/, so asset URLs need
+      # that base. Dev and local builds stay at the root (PAGES_BASE unset).
       - run: pnpm --filter foundry build
+        env:
+          PAGES_BASE: /another-graphql-ide/
 
       # SPA deep-link fallback: Pages serves 404.html for unknown paths, so a
       # hard refresh on a nested route still loads the app.
