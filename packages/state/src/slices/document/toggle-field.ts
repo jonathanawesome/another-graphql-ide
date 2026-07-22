@@ -388,7 +388,11 @@ function insertField(
     return [...selections, makeContainer(step, child)]
   }
   const child = insertField(stepChildren(match), steps, i + 1, leafSelection)
-  return replaceAt(selections, selections.indexOf(match), withChildren(match, child))
+  return replaceAt(
+    selections,
+    selections.indexOf(match),
+    withChildren(match, child)
+  )
 }
 
 /** Remove the leaf field, pruning any container left empty on the way up. */

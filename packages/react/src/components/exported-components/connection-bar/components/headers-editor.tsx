@@ -95,7 +95,9 @@ export const HeadersEditor = () => {
 
   const removeRow = (id: number) => {
     const next = rows.filter(row => row.id !== id)
-    commitRows(next.length ? next : [{ id: nextId.current++, key: '', value: '' }])
+    commitRows(
+      next.length ? next : [{ id: nextId.current++, key: '', value: '' }]
+    )
   }
 
   const onRawChange = (text: string) => {

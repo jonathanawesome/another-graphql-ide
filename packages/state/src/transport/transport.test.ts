@@ -184,9 +184,9 @@ describe('createTransport (local executor)', () => {
     const transport = createTransport({ endpoint: LOCAL_ENDPOINT })
 
     // The local sentinel never degrades to an HTTP fetch of 'local'.
-    await expect(collect(transport.execute({ query: '{ hello }' }))).rejects.toThrow(
-      /schema/i
-    )
+    await expect(
+      collect(transport.execute({ query: '{ hello }' }))
+    ).rejects.toThrow(/schema/i)
     expect(buildHTTPExecutorMock).not.toHaveBeenCalled()
   })
 })

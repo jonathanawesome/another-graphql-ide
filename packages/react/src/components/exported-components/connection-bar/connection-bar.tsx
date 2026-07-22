@@ -51,9 +51,7 @@ export const ConnectionBar = () => {
       <div className={styles.actions}>
         <Popover
           content={<HeadersEditor />}
-          trigger={
-            <IconButton ghost label="Edit headers" name="Settings2" />
-          }
+          trigger={<IconButton ghost label="Edit headers" name="Settings2" />}
         />
 
         <Button

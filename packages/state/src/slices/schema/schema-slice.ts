@@ -10,12 +10,10 @@ import { createTransport } from '../../transport/transport'
 
 import type { SchemaSlice } from './types'
 
-export const createSchemaSlice: StateCreator<
-  AppState,
-  [],
-  [],
-  SchemaSlice
-> = (set, get) => ({
+export const createSchemaSlice: StateCreator<AppState, [], [], SchemaSlice> = (
+  set,
+  get
+) => ({
   schema: undefined,
   schemaStatus: 'idle',
   schemaError: undefined,
