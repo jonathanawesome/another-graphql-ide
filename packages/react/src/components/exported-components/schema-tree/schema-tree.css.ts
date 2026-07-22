@@ -210,7 +210,9 @@ export const schemaTreeStyles = {
 
   // Button reset so a toggleable field name stays a native <button> (keyboard +
   // a11y) while looking exactly like the listItemName span. Compose with the
-  // listItemName recipe class.
+  // listItemName recipe class. Inherit font via longhands, not the `font`
+  // shorthand, which would reset font-variation-settings to normal and wipe out
+  // the "wght" 600 emphasis the active/hover state relies on.
   listItemNameButton: style(
     {
       appearance: 'none',
@@ -218,7 +220,9 @@ export const schemaTreeStyles = {
       border: 'none',
       margin: 0,
       padding: 0,
-      font: 'inherit',
+      fontFamily: 'inherit',
+      fontSize: 'inherit',
+      lineHeight: 'inherit',
       textAlign: 'left',
     },
     'schema-tree-list-item-name-button'
