@@ -40,3 +40,19 @@ export const SchemaAwareLiveTransport = createPreview({
     </EditorGroupFrame>
   ),
 })
+
+// Always pins the local sentinel + bundled schema, so the in-process executor is
+// exercisable in `foundry dev` too (not only in a production build), with no yoga
+// server running.
+export const LocalExecution = createPreview({
+  label: 'In-process execution (no server)',
+  render: () => (
+    <EditorGroupFrame>
+      <EditorGroup
+        schema={graphiqlTestSchema}
+        endpoint={LOCAL_ENDPOINT}
+        defaultQuery={starterQuery}
+      />
+    </EditorGroupFrame>
+  ),
+})

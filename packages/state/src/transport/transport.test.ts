@@ -180,12 +180,13 @@ describe('createTransport (local executor)', () => {
     ])
   })
 
-  it('falls back to HTTP when the local sentinel has no schema', () => {
-    buildHTTPExecutorMock.mockReturnValue(() => Promise.resolve({}))
+  it('errors clearly when the local sentinel has no schema', async () => {
+    const transport = createTransport({ endpoint: LOCAL_ENDPOINT })
 
-    createTransport({ endpoint: LOCAL_ENDPOINT })
-
-    // No schema to run in-process, so it must build the HTTP executor instead.
-    expect(buildHTTPExecutorMock).toHaveBeenCalledTimes(1)
+    // The local sentinel never degrades to an HTTP fetch of 'local'.
+    await expect(collect(transport.execute({ query: '{ hello }' }))).rejects.toThrow(
+      /schema/i
+    )
+    expect(buildHTTPExecutorMock).not.toHaveBeenCalled()
   })
 })

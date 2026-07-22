@@ -60,9 +60,15 @@ const createHTTPTransport = ({
 const createLocalTransport = ({
   schema,
 }: {
-  schema: GraphQLSchema
+  schema?: GraphQLSchema
 }): Transport => ({
   async *execute(request, options) {
+    // Fail loudly rather than degrade to an HTTP fetch of the 'local' sentinel.
+    if (!schema) {
+      throw new Error(
+        'Local execution requires a loaded schema. Pass a schema, or connect to an endpoint.'
+      )
+    }
     const outcome = await normalizedExecutor({
       schema,
       document: parse(request.query),
@@ -80,14 +86,16 @@ const createLocalTransport = ({
 })
 
 /**
- * Picks a transport by endpoint. The local sentinel (with a loaded schema) runs
- * in-process; anything else goes over HTTP.
+ * Picks a transport by endpoint. The local sentinel always runs in-process (and
+ * errors if no schema is loaded); anything else goes over HTTP. Keying on the
+ * sentinel, not on schema-presence, means a real endpoint stays on HTTP even
+ * after introspection loads a schema into state.
  */
 export const createTransport = ({
   endpoint,
   schema,
   headers,
 }: CreateTransportOptions): Transport =>
-  endpoint === LOCAL_ENDPOINT && schema
+  endpoint === LOCAL_ENDPOINT
     ? createLocalTransport({ schema })
     : createHTTPTransport({ endpoint, headers })
