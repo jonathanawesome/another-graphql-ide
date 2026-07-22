@@ -180,9 +180,13 @@ export const HeadersEditor = () => {
         </div>
       ) : (
         <>
-          <div className={styles.rawEditor}>
-            <Editor language="json5" value={rawText} onChange={onRawChange} />
-          </div>
+          <Editor
+            language="json5"
+            value={rawText}
+            onChange={onRawChange}
+            frame="bordered"
+            height={160}
+          />
           {rawError && <div className={styles.error}>{rawError}</div>}
         </>
       )}

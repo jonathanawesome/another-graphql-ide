@@ -33,8 +33,10 @@ export type EditorProps = {
   schema?: GraphQLSchema
   /** Render the document read-only. */
   readOnly?: boolean
-  /** Optional class applied to the editor container. */
-  className?: string
+  /** Optional visual frame around the editor. */
+  frame?: 'none' | 'bordered'
+  /** Explicit height; defaults to filling the parent. */
+  height?: number | string
 }
 
 export const Editor = ({
@@ -47,7 +49,8 @@ export const Editor = ({
   pendingSelection,
   schema,
   readOnly,
-  className,
+  frame,
+  height,
 }: EditorProps) => {
   const containerRef = useCodemirror({
     value,
@@ -64,11 +67,8 @@ export const Editor = ({
   return (
     <div
       ref={containerRef}
-      className={
-        className
-          ? `${editorStyles.container} ${className}`
-          : editorStyles.container
-      }
+      className={editorStyles.container({ frame })}
+      style={height !== undefined ? { height } : undefined}
     />
   )
 }

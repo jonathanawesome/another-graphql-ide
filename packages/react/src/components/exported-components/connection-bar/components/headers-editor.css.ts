@@ -35,13 +35,6 @@ export const headersEditorStyles = {
 
   field: style({ flex: 1, minWidth: 0 }),
 
-  rawEditor: style({
-    height: 160,
-    border: `1px solid ${themeContract.colors.neutral4}`,
-    borderRadius: themeContract.radii.small,
-    overflow: 'hidden',
-  }),
-
   error: style({
     fontSize: themeContract.px[11],
     // No danger token in the contract yet; literal red.
