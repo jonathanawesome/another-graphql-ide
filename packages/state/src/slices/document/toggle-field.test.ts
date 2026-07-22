@@ -6,11 +6,15 @@ import type { ToggleFieldTarget } from './types'
 
 const schema = buildSchema(`
   type Post { id: ID!, title: String! }
-  type User { id: ID!, name: String!, posts: [Post!]! }
+  type User { id: ID!, name: String!, posts: [Post!]!, featured: Media }
+  type First { firstName: String }
+  type Second { secondName(upper: Boolean): String, tag: String }
+  union Media = First | Second
   type Query {
     isTest: Boolean!
     me: User!
     user(id: ID!): User
+    media: Media
   }
   type Mutation { ping: Boolean! }
 `)
@@ -142,6 +146,96 @@ describe('computeToggle', () => {
   it('no-ops on an empty path', () => {
     const start = '{\n  isTest\n}'
     expect(toggle(start, q('query'), 3).query).toBe(start)
+  })
+
+  describe('unions', () => {
+    it('inserts a union-member field as an inline fragment', () => {
+      const { query } = toggle('', q('query', 'media', 'Second', 'secondName'))
+      expect(query).toBe(
+        'query NewQuery {\n  media {\n    ... on Second {\n      secondName\n    }\n  }\n}'
+      )
+    })
+
+    it('toggles one member off, pruning its fragment but keeping the other', () => {
+      const start =
+        'query NewQuery {\n  media {\n    ... on First {\n      firstName\n    }\n    ... on Second {\n      secondName\n    }\n  }\n}'
+      const { query } = toggle(
+        start,
+        q('query', 'media', 'Second', 'secondName'),
+        start.indexOf('media')
+      )
+      expect(query).toBe(
+        'query NewQuery {\n  media {\n    ... on First {\n      firstName\n    }\n  }\n}'
+      )
+    })
+
+    it('adds a second member alongside an existing one', () => {
+      const start =
+        'query NewQuery {\n  media {\n    ... on First {\n      firstName\n    }\n  }\n}'
+      const { query } = toggle(
+        start,
+        q('query', 'media', 'Second', 'secondName'),
+        start.indexOf('media')
+      )
+      expect(query).toBe(
+        'query NewQuery {\n  media {\n    ... on First {\n      firstName\n    }\n    ... on Second {\n      secondName\n    }\n  }\n}'
+      )
+    })
+
+    it('toggles the bare union field with a __typename subselection', () => {
+      const { query } = toggle('', q('query', 'media'))
+      expect(query).toBe('query NewQuery {\n  media {\n    __typename\n  }\n}')
+    })
+
+    it('is idempotent: toggling a member field twice returns the original', () => {
+      // Keep isTest present so the round-trip never empties the operation.
+      const start =
+        'query NewQuery {\n  isTest\n  media {\n    ... on Second {\n      secondName\n    }\n  }\n}'
+      const once = toggle(
+        start,
+        q('query', 'media', 'Second', 'secondName'),
+        3
+      ).query
+      const twice = toggle(
+        once,
+        q('query', 'media', 'Second', 'secondName'),
+        3
+      ).query
+      expect(twice).toBe(start)
+    })
+
+    it('adds an argument to a field inside an inline fragment', () => {
+      const { query } = toggle(
+        '',
+        arg('query', ['media', 'Second', 'secondName'], 'upper')
+      )
+      expect(query).toBe(
+        'query NewQuery {\n  media {\n    ... on Second {\n      secondName(upper: false)\n    }\n  }\n}'
+      )
+    })
+
+    it('removes an argument inside an inline fragment (toggle off)', () => {
+      const start =
+        'query NewQuery {\n  media {\n    ... on Second {\n      secondName(upper: false)\n    }\n  }\n}'
+      const { query } = toggle(
+        start,
+        arg('query', ['media', 'Second', 'secondName'], 'upper'),
+        3
+      )
+      expect(query).toBe(
+        'query NewQuery {\n  media {\n    ... on Second {\n      secondName\n    }\n  }\n}'
+      )
+    })
+
+    it('inserts a union member nested under a field', () => {
+      const { query } = toggle(
+        '',
+        q('query', 'me', 'featured', 'Second', 'secondName')
+      )
+      expect(query).toBe(
+        'query NewQuery {\n  me {\n    featured {\n      ... on Second {\n        secondName\n      }\n    }\n  }\n}'
+      )
+    })
   })
 
   describe('arguments', () => {
