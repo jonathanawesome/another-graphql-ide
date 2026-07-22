@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@another-graphql-ide/eslint-config": "workspace:*",
+    "@graphql-tools/executor": "1.5.7",
     "@graphql-tools/executor-http": "3.3.0",
     "zustand": "catalog:"
   },

@@ -286,6 +286,9 @@ importers:
       graphql-language-service:
         specifier: 5.5.2
         version: 5.5.2(graphql@16.14.2)
+      json5:
+        specifier: 2.2.3
+        version: 2.2.3
       react:
         specifier: ^19
         version: 19.2.7
@@ -345,6 +348,9 @@ importers:
       '@another-graphql-ide/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@graphql-tools/executor':
+        specifier: 1.5.7
+        version: 1.5.7(graphql@16.14.2)
       '@graphql-tools/executor-http':
         specifier: 3.3.0
         version: 3.3.0(@types/node@26.1.1)(graphql@16.14.2)

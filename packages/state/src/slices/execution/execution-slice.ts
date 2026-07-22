@@ -17,11 +17,13 @@ export const createExecutionSlice: StateCreator<
 
   return {
     endpoint: DEFAULT_ENDPOINT,
+    headers: {},
     status: 'idle',
     response: '',
     error: undefined,
 
     setEndpoint: endpoint => set({ endpoint }),
+    setHeaders: headers => set({ headers }),
 
     cancel: () => {
       controller?.abort()
@@ -30,7 +32,8 @@ export const createExecutionSlice: StateCreator<
     },
 
     execute: async () => {
-      const { query, variables, operationName, endpoint } = get()
+      const { query, variables, operationName, endpoint, headers, schema } =
+        get()
 
       let parsedVariables: Record<string, unknown> | undefined
       if (variables.trim()) {
@@ -48,7 +51,7 @@ export const createExecutionSlice: StateCreator<
 
       set({ status: 'fetching', error: undefined, response: '' })
 
-      const transport = createTransport({ endpoint })
+      const transport = createTransport({ endpoint, schema, headers })
       try {
         for await (const result of transport.execute(
           { query, variables: parsedVariables, operationName },

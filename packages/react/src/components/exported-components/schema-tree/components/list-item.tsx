@@ -69,21 +69,21 @@ export const ListItem = ({
     tooltipOptions: { side: 'bottom' },
   }
 
-  const toggleAction: IconItem = {
-    action: handleToggle,
-    label:
-      node.type === 'argument'
-        ? 'Toggle argument in document'
-        : 'Toggle field in document',
-    name: 'InsertCode',
-    size: 'mini',
-    tooltipOptions: { side: 'bottom' },
-  }
+  // Toggling now happens by clicking the field name (see below). Keep the
+  // dedicated toggle button around, commented out, until we decide whether both
+  // affordances should coexist.
+  // const toggleAction: IconItem = {
+  //   action: handleToggle,
+  //   label:
+  //     node.type === 'argument'
+  //       ? 'Toggle argument in document'
+  //       : 'Toggle field in document',
+  //   name: 'InsertCode',
+  //   size: 'mini',
+  //   tooltipOptions: { side: 'bottom' },
+  // }
 
-  const actions: IconButtonGroupProps['icons'] = [
-    ...(canToggle ? [toggleAction] : []),
-    baseAction,
-  ]
+  const actions: IconButtonGroupProps['icons'] = [baseAction]
 
   return (
     <li className={schemaTreeStyles.listItem} ref={ref} data-index={dataIndex}>
@@ -108,17 +108,31 @@ export const ListItem = ({
         )}
 
         <div className={schemaTreeStyles.listItemDetail}>
-          <span
-            className={
-              isArgumentsNode
-                ? schemaTreeStyles.listItemArgumentsLabel
-                : schemaTreeStyles.listItemName({
-                    active: activePaths.has(node.id),
-                  })
-            }
-          >
-            {node.name}
-          </span>
+          {isArgumentsNode ? (
+            <span className={schemaTreeStyles.listItemArgumentsLabel}>
+              {node.name}
+            </span>
+          ) : canToggle ? (
+            // A native button so clicking the name toggles the field/argument
+            // into the document with keyboard + a11y support for free.
+            <button
+              type="button"
+              className={`${schemaTreeStyles.listItemNameButton} ${schemaTreeStyles.listItemName(
+                { active: activePaths.has(node.id) }
+              )}`}
+              onClick={handleToggle}
+            >
+              {node.name}
+            </button>
+          ) : (
+            <span
+              className={schemaTreeStyles.listItemName({
+                active: activePaths.has(node.id),
+              })}
+            >
+              {node.name}
+            </span>
+          )}
           {!isArgumentsNode && (
             <div className={schemaTreeStyles.listItemActionsContainer}>
               <IconButtonGroup icons={actions} />

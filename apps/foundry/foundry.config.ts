@@ -37,8 +37,10 @@ export default defineConfig({
     {
       label: 'Exported Components',
       children: [
+        { label: 'Connection Bar' },
         { label: 'Editor' },
         { label: 'Editor Group' },
+        { label: 'Headers Editor' },
         { label: 'Schema Tree' },
         { label: 'Schema Tree Settings' },
         { label: 'Schema Tree + Editor' },
@@ -46,6 +48,11 @@ export default defineConfig({
     },
   ],
   viteConfig: {
+    // The GitHub Pages project site serves from a sub-path
+    // (<user>.github.io/another-graphql-ide/), so the Pages build sets
+    // PAGES_BASE. Dev and normal builds stay at the root so localhost is
+    // http://localhost:5173/, not /another-graphql-ide/.
+    base: process.env.PAGES_BASE ?? '/',
     // Our components author styles with vanilla-extract (.css.ts); foundry does
     // not bundle the plugin. Symlinked workspace sources are served automatically
     // (foundry allow-lists the detected workspace root).

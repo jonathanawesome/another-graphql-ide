@@ -7,6 +7,7 @@ import type {
   GraphQLInputType,
   GraphQLNamedType,
   GraphQLSchema,
+  InlineFragmentNode,
   NameNode,
   OperationDefinitionNode,
   SelectionNode,
@@ -49,12 +50,15 @@ export type ComputeToggleResult = {
 // fragment definitions. Both carry a `selectionSet`.
 type TargetableDefinition = OperationDefinitionNode | FragmentDefinitionNode
 
+// What subselection a freshly inserted leaf needs.
+type LeafSelection = 'none' | 'typename'
+
 /**
  * Toggle a field path (or one of its arguments) into or out of the GraphQL
  * document, targeting the operation or fragment the cursor is inside. Pure: no
  * CodeMirror, no store. Returns the original query unchanged on any condition
- * it cannot handle safely (parse failure, unresolved path, unions, missing
- * types or arguments).
+ * it cannot handle safely (parse failure, unresolved path, missing types or
+ * arguments). Union members are addressed via inline fragments (`... on Type`).
  */
 export function computeToggle({
   query,
@@ -113,12 +117,22 @@ export function computeToggle({
   const steps = resolvePath(baseType, target.path)
   if (!steps) return { query }
   const leaf = steps[steps.length - 1]
-  if (!leaf || isUnionType(leaf.namedType)) return { query } // unions deferred
-  const leafNeedsSelection =
-    isObjectType(leaf.namedType) || isInterfaceType(leaf.namedType)
+  // Toggleable leaves are always fields (union `... on Type` nodes are not
+  // clickable), so a fragment-terminated path is not something we handle.
+  if (leaf?.kind !== 'field') return { query }
+
+  // Object/interface leaves get `{ __typename }` (or nothing in bare mode).
+  // Union leaves always need a subselection and `__typename` is valid on any
+  // member, so use it regardless of mode.
+  const leafSelection: LeafSelection = isUnionType(leaf.namedType)
+    ? 'typename'
+    : isObjectType(leaf.namedType) || isInterfaceType(leaf.namedType)
+      ? mode === 'bare'
+        ? 'none'
+        : 'typename'
+      : 'none'
 
   const activeSelections = getSelections(activeDef)
-  const names = target.path
 
   let newSelections: SelectionNode[]
 
@@ -126,13 +140,13 @@ export function computeToggle({
     const arg = leaf.field.args.find(a => a.name === target.argument)
     if (!arg) return { query }
 
-    const existingField = getFieldAtPath(activeSelections, names, 0)
+    const existingField = fieldAtPath(activeSelections, steps, 0)
     const hasArg =
       existingField?.arguments?.some(a => a.name.value === target.argument) ??
       false
 
     if (hasArg) {
-      newSelections = updateFieldAtPath(activeSelections, names, 0, field => ({
+      newSelections = updateFieldAtPath(activeSelections, steps, 0, field => ({
         ...field,
         arguments: (field.arguments ?? []).filter(
           a => a.name.value !== target.argument
@@ -142,23 +156,17 @@ export function computeToggle({
       // Ensure the field exists, then add the argument with a placeholder value.
       const ensured = existingField
         ? activeSelections
-        : insertField(activeSelections, names, 0, leafNeedsSelection, mode)
+        : insertField(activeSelections, steps, 0, leafSelection)
       const argNode = makeArgument(arg.name, placeholderValue(arg.type))
-      newSelections = updateFieldAtPath(ensured, names, 0, field => ({
+      newSelections = updateFieldAtPath(ensured, steps, 0, field => ({
         ...field,
         arguments: [...(field.arguments ?? []), argNode],
       }))
     }
-  } else if (pathExists(activeSelections, names, 0)) {
-    newSelections = removeField(activeSelections, names, 0)
+  } else if (fieldAtPath(activeSelections, steps, 0)) {
+    newSelections = removeField(activeSelections, steps, 0)
   } else {
-    newSelections = insertField(
-      activeSelections,
-      names,
-      0,
-      leafNeedsSelection,
-      mode
-    )
+    newSelections = insertField(activeSelections, steps, 0, leafSelection)
   }
 
   const newDef = withSelections(activeDef, newSelections)
@@ -178,11 +186,22 @@ export function computeToggle({
 
 // --- definition + type resolution ---------------------------------------
 
-type ResolvedStep = {
+/**
+ * A resolved path segment. A `field` step descends a field; a `fragment` step
+ * descends into a union member, i.e. an inline fragment `... on <typeName>`.
+ */
+type FieldStep = {
+  kind: 'field'
   name: string
   field: GraphQLField<unknown, unknown>
   namedType: GraphQLNamedType
 }
+type FragmentStep = {
+  kind: 'fragment'
+  typeName: string
+  namedType: GraphQLNamedType
+}
+type ResolvedStep = FieldStep | FragmentStep
 
 /** GraphiQL-style: the def containing the cursor, else the last starting before it, else the first. */
 function selectActiveDefIndex(
@@ -239,7 +258,11 @@ function definitionBaseType(
   return schema.getType(def.typeCondition.name.value)
 }
 
-/** Walk the path against the schema; null if any segment cannot be descended/resolved. */
+/**
+ * Walk the path against the schema; null if any segment cannot be resolved. A
+ * segment under an object/interface is a field; a segment under a union names a
+ * member type (an inline fragment).
+ */
 function resolvePath(
   baseType: GraphQLNamedType,
   path: string[]
@@ -247,139 +270,171 @@ function resolvePath(
   const steps: ResolvedStep[] = []
   let currentType: GraphQLNamedType = baseType
   for (const segment of path) {
-    if (!isObjectType(currentType) && !isInterfaceType(currentType)) return null
-    const field = currentType.getFields()[segment]
-    if (!field) return null
-    const namedType = getNamedType(field.type)
-    steps.push({ name: segment, field, namedType })
-    currentType = namedType
+    if (isObjectType(currentType) || isInterfaceType(currentType)) {
+      const field = currentType.getFields()[segment]
+      if (!field) return null
+      const namedType = getNamedType(field.type)
+      steps.push({ kind: 'field', name: segment, field, namedType })
+      currentType = namedType
+    } else if (isUnionType(currentType)) {
+      const member = currentType.getTypes().find(t => t.name === segment)
+      if (!member) return null
+      steps.push({ kind: 'fragment', typeName: segment, namedType: member })
+      currentType = member
+    } else {
+      return null
+    }
   }
   return steps
 }
 
 // --- selection-set editing (pure, functional) ---------------------------
+//
+// A path is a list of steps: `field` steps descend a field, `fragment` steps
+// descend into a union member via an inline fragment (`... on Type`). The four
+// walkers below share the same shape: find the selection matching this step,
+// then recurse into its children (or act, at the leaf). These helpers hold the
+// per-step logic so each walker reads as just its own intent.
 
-function pathExists(
-  selections: readonly SelectionNode[],
-  names: string[],
-  i: number
-): boolean {
-  const field = selections.find(
-    (s): s is FieldNode => s.kind === Kind.FIELD && s.name.value === names[i]
-  )
-  if (!field) return false
-  if (i === names.length - 1) return true
-  return pathExists(field.selectionSet?.selections ?? [], names, i + 1)
+// A step is always satisfied by a field or an inline fragment, never a spread.
+type Container = FieldNode | InlineFragmentNode
+
+/** Does a selection node correspond to this step (field name or `... on Type`)? */
+function matchesStep(selection: SelectionNode, step: ResolvedStep): boolean {
+  return step.kind === 'fragment'
+    ? selection.kind === Kind.INLINE_FRAGMENT &&
+        selection.typeCondition?.name.value === step.typeName
+    : selection.kind === Kind.FIELD && selection.name.value === step.name
 }
 
-function insertField(
+/** The selection matching this step, narrowed to a field/fragment container. */
+function findContainer(
   selections: readonly SelectionNode[],
-  names: string[],
-  i: number,
-  leafNeedsSelection: boolean,
-  mode: ObjectFieldInsertionMode
+  step: ResolvedStep
+): Container | undefined {
+  return selections.find((s): s is Container => matchesStep(s, step))
+}
+
+/** Child selections of a field or inline fragment. */
+function stepChildren(node: Container): readonly SelectionNode[] {
+  return node.selectionSet?.selections ?? []
+}
+
+/** Rebuild a field/fragment container around a new set of child selections. */
+function withChildren(
+  node: Container,
+  selections: readonly SelectionNode[]
+): Container {
+  return { ...node, selectionSet: makeSelectionSet(selections) }
+}
+
+/** A container for a non-leaf step (an inline fragment or a field), wrapping `children`. */
+function makeContainer(
+  step: ResolvedStep,
+  children: readonly SelectionNode[]
+): SelectionNode {
+  return step.kind === 'fragment'
+    ? makeInlineFragment(step.typeName, children)
+    : makeField(step.name, makeSelectionSet(children))
+}
+
+function removeAt(
+  selections: readonly SelectionNode[],
+  idx: number
 ): SelectionNode[] {
-  const name = names[i]
-  if (name === undefined) return [...selections]
-  const isLeaf = i === names.length - 1
-  const idx = selections.findIndex(
-    s => s.kind === Kind.FIELD && s.name.value === name
-  )
-
-  if (isLeaf) {
-    return [...selections, buildLeaf(name, leafNeedsSelection, mode)]
-  }
-
-  if (idx !== -1) {
-    const existing = selections[idx] as FieldNode
-    const child = insertField(
-      existing.selectionSet?.selections ?? [],
-      names,
-      i + 1,
-      leafNeedsSelection,
-      mode
-    )
-    return replaceAt(selections, idx, {
-      ...existing,
-      selectionSet: makeSelectionSet(child),
-    })
-  }
-
-  const child = insertField([], names, i + 1, leafNeedsSelection, mode)
-  return [...selections, makeField(name, makeSelectionSet(child))]
+  return [...selections.slice(0, idx), ...selections.slice(idx + 1)]
 }
 
-function removeField(
+/**
+ * The field node at the end of the path, or null if any step is absent. Doubles
+ * as the "does this path exist?" check.
+ */
+function fieldAtPath(
   selections: readonly SelectionNode[],
-  names: string[],
-  i: number
-): SelectionNode[] {
-  const name = names[i]
-  const idx = selections.findIndex(
-    s => s.kind === Kind.FIELD && s.name.value === name
-  )
-  if (idx === -1) return [...selections]
-
-  if (i === names.length - 1) {
-    return [...selections.slice(0, idx), ...selections.slice(idx + 1)]
-  }
-
-  const existing = selections[idx] as FieldNode
-  const child = removeField(
-    existing.selectionSet?.selections ?? [],
-    names,
-    i + 1
-  )
-  // Prune an intermediate whose selection set is now empty.
-  if (child.length === 0) {
-    return [...selections.slice(0, idx), ...selections.slice(idx + 1)]
-  }
-  return replaceAt(selections, idx, {
-    ...existing,
-    selectionSet: makeSelectionSet(child),
-  })
-}
-
-/** The field node at the given path, or null if any segment is absent. */
-function getFieldAtPath(
-  selections: readonly SelectionNode[],
-  names: string[],
+  steps: readonly ResolvedStep[],
   i: number
 ): FieldNode | null {
-  const field = selections.find(
-    (s): s is FieldNode => s.kind === Kind.FIELD && s.name.value === names[i]
+  const step = steps[i]
+  if (!step) return null
+  const match = findContainer(selections, step)
+  if (!match) return null
+  if (i === steps.length - 1) {
+    return match.kind === Kind.FIELD ? match : null
+  }
+  return fieldAtPath(stepChildren(match), steps, i + 1)
+}
+
+/** Insert the leaf field, creating intermediate fields and inline fragments. */
+function insertField(
+  selections: readonly SelectionNode[],
+  steps: readonly ResolvedStep[],
+  i: number,
+  leafSelection: LeafSelection
+): SelectionNode[] {
+  const step = steps[i]
+  if (!step) return [...selections]
+
+  // The leaf is always a field; append it.
+  if (i === steps.length - 1) {
+    return step.kind === 'field'
+      ? [...selections, buildLeaf(step.name, leafSelection)]
+      : [...selections]
+  }
+
+  // Descend into the matching container, creating it if absent.
+  const match = findContainer(selections, step)
+  if (!match) {
+    const child = insertField([], steps, i + 1, leafSelection)
+    return [...selections, makeContainer(step, child)]
+  }
+  const child = insertField(stepChildren(match), steps, i + 1, leafSelection)
+  return replaceAt(
+    selections,
+    selections.indexOf(match),
+    withChildren(match, child)
   )
-  if (!field) return null
-  if (i === names.length - 1) return field
-  return getFieldAtPath(field.selectionSet?.selections ?? [], names, i + 1)
+}
+
+/** Remove the leaf field, pruning any container left empty on the way up. */
+function removeField(
+  selections: readonly SelectionNode[],
+  steps: readonly ResolvedStep[],
+  i: number
+): SelectionNode[] {
+  const step = steps[i]
+  if (!step) return [...selections]
+  const match = findContainer(selections, step)
+  if (!match) return [...selections]
+  const idx = selections.indexOf(match)
+
+  if (i === steps.length - 1) return removeAt(selections, idx)
+
+  const child = removeField(stepChildren(match), steps, i + 1)
+  return child.length === 0
+    ? removeAt(selections, idx)
+    : replaceAt(selections, idx, withChildren(match, child))
 }
 
 /** Rebuild the selections applying `update` to the field node at the path. */
 function updateFieldAtPath(
   selections: readonly SelectionNode[],
-  names: string[],
+  steps: readonly ResolvedStep[],
   i: number,
   update: (field: FieldNode) => FieldNode
 ): SelectionNode[] {
-  const idx = selections.findIndex(
-    s => s.kind === Kind.FIELD && s.name.value === names[i]
-  )
-  if (idx === -1) return [...selections]
+  const step = steps[i]
+  if (!step) return [...selections]
+  const match = findContainer(selections, step)
+  if (!match) return [...selections]
+  const idx = selections.indexOf(match)
 
-  const field = selections[idx] as FieldNode
-  if (i === names.length - 1) {
-    return replaceAt(selections, idx, update(field))
+  if (i === steps.length - 1) {
+    return match.kind === Kind.FIELD
+      ? replaceAt(selections, idx, update(match))
+      : [...selections]
   }
-  const child = updateFieldAtPath(
-    field.selectionSet?.selections ?? [],
-    names,
-    i + 1,
-    update
-  )
-  return replaceAt(selections, idx, {
-    ...field,
-    selectionSet: makeSelectionSet(child),
-  })
+  const child = updateFieldAtPath(stepChildren(match), steps, i + 1, update)
+  return replaceAt(selections, idx, withChildren(match, child))
 }
 
 /** A self-contained placeholder literal matching the argument type. */
@@ -413,13 +468,8 @@ function makeArgument(name: string, value: ValueNode): ArgumentNode {
   return { kind: Kind.ARGUMENT, name: makeName(name), value }
 }
 
-function buildLeaf(
-  name: string,
-  needsSelection: boolean,
-  mode: ObjectFieldInsertionMode
-): FieldNode {
-  // `bare` leaves an object field with no subselection for the user to fill.
-  if (!needsSelection || mode === 'bare') return makeField(name)
+function buildLeaf(name: string, leafSelection: LeafSelection): FieldNode {
+  if (leafSelection === 'none') return makeField(name)
   return makeField(name, makeSelectionSet([makeField('__typename')]))
 }
 
@@ -432,6 +482,17 @@ function makeField(name: string, selectionSet?: SelectionSetNode): FieldNode {
     kind: Kind.FIELD,
     name: makeName(name),
     ...(selectionSet ? { selectionSet } : {}),
+  }
+}
+
+function makeInlineFragment(
+  typeName: string,
+  selections: readonly SelectionNode[]
+): InlineFragmentNode {
+  return {
+    kind: Kind.INLINE_FRAGMENT,
+    typeCondition: { kind: Kind.NAMED_TYPE, name: makeName(typeName) },
+    selectionSet: makeSelectionSet(selections),
   }
 }
 
