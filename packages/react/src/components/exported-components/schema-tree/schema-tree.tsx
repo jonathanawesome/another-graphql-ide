@@ -11,10 +11,7 @@ import { SettingsContent } from './components/settings-content'
 import { TreeContainer } from './components/tree-container'
 import { useSchemaTree } from './hooks/use-schema-tree'
 import { schemaTreeStyles } from './schema-tree.css'
-import {
-  activeOperationType,
-  computePresentPaths,
-} from './utils/present-paths'
+import { activeOperationType, computePresentPaths } from './utils/present-paths'
 
 export type SchemaTreeProps = {
   /**

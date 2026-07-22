@@ -15,8 +15,10 @@ const schema = buildSchema(`
   type Mutation { ping: Boolean! }
 `)
 
-const q = (rootOperation: ToggleFieldTarget['rootOperation'], ...path: string[]) =>
-  ({ rootOperation, path }) satisfies ToggleFieldTarget
+const q = (
+  rootOperation: ToggleFieldTarget['rootOperation'],
+  ...path: string[]
+) => ({ rootOperation, path }) satisfies ToggleFieldTarget
 
 const arg = (
   rootOperation: ToggleFieldTarget['rootOperation'],
@@ -39,7 +41,11 @@ describe('computeToggle', () => {
   })
 
   it('inserts a nested path, creating intermediate parents', () => {
-    const { query } = toggle('{\n  isTest\n}', q('query', 'user', 'posts', 'title'), 5)
+    const { query } = toggle(
+      '{\n  isTest\n}',
+      q('query', 'user', 'posts', 'title'),
+      5
+    )
     expect(query).toBe(
       '{\n  isTest\n  user {\n    posts {\n      title\n    }\n  }\n}'
     )
@@ -59,14 +65,24 @@ describe('computeToggle', () => {
 
   it('object field in typename mode inserts a __typename subselection', () => {
     // Start from an existing operation so no new-operation caret is returned.
-    const { query, selection } = toggle('{\n  isTest\n}', q('query', 'me'), 3, 'typename')
+    const { query, selection } = toggle(
+      '{\n  isTest\n}',
+      q('query', 'me'),
+      3,
+      'typename'
+    )
     expect(query).toBe('{\n  isTest\n  me {\n    __typename\n  }\n}')
     expect(selection).toBeUndefined()
   })
 
   it('object field in bare mode inserts no subselection (stays parseable)', () => {
     // Cursor inside an existing op so no new-operation caret is returned.
-    const { query, selection } = toggle('{\n  isTest\n}', q('query', 'me'), 3, 'bare')
+    const { query, selection } = toggle(
+      '{\n  isTest\n}',
+      q('query', 'me'),
+      3,
+      'bare'
+    )
     expect(query).toBe('{\n  isTest\n  me\n}')
     expect(selection).toBeUndefined()
   })
@@ -89,8 +105,7 @@ describe('computeToggle', () => {
   it('creates a new operation rather than adding to a non-active matching op', () => {
     // Cursor is in the query, so clicking a mutation field must not touch the
     // existing (non-active) mutation M; it starts a fresh mutation instead.
-    const start =
-      'query A {\n  isTest\n}\n\nmutation M {\n  ping\n}'
+    const start = 'query A {\n  isTest\n}\n\nmutation M {\n  ping\n}'
     const cursorInA = start.indexOf('isTest')
     const { query } = toggle(start, q('mutation', 'ping'), cursorInA)
     expect(query).toBe(
@@ -140,9 +155,7 @@ describe('computeToggle', () => {
     it('removes an argument that is already present (toggle off)', () => {
       const start = 'query NewQuery {\n  user(id: "") {\n    __typename\n  }\n}'
       const { query } = toggle(start, arg('query', ['user'], 'id'), 3)
-      expect(query).toBe(
-        'query NewQuery {\n  user {\n    __typename\n  }\n}'
-      )
+      expect(query).toBe('query NewQuery {\n  user {\n    __typename\n  }\n}')
     })
 
     it('is idempotent when the field already exists', () => {

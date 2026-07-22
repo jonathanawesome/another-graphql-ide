@@ -170,7 +170,8 @@ export function computeToggle({
   // occurrence.
   if (createdOpName !== undefined) {
     const at = printed.lastIndexOf(createdOpName)
-    if (at !== -1) return { query: printed, selection: { anchor: at, head: at } }
+    if (at !== -1)
+      return { query: printed, selection: { anchor: at, head: at } }
   }
   return { query: printed }
 }
@@ -324,7 +325,11 @@ function removeField(
   }
 
   const existing = selections[idx] as FieldNode
-  const child = removeField(existing.selectionSet?.selections ?? [], names, i + 1)
+  const child = removeField(
+    existing.selectionSet?.selections ?? [],
+    names,
+    i + 1
+  )
   // Prune an intermediate whose selection set is now empty.
   if (child.length === 0) {
     return [...selections.slice(0, idx), ...selections.slice(idx + 1)]
@@ -430,7 +435,9 @@ function makeField(name: string, selectionSet?: SelectionSetNode): FieldNode {
   }
 }
 
-function makeSelectionSet(selections: readonly SelectionNode[]): SelectionSetNode {
+function makeSelectionSet(
+  selections: readonly SelectionNode[]
+): SelectionSetNode {
   return { kind: Kind.SELECTION_SET, selections }
 }
 

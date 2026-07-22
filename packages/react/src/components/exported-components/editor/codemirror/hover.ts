@@ -13,7 +13,11 @@ export const graphqlHover = () =>
     if (!schema) return null
 
     const position = offsetToPos(view.state.doc, pos)
-    const info = getHoverInformation(schema, view.state.doc.toString(), position)
+    const info = getHoverInformation(
+      schema,
+      view.state.doc.toString(),
+      position
+    )
 
     // getHoverInformation returns '' for nothing hoverable, or an array.
     if (typeof info !== 'string' || info.length === 0) return null

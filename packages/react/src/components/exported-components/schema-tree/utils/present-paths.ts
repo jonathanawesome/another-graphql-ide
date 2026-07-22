@@ -12,7 +12,10 @@ import { Kind, parse } from 'graphql'
  * so the tree reflects what you are currently editing. Parse failures yield an
  * empty set. Fragments, aliases, and inline fragments are ignored for now.
  */
-export function computePresentPaths(query: string, cursor: number): Set<string> {
+export function computePresentPaths(
+  query: string,
+  cursor: number
+): Set<string> {
   const paths = new Set<string>()
   const active = findActiveOperation(query, cursor)
   if (active) collect(active.selectionSet, active.operation, paths)

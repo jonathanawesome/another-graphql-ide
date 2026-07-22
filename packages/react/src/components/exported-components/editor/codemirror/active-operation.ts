@@ -12,9 +12,7 @@ export const getOperationRanges = (query: string): OperationRange[] => {
   const facts = getOperationFacts(null, query)
   if (!facts) return []
   return facts.operations.flatMap(op =>
-    op.loc
-      ? [{ name: op.name?.value, from: op.loc.start, to: op.loc.end }]
-      : []
+    op.loc ? [{ name: op.name?.value, from: op.loc.start, to: op.loc.end }] : []
   )
 }
 

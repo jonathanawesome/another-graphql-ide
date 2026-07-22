@@ -49,7 +49,11 @@ export const ListItem = ({
       const argsIndex = rest.indexOf('arguments')
       const argument = rest[argsIndex + 1]
       if (argsIndex === -1 || argument === undefined) return
-      onToggle({ rootOperation: root, path: rest.slice(0, argsIndex), argument })
+      onToggle({
+        rootOperation: root,
+        path: rest.slice(0, argsIndex),
+        argument,
+      })
     }
   }
 
