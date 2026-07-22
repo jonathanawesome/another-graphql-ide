@@ -208,6 +208,22 @@ export const schemaTreeStyles = {
     'schema-tree-list-item-name'
   ),
 
+  // Button reset so a toggleable field name stays a native <button> (keyboard +
+  // a11y) while looking exactly like the listItemName span. Compose with the
+  // listItemName recipe class.
+  listItemNameButton: style(
+    {
+      appearance: 'none',
+      background: 'none',
+      border: 'none',
+      margin: 0,
+      padding: 0,
+      font: 'inherit',
+      textAlign: 'left',
+    },
+    'schema-tree-list-item-name-button'
+  ),
+
   listItemArgumentsLabel: style(
     {
       color: themeContract.colors.neutral6,

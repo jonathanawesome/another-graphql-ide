@@ -1,3 +1,9 @@
+import {
+  GraphQLInt,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from 'graphql'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 type BuildHTTPExecutorOptions = {
@@ -15,7 +21,7 @@ vi.mock('@graphql-tools/executor-http', () => ({
   buildHTTPExecutor: buildHTTPExecutorMock,
 }))
 
-const { createTransport } = await import('./transport')
+const { createTransport, LOCAL_ENDPOINT } = await import('./transport')
 
 const collect = async (iterable: AsyncIterable<unknown>) => {
   const out: unknown[] = []
@@ -69,5 +75,117 @@ describe('createTransport', () => {
     expect(typeof options?.headers).toBe('function')
     expect(options?.headers?.()).toEqual({ a: '1' })
     expect(options?.retry).toBeUndefined()
+  })
+})
+
+// A tiny in-memory schema with resolvers, so the local transport runs the real
+// normalizedExecutor (not the mocked HTTP executor) end to end.
+const localSchema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: 'Query',
+    fields: {
+      hello: { type: GraphQLString, resolve: () => 'world' },
+      add: {
+        type: GraphQLInt,
+        args: { a: { type: GraphQLInt }, b: { type: GraphQLInt } },
+        resolve: (_source, { a, b }: { a: number; b: number }) => a + b,
+      },
+      boom: {
+        type: GraphQLString,
+        resolve: () => {
+          throw new Error('kaboom')
+        },
+      },
+    },
+  }),
+  subscription: new GraphQLObjectType({
+    name: 'Subscription',
+    fields: {
+      count: {
+        type: GraphQLInt,
+        subscribe: async function* () {
+          await Promise.resolve()
+          yield { count: 1 }
+          yield { count: 2 }
+          yield { count: 3 }
+        },
+        resolve: (payload: { count: number }) => payload.count,
+      },
+    },
+  }),
+})
+
+describe('createTransport (local executor)', () => {
+  beforeEach(() => {
+    buildHTTPExecutorMock.mockReset()
+  })
+
+  it('runs a query in-process against the schema, no HTTP', async () => {
+    const transport = createTransport({
+      endpoint: LOCAL_ENDPOINT,
+      schema: localSchema,
+    })
+
+    const results = await collect(transport.execute({ query: '{ hello }' }))
+
+    expect(results).toEqual([{ data: { hello: 'world' } }])
+    // The local path must never build the HTTP executor.
+    expect(buildHTTPExecutorMock).not.toHaveBeenCalled()
+  })
+
+  it('passes variables through to the resolver', async () => {
+    const transport = createTransport({
+      endpoint: LOCAL_ENDPOINT,
+      schema: localSchema,
+    })
+
+    const results = await collect(
+      transport.execute({
+        query: 'query Add($a: Int, $b: Int) { add(a: $a, b: $b) }',
+        variables: { a: 2, b: 3 },
+      })
+    )
+
+    expect(results).toEqual([{ data: { add: 5 } }])
+  })
+
+  it('surfaces field errors in the result', async () => {
+    const transport = createTransport({
+      endpoint: LOCAL_ENDPOINT,
+      schema: localSchema,
+    })
+
+    const [result] = (await collect(
+      transport.execute({ query: '{ boom }' })
+    )) as [{ data?: { boom: string | null }; errors?: { message: string }[] }]
+
+    expect(result.data?.boom).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('kaboom')
+  })
+
+  it('streams a subscription as multiple yielded values', async () => {
+    const transport = createTransport({
+      endpoint: LOCAL_ENDPOINT,
+      schema: localSchema,
+    })
+
+    const results = await collect(
+      transport.execute({ query: 'subscription { count }' })
+    )
+
+    expect(results).toEqual([
+      { data: { count: 1 } },
+      { data: { count: 2 } },
+      { data: { count: 3 } },
+    ])
+  })
+
+  it('falls back to HTTP when the local sentinel has no schema', () => {
+    buildHTTPExecutorMock.mockReturnValue(() => Promise.resolve({}))
+
+    createTransport({ endpoint: LOCAL_ENDPOINT })
+
+    // No schema to run in-process, so it must build the HTTP executor instead.
+    expect(buildHTTPExecutorMock).toHaveBeenCalledTimes(1)
   })
 })

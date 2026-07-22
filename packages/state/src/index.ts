@@ -7,13 +7,13 @@ export type {
   PendingSelection,
 } from './slices/document/types'
 export type { ExecutionSlice, ExecutionStatus } from './slices/execution/types'
-export type { SchemaSlice } from './slices/schema/types'
+export type { SchemaSlice, SchemaStatus } from './slices/schema/types'
 export type {
   SettingsSlice,
   ObjectFieldInsertionMode,
 } from './slices/settings/types'
 
-export { createTransport } from './transport/transport'
+export { createTransport, LOCAL_ENDPOINT } from './transport/transport'
 export type { CreateTransportOptions } from './transport/transport'
 export type {
   GraphQLRequest,

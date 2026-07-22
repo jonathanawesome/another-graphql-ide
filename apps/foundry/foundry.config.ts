@@ -37,8 +37,10 @@ export default defineConfig({
     {
       label: 'Exported Components',
       children: [
+        { label: 'Connection Bar' },
         { label: 'Editor' },
         { label: 'Editor Group' },
+        { label: 'Headers Editor' },
         { label: 'Schema Tree' },
         { label: 'Schema Tree Settings' },
         { label: 'Schema Tree + Editor' },
@@ -46,6 +48,9 @@ export default defineConfig({
     },
   ],
   viteConfig: {
+    // Served from a project-site sub-path on GitHub Pages
+    // (<user>.github.io/another-graphql-ide/). Passed straight through to Vite.
+    base: '/another-graphql-ide/',
     // Our components author styles with vanilla-extract (.css.ts); foundry does
     // not bundle the plugin. Symlinked workspace sources are served automatically
     // (foundry allow-lists the detected workspace root).
