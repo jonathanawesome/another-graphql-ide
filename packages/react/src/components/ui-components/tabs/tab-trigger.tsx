@@ -1,4 +1,4 @@
-import * as RadixTabs from '@radix-ui/react-tabs'
+import { Tabs as BaseTabs } from '@base-ui/react/tabs'
 
 import { IconButton, type IconButtonProps } from '../icon-button/icon-button'
 import { Pill, type PillProps } from '../pill/pill'
@@ -21,7 +21,7 @@ export const TabTrigger = ({
   isActive,
 }: TabTriggerProps) => (
   <div className={tabsStyles.triggerContainer}>
-    <RadixTabs.Trigger
+    <BaseTabs.Tab
       className={tabsStyles.trigger({
         withAction: actionButton && true,
       })}
@@ -29,7 +29,7 @@ export const TabTrigger = ({
     >
       {text}
       {pill && <Pill {...pill} />}
-    </RadixTabs.Trigger>
+    </BaseTabs.Tab>
 
     {actionButton && (
       <div className={tabsStyles.triggerAction}>

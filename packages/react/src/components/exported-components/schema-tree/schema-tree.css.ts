@@ -1,5 +1,12 @@
 import { recipe, style, themeContract } from '@another-graphql-ide/style'
 
+// The emphasized look shared by the hover state and the active (in-document)
+// state, so a selected field reads the same as a hovered one.
+const emphasizedName = {
+  color: themeContract.colors.neutral8,
+  fontVariationSettings: `"wght" 600`,
+}
+
 // Hoisted so the actions container can reveal on its hover/focus-within.
 const listItemDetail = style(
   {
@@ -179,16 +186,23 @@ export const schemaTreeStyles = {
 
   listItemDetail,
 
-  listItemName: style(
+  listItemName: recipe(
     {
-      color: themeContract.colors.neutral7,
-      cursor: 'pointer',
-      fontVariationSettings: `"wght" 400`,
-      transition: `all 0.1s ${themeContract.motion.authentic}`,
+      base: {
+        color: themeContract.colors.neutral7,
+        cursor: 'pointer',
+        fontVariationSettings: `"wght" 400`,
+        transition: `all 0.1s ${themeContract.motion.authentic}`,
 
-      ':hover': {
-        color: themeContract.colors.neutral8,
-        fontVariationSettings: `"wght" 600`,
+        ':hover': emphasizedName,
+      },
+
+      variants: {
+        // A field currently present in the document reads like the hover state.
+        active: {
+          false: {},
+          true: emphasizedName,
+        },
       },
     },
     'schema-tree-list-item-name'

@@ -1,4 +1,4 @@
-import * as RadixTabs from '@radix-ui/react-tabs'
+import { Tabs as BaseTabs } from '@base-ui/react/tabs'
 import { useState, type ReactNode } from 'react'
 
 import type { TabTriggerProps } from './tab-trigger'
@@ -7,6 +7,9 @@ import { tabsStyles } from './tabs.css'
 
 export type TabsProps = {
   defaultActiveTab?: string
+  /** Controlled active tab. When provided (with `onValueChange`) the parent owns tab state. */
+  value?: string
+  onValueChange?: (value: string) => void
   items: {
     name: string
     content: ReactNode
@@ -15,16 +18,29 @@ export type TabsProps = {
   label: string
 }
 
-export const Tabs = ({ defaultActiveTab, items, label }: TabsProps) => {
-  const [activeTab, setActiveTab] = useState(defaultActiveTab ?? items[0]?.name)
+export const Tabs = ({
+  defaultActiveTab,
+  value,
+  onValueChange,
+  items,
+  label,
+}: TabsProps) => {
+  const [uncontrolled, setUncontrolled] = useState(
+    defaultActiveTab ?? items[0]?.name
+  )
+  const activeTab = value ?? uncontrolled
+  const handleChange = (next: string) => {
+    setUncontrolled(next)
+    onValueChange?.(next)
+  }
 
   return (
-    <RadixTabs.Root
+    <BaseTabs.Root
       className={tabsStyles.root}
       value={activeTab}
-      onValueChange={setActiveTab}
+      onValueChange={next => handleChange(next as string)}
     >
-      <RadixTabs.List className={tabsStyles.list} aria-label={label}>
+      <BaseTabs.List className={tabsStyles.list} aria-label={label}>
         {items.map((item, i) => (
           <TabTrigger
             key={i}
@@ -33,16 +49,16 @@ export const Tabs = ({ defaultActiveTab, items, label }: TabsProps) => {
             {...item.trigger}
           />
         ))}
-      </RadixTabs.List>
+      </BaseTabs.List>
       {items.map((item, i) => (
-        <RadixTabs.Content
+        <BaseTabs.Panel
           className={tabsStyles.content}
           value={item.name}
           key={i}
         >
           {item.content}
-        </RadixTabs.Content>
+        </BaseTabs.Panel>
       ))}
-    </RadixTabs.Root>
+    </BaseTabs.Root>
   )
 }

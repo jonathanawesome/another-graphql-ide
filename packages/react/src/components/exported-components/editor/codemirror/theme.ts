@@ -61,6 +61,16 @@ export const editorTheme = (dark: boolean) =>
         color: themeContract.colors.neutral1,
         backgroundColor: themeContract.colors.brand,
       },
+      '.cm-graphql-hover': {
+        padding: themeContract.px[8],
+        maxWidth: '24rem',
+        whiteSpace: 'pre-wrap',
+        fontFamily: themeContract.fonts.mono,
+      },
+      // De-emphasize operations the cursor is not inside.
+      '.cm-agi-dimmed': {
+        opacity: 0.4,
+      },
     },
     { dark }
   )

@@ -5,12 +5,11 @@ export const editorGroupStyles = {
     {
       display: 'flex',
       flexDirection: 'column',
-      backgroundColor: themeContract.colors.neutral2,
       border: `1px solid ${themeContract.colors.neutral4}`,
       borderRadius: themeContract.radii.medium,
       overflow: 'hidden',
       height: '100%',
-      // boxShadow: themeContract.shadows.tight,
+      padding: themeContract.px[12],
     },
     'editor-group-container'
   ),

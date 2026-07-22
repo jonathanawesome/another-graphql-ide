@@ -1,3 +1,4 @@
+import { themeContract } from '@another-graphql-ide/style'
 import { createPreview, type NavPath } from 'react-foundry'
 
 import {
@@ -9,40 +10,32 @@ import { Resizer } from './resizer'
 
 export const nav: NavPath = 'UI Components/Resizer'
 
+// Theme-aware demo panes so the preview reads correctly in light and dark.
+const paneBase: React.CSSProperties = {
+  padding: '20px',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: themeContract.colors.neutral8,
+}
+const firstPane: React.CSSProperties = {
+  ...paneBase,
+  backgroundColor: themeContract.colors.neutral4,
+}
+const secondPane: React.CSSProperties = {
+  ...paneBase,
+  backgroundColor: themeContract.colors.neutral5,
+}
+
 export const HorizontalResizer = createPreview(() => (
   <DemoGrid>
     <DemoGridItem>
       <div style={{ height: '400px' }}>
         <Resizer
           orientation="horizontal"
-          firstPane={
-            <div
-              style={{
-                padding: '20px',
-                backgroundColor: '#f0f0f0',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              First Pane (Horizontal)
-            </div>
-          }
-          secondPane={
-            <div
-              style={{
-                padding: '20px',
-                backgroundColor: '#e0e0e0',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              Second Pane (Horizontal)
-            </div>
-          }
+          firstPane={<div style={firstPane}>First Pane (Horizontal)</div>}
+          secondPane={<div style={secondPane}>Second Pane (Horizontal)</div>}
         />
       </div>
     </DemoGridItem>
@@ -55,34 +48,8 @@ export const VerticalResizer = createPreview(() => (
       <div style={{ height: '400px' }}>
         <Resizer
           orientation="vertical"
-          firstPane={
-            <div
-              style={{
-                padding: '20px',
-                backgroundColor: '#f0f0f0',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              First Pane (Vertical)
-            </div>
-          }
-          secondPane={
-            <div
-              style={{
-                padding: '20px',
-                backgroundColor: '#e0e0e0',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              Second Pane (Vertical)
-            </div>
-          }
+          firstPane={<div style={firstPane}>First Pane (Vertical)</div>}
+          secondPane={<div style={secondPane}>Second Pane (Vertical)</div>}
         />
       </div>
     </DemoGridItem>
@@ -99,43 +66,16 @@ export const CustomSizeLimits = createPreview(() => (
           minSizePercent={20}
           maxSizePercent={60}
           firstPane={
-            <div
-              style={{
-                padding: '20px',
-                backgroundColor: '#f0f0f0',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-              }}
-            >
+            <div style={{ ...firstPane, flexDirection: 'column' }}>
               <div>First Pane</div>
               <div
-                style={{
-                  fontSize: '12px',
-                  marginTop: '10px',
-                  opacity: 0.7,
-                }}
+                style={{ fontSize: '12px', marginTop: '10px', opacity: 0.7 }}
               >
                 Min: 20%, Max: 60%
               </div>
             </div>
           }
-          secondPane={
-            <div
-              style={{
-                padding: '20px',
-                backgroundColor: '#e0e0e0',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              Second Pane
-            </div>
-          }
+          secondPane={<div style={secondPane}>Second Pane</div>}
         />
       </div>
     </DemoGridItem>

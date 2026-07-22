@@ -63,19 +63,19 @@ export const popoverStyles = {
         // boxShadow: themeContract.shadows.boxFocus,
       },
 
-      '&[data-state="open"][data-side="top"]': {
+      '&[data-open][data-side="top"]': {
         animationName: slideDownAndFade,
       },
 
-      '&[data-state="open"][data-side="right"]': {
+      '&[data-open][data-side="right"]': {
         animationName: slideLeftAndFade,
       },
 
-      '&[data-state="open"][data-side="bottom"]': {
+      '&[data-open][data-side="bottom"]': {
         animationName: slideUpAndFade,
       },
 
-      '&[data-state="open"][data-side="left"]': {
+      '&[data-open][data-side="left"]': {
         animationName: slideRightAndFade,
       },
     },

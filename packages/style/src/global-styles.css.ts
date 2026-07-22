@@ -126,7 +126,7 @@ globalStyle('::-webkit-scrollbar-track', {
 })
 
 globalStyle('::-webkit-scrollbar-thumb', {
-  background: themeContract.colors.neutral7, // Scrollbar handle
+  background: themeContract.colors.neutral5, // Scrollbar handle
   borderRadius: themeContract.px[6],
   transition: 'background 0.3s ease',
 })
@@ -142,5 +142,5 @@ globalStyle('::-webkit-scrollbar-corner', {
 // For Firefox (uses different syntax)
 globalStyle('html', {
   scrollbarWidth: 'thin',
-  scrollbarColor: `${themeContract.colors.neutral7} transparent`, // thumb track
+  scrollbarColor: `${themeContract.colors.neutral5} transparent`, // thumb track
 })

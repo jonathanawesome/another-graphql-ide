@@ -27,4 +27,11 @@ export type CreateEditorOptions = {
   dark: boolean
   /** Called with the new document text on every user edit. */
   onChange?: (value: string) => void
+  /**
+   * Called with the active operation name (or undefined) whenever the cursor
+   * moves or the document changes. GraphQL only.
+   */
+  onActiveOperationChange?: (name: string | undefined) => void
+  /** Called with the caret offset whenever the cursor moves or the doc changes. */
+  onSelectionChange?: (offset: number) => void
 }

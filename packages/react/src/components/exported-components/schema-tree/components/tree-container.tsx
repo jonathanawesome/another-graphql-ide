@@ -1,3 +1,4 @@
+import type { ToggleFieldTarget } from '@another-graphql-ide/state'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import React from 'react'
 
@@ -8,11 +9,18 @@ import { ListItem } from './list-item'
 
 type TreeContainerProps = {
   nodes: ListItemType[]
+  onToggle: (target: ToggleFieldTarget) => void
+  activePaths: Set<string>
 }
 
-export const TreeContainer = ({ nodes }: TreeContainerProps) => {
+export const TreeContainer = ({
+  nodes,
+  onToggle,
+  activePaths,
+}: TreeContainerProps) => {
   const parentRef = React.useRef<HTMLDivElement>(null)
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: nodes.length,
     getScrollElement: () => parentRef.current,
@@ -47,6 +55,8 @@ export const TreeContainer = ({ nodes }: TreeContainerProps) => {
                   depth={0}
                   key={virtualItem.key}
                   data-index={virtualItem.index}
+                  onToggle={onToggle}
+                  activePaths={activePaths}
                   ref={virtualizer.measureElement}
                 />
               )

@@ -71,7 +71,7 @@ export const DocumentHeader = ({
         <Button
           action={onExecute}
           label="Execute operation"
-          text={operationName ?? 'OperationName'}
+          text={operationName ?? 'Run'}
           withLeftIcon="Play"
         />
       </div>

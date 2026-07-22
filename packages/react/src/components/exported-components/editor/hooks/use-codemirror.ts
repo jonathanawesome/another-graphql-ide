@@ -21,6 +21,14 @@ export type UseCodemirrorParams = {
   schema?: GraphQLSchema
   readOnly?: boolean
   onChange?: (value: string) => void
+  onActiveOperationChange?: (name: string | undefined) => void
+  onSelectionChange?: (offset: number) => void
+  /**
+   * A one-shot request to move the caret or select a range, applied once per
+   * `nonce`. Used by state-driven edits (e.g. schema tree inserts) to place the
+   * cursor or select a placeholder to type over.
+   */
+  pendingSelection?: { anchor: number; head: number; nonce: number }
 }
 
 /**
@@ -35,6 +43,9 @@ export const useCodemirror = ({
   schema,
   readOnly = false,
   onChange,
+  onActiveOperationChange,
+  onSelectionChange,
+  pendingSelection,
 }: UseCodemirrorParams) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
@@ -44,6 +55,10 @@ export const useCodemirror = ({
   // value syncs from re-firing it.
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
+  const onActiveOperationChangeRef = useRef(onActiveOperationChange)
+  onActiveOperationChangeRef.current = onActiveOperationChange
+  const onSelectionChangeRef = useRef(onSelectionChange)
+  onSelectionChangeRef.current = onSelectionChange
   const isSyncingRef = useRef(false)
 
   // Track the previous language so a schema-only change can use the cheaper
@@ -64,6 +79,10 @@ export const useCodemirror = ({
       onChange: next => {
         if (!isSyncingRef.current) onChangeRef.current?.(next)
       },
+      onActiveOperationChange: (name: string | undefined) =>
+        onActiveOperationChangeRef.current?.(name),
+      onSelectionChange: (offset: number) =>
+        onSelectionChangeRef.current?.(offset),
     })
     viewRef.current = view
 
@@ -99,7 +118,9 @@ export const useCodemirror = ({
     if (view) reconfigureReadOnly(view, readOnly)
   }, [readOnly])
 
-  // Controlled value: push external changes into the editor.
+  // Controlled value: push external changes into the editor as a minimal-range
+  // replace (common prefix/suffix diff) so the caret and undo history survive
+  // programmatic setQuery, e.g. schema tree inserts.
   useEffect(() => {
     const view = viewRef.current
     if (!view || value === undefined) return
@@ -107,12 +128,40 @@ export const useCodemirror = ({
     const current = view.state.doc.toString()
     if (value === current) return
 
+    let start = 0
+    const minLen = Math.min(current.length, value.length)
+    while (start < minLen && current[start] === value[start]) start++
+    let endCur = current.length
+    let endNew = value.length
+    while (
+      endCur > start &&
+      endNew > start &&
+      current[endCur - 1] === value[endNew - 1]
+    ) {
+      endCur--
+      endNew--
+    }
+
     isSyncingRef.current = true
     view.dispatch({
-      changes: { from: 0, to: current.length, insert: value },
+      changes: { from: start, to: endCur, insert: value.slice(start, endNew) },
     })
     isSyncingRef.current = false
   }, [value])
+
+  // One-shot caret move requested by state (declared after the value sync so
+  // the document is already updated when this runs). A selection-only dispatch
+  // changes no text, so it never re-fires onChange.
+  useEffect(() => {
+    const view = viewRef.current
+    if (!view || !pendingSelection) return
+    const max = view.state.doc.length
+    const anchor = Math.min(pendingSelection.anchor, max)
+    const head = Math.min(pendingSelection.head, max)
+    view.dispatch({ selection: { anchor, head } })
+    view.focus()
+    // Keyed on nonce so each toggle applies once, even to a repeated range.
+  }, [pendingSelection?.nonce])
 
   return containerRef
 }

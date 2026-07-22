@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@another-graphql-ide/tsconfig": "workspace:*",
+    "graphql": "^16",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }
