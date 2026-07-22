@@ -1,3 +1,4 @@
+import JSON5 from 'json5'
 import { useRef, useState } from 'react'
 
 import { useAppStore } from '../../../../state'
@@ -36,15 +37,17 @@ const recordToRows = (
 }
 
 /**
- * Coerce arbitrary parsed JSON into a flat string->string header map. Throws
- * when the shape is not an object of primitive values.
+ * Coerce arbitrary parsed JSON5 into a flat string->string header map. Parsed as
+ * JSON5 (a superset of JSON) to match the editor's json5 highlighting, so
+ * unquoted keys, trailing commas, and comments are accepted. Throws when the
+ * shape is not an object of primitive values.
  */
 const parseRawHeaders = (text: string): Record<string, string> => {
   const trimmed = text.trim()
   if (!trimmed) return {}
-  const parsed: unknown = JSON.parse(trimmed)
+  const parsed: unknown = JSON5.parse(trimmed)
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-    throw new Error('Headers must be a JSON object.')
+    throw new Error('Headers must be an object.')
   }
   const record: Record<string, string> = {}
   for (const [key, value] of Object.entries(parsed)) {
@@ -102,7 +105,7 @@ export const HeadersEditor = () => {
       setRawError(undefined)
     } catch (error) {
       // Keep the last valid headers in the store; just flag the text.
-      setRawError(error instanceof Error ? error.message : 'Invalid JSON.')
+      setRawError(error instanceof Error ? error.message : 'Invalid JSON5.')
     }
   }
 
@@ -121,7 +124,7 @@ export const HeadersEditor = () => {
       setRawError(undefined)
       setMode('kv')
     } catch (error) {
-      setRawError(error instanceof Error ? error.message : 'Invalid JSON.')
+      setRawError(error instanceof Error ? error.message : 'Invalid JSON5.')
     }
   }
 
