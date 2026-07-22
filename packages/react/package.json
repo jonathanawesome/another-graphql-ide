@@ -16,7 +16,8 @@
     "lint": "eslint .",
     "types": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "bench": "vitest bench --run --config vitest.bench.config.ts"
   },
   "peerDependencies": {
     "graphql": "^16",

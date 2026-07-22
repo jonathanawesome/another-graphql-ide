@@ -1,6 +1,10 @@
-import { graphiqlTestSchema } from '@another-graphql-ide/shared'
+import {
+  graphiqlTestSchema,
+  performanceTestSchema,
+} from '@another-graphql-ide/shared'
 import { createPreview, type NavPath } from 'react-foundry'
 
+import { makeLargeDocument } from './codemirror/__fixtures__/large-doc'
 import { Editor } from './editor'
 
 export const nav: NavPath = 'Exported Components/Editor'
@@ -84,6 +88,68 @@ export const ReadOnly = createPreview({
   render: () => (
     <EditorFrame key="readonly">
       <Editor language="typescript" defaultValue={typescriptDoc} readOnly />
+    </EditorFrame>
+  ),
+})
+
+// --- Stress-testing the main-thread graphql-language-service paths ---
+// cm6-graphql runs completion/lint on the main thread (no worker, unlike
+// monaco-graphql), so these previews let you feel autocomplete, lint, hover,
+// and schema-attach latency against a ~11,800-type schema. The automated
+// counterpart lives in ./codemirror/stress.bench.ts.
+
+// Near-empty query: put the caret inside the braces and Ctrl-Space to feel the
+// completion list build against whichever schema is selected. Valid for both.
+const stressSimpleDoc = `# Caret inside the braces, then Ctrl-Space to feel completion build.
+query {
+
+}
+`
+
+// ~300 operations (~1,800 lines) to stress the document-size path: every doc
+// change and caret move re-parses the whole document via getOperationFacts.
+const stressLargeDoc = makeLargeDocument(300)
+
+const stressSchemas = {
+  baseline: graphiqlTestSchema,
+  stress: performanceTestSchema,
+} as const
+
+const stressDocs = {
+  simple: stressSimpleDoc,
+  large: stressLargeDoc,
+} as const
+
+export const GraphqlStress = createPreview({
+  label: 'GraphQL stress (large schema)',
+  controls: {
+    // Swapping schema on the live editor exercises the updateSchema attach path.
+    schema: { type: 'select', options: ['baseline', 'stress'], default: 'stress' },
+    document: { type: 'select', options: ['simple', 'large'], default: 'simple' },
+  },
+  // Key on the document only: switching schema keeps the editor mounted so the
+  // swap goes through updateSchema (what we want to feel); switching document
+  // remounts with fresh defaultValue.
+  render: v => (
+    <EditorFrame key={`stress-${v.document}`}>
+      <Editor
+        language="graphql"
+        schema={stressSchemas[v.schema]}
+        defaultValue={stressDocs[v.document]}
+      />
+    </EditorFrame>
+  ),
+})
+
+export const GraphqlLargeDocument = createPreview({
+  label: 'GraphQL large document (300 ops)',
+  render: () => (
+    <EditorFrame key="stress-largedoc">
+      <Editor
+        language="graphql"
+        schema={performanceTestSchema}
+        defaultValue={stressLargeDoc}
+      />
     </EditorFrame>
   ),
 })
