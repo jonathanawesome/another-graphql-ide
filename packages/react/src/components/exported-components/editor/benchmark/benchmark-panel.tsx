@@ -105,8 +105,8 @@ export const BenchmarkPanel = () => {
       {results.length === 0 && !running && (
         <p className={styles.intro}>
           Times the main-thread graphql-language-service work (completion, lint,
-          hover, document parsing, schema attach) against the baseline schema and
-          the 11,800-type stress schema. Running blocks this tab briefly per
+          hover, document parsing, schema attach) against the baseline schema
+          and the 11,800-type stress schema. Running blocks this tab briefly per
           measurement: that stall is the cost you would feel while typing.
         </p>
       )}

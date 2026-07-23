@@ -56,7 +56,8 @@ const schemaCases = [
   {
     variant: 'baseline (small)',
     schema: graphiqlTestSchema,
-    validQuery: 'query {\n  allFilms {\n    films {\n      title\n    }\n  }\n}',
+    validQuery:
+      'query {\n  allFilms {\n    films {\n      title\n    }\n  }\n}',
     hoverPos: new Position(1, 4), // over "allFilms"
   },
   {

@@ -125,8 +125,16 @@ export const GraphqlStress = createPreview({
   label: 'GraphQL stress (large schema)',
   controls: {
     // Swapping schema on the live editor exercises the updateSchema attach path.
-    schema: { type: 'select', options: ['baseline', 'stress'], default: 'stress' },
-    document: { type: 'select', options: ['simple', 'large'], default: 'simple' },
+    schema: {
+      type: 'select',
+      options: ['baseline', 'stress'],
+      default: 'stress',
+    },
+    document: {
+      type: 'select',
+      options: ['simple', 'large'],
+      default: 'simple',
+    },
   },
   // Key on the document only: switching schema keeps the editor mounted so the
   // swap goes through updateSchema (what we want to feel); switching document
