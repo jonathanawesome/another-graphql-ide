@@ -51,16 +51,16 @@ export const tabsStyles = {
         },
 
         selectors: {
-          '&:not([data-selected])': {
+          '&:not([data-active])': {
             color: themeContract.colors.neutral6,
           },
-          '&:not([data-selected]):hover': {
+          '&:not([data-active]):hover': {
             color: themeContract.colors.neutral8,
           },
-          '&[data-selected]': {
+          '&[data-active]': {
             color: themeContract.colors.neutral8,
           },
-          '&[data-selected]::after': {
+          '&[data-active]::after': {
             content: '',
             position: 'absolute',
             bottom: 0,
