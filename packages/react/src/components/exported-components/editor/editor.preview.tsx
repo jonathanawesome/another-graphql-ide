@@ -4,6 +4,7 @@ import {
 } from '@another-graphql-ide/shared'
 import { createPreview, type NavPath } from 'react-foundry'
 
+import { BenchmarkPanel } from './benchmark/benchmark-panel'
 import { makeLargeDocument } from './codemirror/__fixtures__/large-doc'
 import { Editor } from './editor'
 
@@ -152,4 +153,9 @@ export const GraphqlLargeDocument = createPreview({
       />
     </EditorFrame>
   ),
+})
+
+export const Benchmark = createPreview({
+  label: 'Benchmark (main-thread cost)',
+  render: () => <BenchmarkPanel />,
 })
