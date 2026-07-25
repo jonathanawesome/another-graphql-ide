@@ -104,6 +104,9 @@ describe('SchemaTree', () => {
     const nameOf = (row: HTMLElement) => row.textContent.trim()
     const press = (key: string) => fireEvent.keyDown(focused(), { key })
 
+    // Focusing the first row directly stands in for tabbing into the tree,
+    // which jsdom cannot do. That row is the tree's only tab stop, so this is
+    // where a real Tab press would land.
     const openTree = () => {
       render(<SchemaTree schema={deepTestSchema} />)
       const first = nth(rows(), 0)
@@ -140,6 +143,9 @@ describe('SchemaTree', () => {
       expect(nameOf(focused())).toBe(nameOf(nth(rows(), 0)))
     })
 
+    // ArrowRight and ArrowLeft each do two jobs depending on the row's state,
+    // which is the part of the tree pattern most often gotten wrong. Levels are
+    // 1-based, so stepping into a child reads as level 2.
     it('opens with ArrowRight, steps in, then closes with ArrowLeft', () => {
       openTree()
 
@@ -166,6 +172,8 @@ describe('SchemaTree', () => {
       press('Enter')
 
       expect(useAppStore.getState().query).toContain('entry0')
+      // Selection in this tree means "present in the document", not "focused",
+      // which is why the tree is marked aria-multiselectable.
       expect(focused().getAttribute('aria-selected')).toBe('true')
     })
 

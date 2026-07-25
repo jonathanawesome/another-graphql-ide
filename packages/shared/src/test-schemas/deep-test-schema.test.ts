@@ -23,14 +23,22 @@ describe('deepTestSchema', () => {
 
     expect(result.errors).toBeUndefined()
 
-    // Walk back down the response to prove every level resolved.
+    // Validation alone would pass on a schema whose resolvers bottom out, so
+    // walk the response back down and read the deepest level.
     let value: unknown = result.data?.root
     for (let i = 0; i < 20; i++) {
       value = (value as { self: unknown }).self
     }
+    // Stub names are `<TypeName>-<index>`, uppercased by `upper: true`, which
+    // also proves the argument is honored twenty levels down.
     expect((value as { name: string }).name).toBe('NODE0-0')
   })
 
+  /**
+   * Abstract types are the easy thing to get wrong in a fixture: without a
+   * `resolveType` that reads the stub, an interface or union field returns
+   * nothing usable and the tree has an expandable node that cannot execute.
+   */
   it('resolves interface and union fields back into the mesh', async () => {
     const result = await graphql({
       schema: deepTestSchema,
@@ -41,12 +49,16 @@ describe('deepTestSchema', () => {
     })
 
     expect(result.errors).toBeUndefined()
+    // `Node1-0` is the point: the union member's `owner` leads back into the
+    // mesh (Node0's `child` is Node1) rather than dead-ending at the payload.
     expect(result.data).toMatchObject({
       node: { __typename: 'Node0' },
       payload: { owner: { child: { id: 'Node1-0' } } },
     })
   })
 
+  // The schema is executed in-process by the local transport, so a list
+  // relation must not hand back whatever `first` asks for.
   it('clamps list relations however many are requested', async () => {
     const result = await graphql({
       schema: deepTestSchema,

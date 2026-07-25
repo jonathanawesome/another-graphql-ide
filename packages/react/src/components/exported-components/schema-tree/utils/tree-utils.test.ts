@@ -61,6 +61,8 @@ describe('createSchemaTreeData', () => {
     expect(data.subscription).toBeNull()
   })
 
+  // `count` is the only Query field with nothing under it (Int, no arguments),
+  // so it sorts below the three expandable ones, which go alphabetically.
   it('ids root children as dotted paths, expandable first then alphabetical', () => {
     expect(getNodeChildren(queryRoot()).map(n => n.id)).toEqual([
       'query.media',
@@ -81,6 +83,12 @@ describe('getNodeChildren', () => {
     ])
   })
 
+  /**
+   * Two different orderings in one node. ARGUMENTS is prepended ahead of the
+   * sorted fields so a field's inputs read before its shape, and the arguments
+   * themselves stay in declaration order (`tag` then `limit`) so they match the
+   * signature in the schema rather than being alphabetized.
+   */
   it('puts ARGUMENTS before type children, unsorted', () => {
     expect(
       getNodeChildren(childNamed(queryRoot(), 'tagged')).map(n => n.id)
@@ -136,6 +144,8 @@ describe('getNodeChildren', () => {
     expect(recursive).toEqual([false, true, true, true, true])
   })
 
+  // Scalars repeat on nearly every type, so tracking them the same way would
+  // put a recursion badge on half the leaves in the tree.
   it('treats scalar repetition as ordinary, not recursion', () => {
     expect(descend(['root', 'id']).isRecursive).toBeUndefined()
   })
@@ -218,6 +228,8 @@ describe('flattenTree', () => {
     const rows = flattenTree(roots(), expanded, getNodeChildren)
     const deepest = Math.max(...rows.map(r => r.depth))
 
+    // Depth is zero-based, so a full path is MAX_TREE_DEPTH rows and the last
+    // sits at cap - 1. `self` is a one-type cycle: nothing else stops the walk.
     expect(deepest).toBe(MAX_TREE_DEPTH - 1)
   })
 })
