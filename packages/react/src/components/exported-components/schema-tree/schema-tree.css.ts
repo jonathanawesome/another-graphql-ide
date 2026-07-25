@@ -104,44 +104,37 @@ export const schemaTreeStyles = {
     'schema-tree-tree-list'
   ),
 
-  nestedList: style(
-    {
-      margin: 0,
-      padding: 0,
-      listStyle: 'none',
-      marginLeft: themeContract.px[20],
-    },
-    'schema-tree-nested-list'
-  ),
-
   listItem: style(
     {
       position: 'relative',
+    },
+    'schema-tree-list-item'
+  ),
 
-      selectors: {
-        '&::before': {
-          content: '',
-          position: 'absolute',
-          top: 18,
-          left: 12,
-          height: 'calc(100% - 30px)',
-          width: 1,
-          backgroundColor: themeContract.colors.neutral5,
-        },
+  // One rail per ancestor column. The tree used to be nested markup, where a
+  // row's <li> was as tall as its whole subtree and a single ::before could
+  // span it. Flattened, every row is one line tall, so each row draws the
+  // ancestor rails passing through it: full height while the group continues,
+  // stopping at the elbow on the last child.
+  listItemGuide: recipe(
+    {
+      base: {
+        content: '',
+        position: 'absolute',
+        top: 0,
+        width: 1,
+        backgroundColor: themeContract.colors.neutral5,
+      },
 
-        '&:last-of-type&::after': {
-          content: '',
-          position: 'absolute',
-          zIndex: 1,
-          top: 13,
-          left: -8,
-          height: 'calc(100% - 12px)',
-          width: 1,
-          backgroundColor: themeContract.colors.neutral2,
+      variants: {
+        continues: {
+          true: { bottom: 0 },
+          // Meets the horizontal tick drawn by listItemInner.
+          false: { height: 12 },
         },
       },
     },
-    'schema-tree-list-item'
+    'schema-tree-list-item-guide'
   ),
 
   listItemInner: recipe(
@@ -256,14 +249,14 @@ export const schemaTreeStyles = {
     'schema-tree-list-item-name-actions-container'
   ),
 
-  nodeType: style({}, 'schema-tree-node-type'),
-
-  nodeChildren: style(
+  // Marks a node whose type already appears above it on the same path.
+  listItemRecursionBadge: style(
     {
-      marginLeft: themeContract.px[16],
-      borderLeft: `1px solid ${themeContract.colors.neutral4}`,
-      paddingLeft: themeContract.px[8],
+      color: themeContract.colors.neutral6,
+      fontSize: themeContract.px[12],
+      lineHeight: 1,
+      cursor: 'help',
     },
-    'schema-tree-node-children'
+    'schema-tree-list-item-recursion-badge'
   ),
 }

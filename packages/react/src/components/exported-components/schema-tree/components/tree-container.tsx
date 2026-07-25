@@ -3,29 +3,36 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import React from 'react'
 
 import { schemaTreeStyles } from '../schema-tree.css'
-import type { ListItemType } from '../utils/tree-utils'
+import type { FlatRow } from '../utils/tree-utils'
 
 import { ListItem } from './list-item'
 
 type TreeContainerProps = {
-  nodes: ListItemType[]
+  rows: FlatRow[]
   onToggle: (target: ToggleFieldTarget) => void
+  onToggleExpand: (id: string) => void
   activePaths: Set<string>
 }
 
 export const TreeContainer = ({
-  nodes,
+  rows,
   onToggle,
+  onToggleExpand,
   activePaths,
 }: TreeContainerProps) => {
   const parentRef = React.useRef<HTMLDivElement>(null)
 
+  // The whole visible tree is one flat list, expanded descendants included, so
+  // opening a 200-field type costs the same as scrolling past one.
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
-    count: nodes.length,
+    count: rows.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 24,
-    overscan: 50,
+    overscan: 10,
+    // Keyed by path, not index: expanding a node shifts every index below it,
+    // and without this the measured heights would follow the old positions.
+    getItemKey: index => rows[index]?.node.id ?? index,
   })
 
   const virtualItems = virtualizer.getVirtualItems()
@@ -47,15 +54,15 @@ export const TreeContainer = ({
             className={schemaTreeStyles.treeList}
           >
             {virtualItems.map(virtualItem => {
-              const node = nodes[virtualItem.index]
-              if (!node) return null
+              const row = rows[virtualItem.index]
+              if (!row) return null
               return (
                 <ListItem
-                  node={node}
-                  depth={0}
+                  row={row}
                   key={virtualItem.key}
                   data-index={virtualItem.index}
                   onToggle={onToggle}
+                  onToggleExpand={onToggleExpand}
                   activePaths={activePaths}
                   ref={virtualizer.measureElement}
                 />

@@ -1,5 +1,4 @@
 import type { ToggleFieldTarget } from '@another-graphql-ide/state'
-import { useState } from 'react'
 
 import { Icon } from '../../../ui-components/icon/icon'
 import { IconButton } from '../../../ui-components/icon-button/icon-button'
@@ -8,12 +7,12 @@ import {
   type IconButtonGroupProps,
 } from '../../../ui-components/icon-button-group/icon-button-group'
 import { schemaTreeStyles } from '../schema-tree.css'
-import type { ListItemType } from '../utils/tree-utils'
+import type { FlatRow } from '../utils/tree-utils'
 
 type ListItemProps = {
-  node: ListItemType
-  depth?: number
+  row: FlatRow
   onToggle: (target: ToggleFieldTarget) => void
+  onToggleExpand: (id: string) => void
   activePaths: Set<string>
   ref?: React.Ref<HTMLLIElement>
   'data-index'?: number
@@ -21,18 +20,20 @@ type ListItemProps = {
 
 const ROOT_OPERATIONS = ['query', 'mutation', 'subscription'] as const
 
+/** Matches the indent the nested lists used before the tree was flattened. */
+const INDENT_PX = 20
+/** Where a column's rail sits, lining up with the tick on the rows below it. */
+const GUIDE_OFFSET_PX = 12
+
 export const ListItem = ({
-  node,
-  depth = 0,
+  row,
   onToggle,
+  onToggleExpand,
   activePaths,
   ref,
   'data-index': dataIndex,
 }: ListItemProps) => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false)
-
-  // Check if node has children
-  const hasChildren = node.children && node.children.length > 0
+  const { node, depth, hasChildren, isExpanded, guides } = row
 
   // Special handling for ARGUMENTS node
   const isArgumentsNode = node.type === 'arguments'
@@ -86,7 +87,30 @@ export const ListItem = ({
   const actions: IconButtonGroupProps['icons'] = [baseAction]
 
   return (
-    <li className={schemaTreeStyles.listItem} ref={ref} data-index={dataIndex}>
+    // Flattening dropped the nested `role="group"` markup. Proper tree ARIA
+    // (role=tree/treeitem, aria-level) needs roving-focus keyboard navigation to
+    // not mislead assistive tech, so it waits for that work.
+    <li
+      className={schemaTreeStyles.listItem}
+      ref={ref}
+      data-index={dataIndex}
+      style={{ paddingInlineStart: depth * INDENT_PX }}
+    >
+      {guides.map((continues, column) => {
+        // A finished column draws nothing except on the row it ends at, where
+        // the stub forms the elbow with that row's horizontal tick.
+        const isOwnColumn = column === guides.length - 1
+        if (!continues && !isOwnColumn) return null
+
+        return (
+          <span
+            aria-hidden="true"
+            className={schemaTreeStyles.listItemGuide({ continues })}
+            key={column}
+            style={{ left: GUIDE_OFFSET_PX + column * INDENT_PX }}
+          />
+        )
+      })}
       <div
         className={schemaTreeStyles.listItemInner({
           withIndentLine: depth !== 0,
@@ -94,7 +118,7 @@ export const ListItem = ({
       >
         {hasChildren ? (
           <IconButton
-            action={() => setIsExpanded(!isExpanded)}
+            action={() => onToggleExpand(node.id)}
             label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.name}`}
             ghost={true}
             name="Chevron"
@@ -133,6 +157,18 @@ export const ListItem = ({
               {node.name}
             </span>
           )}
+          {/* Expanding here loops back to a type already on this path. Marked,
+              never blocked: walking a cycle is a legitimate way to build a
+              deeply nested selection. */}
+          {node.isRecursive && (
+            <span
+              className={schemaTreeStyles.listItemRecursionBadge}
+              title={`${node.name} loops back to a type already on this path`}
+              aria-hidden="true"
+            >
+              ↻
+            </span>
+          )}
           {!isArgumentsNode && (
             <div className={schemaTreeStyles.listItemActionsContainer}>
               <IconButtonGroup icons={actions} />
@@ -140,19 +176,6 @@ export const ListItem = ({
           )}
         </div>
       </div>
-      {isExpanded && hasChildren && (
-        <ul role="group" className={schemaTreeStyles.nestedList}>
-          {node.children?.map(childNode => (
-            <ListItem
-              key={childNode.id}
-              node={childNode}
-              depth={depth + 1}
-              onToggle={onToggle}
-              activePaths={activePaths}
-            />
-          ))}
-        </ul>
-      )}
     </li>
   )
 }

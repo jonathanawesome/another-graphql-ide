@@ -10,8 +10,16 @@ import { Tabs } from '../../ui-components/tabs/tabs'
 import { SettingsContent } from './components/settings-content'
 import { TreeContainer } from './components/tree-container'
 import { useSchemaTree } from './hooks/use-schema-tree'
+import { useTreeExpansion } from './hooks/use-tree-expansion'
 import { schemaTreeStyles } from './schema-tree.css'
 import { activeOperationType, computePresentPaths } from './utils/present-paths'
+import { flattenTree, type TabType } from './utils/tree-utils'
+
+const TAB_TYPES = ['query', 'mutation', 'subscription', 'favorites'] as const
+
+/** The tab selection can come from a manual click, so narrow it back. */
+const asTabType = (value: string | null | undefined): TabType =>
+  TAB_TYPES.includes(value as TabType) ? (value as TabType) : 'query'
 
 export type SchemaTreeProps = {
   /**
@@ -49,22 +57,25 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
     setSeenOpType(activeOpType)
     setManualTab(null)
   }
-  const activeTab = manualTab ?? activeOpType ?? 'query'
+  const activeTab = asTabType(manualTab ?? activeOpType)
 
   // Bridge the optional seed prop into shared state.
   useEffect(() => {
     if (schema) setSchema(schema)
   }, [schema, setSchema])
 
-  // Get data for all tabs
-  const queryData = useSchemaTree(activeSchema, searchTerm, 'query')
-  const mutationData = useSchemaTree(activeSchema, searchTerm, 'mutation')
-  const subscriptionData = useSchemaTree(
+  const { roots, visibleRoots, fieldCounts, getChildren } = useSchemaTree(
     activeSchema,
-    searchTerm,
-    'subscription'
+    searchTerm
   )
-  const favoritesData = useSchemaTree(activeSchema, searchTerm, 'favorites')
+  const { expanded, toggleExpanded } = useTreeExpansion(activeSchema)
+
+  // Only the visible tab is flattened. Base UI keeps every tab panel mounted,
+  // so without this the other three would each build and virtualize a list.
+  const rows = useMemo(
+    () => flattenTree(visibleRoots[activeTab], expanded, getChildren),
+    [visibleRoots, activeTab, expanded, getChildren]
+  )
 
   if (!activeSchema) {
     return (
@@ -74,64 +85,56 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
     )
   }
 
+  // The tree for whichever tab is showing. Inactive panels render nothing.
+  const tree = (
+    <TreeContainer
+      rows={rows}
+      onToggle={toggleField}
+      onToggleExpand={toggleExpanded}
+      activePaths={activePaths}
+    />
+  )
+
   // Create tab items with content
   const tabItems = []
 
-  if (queryData.schemaData.query) {
+  if (roots.query) {
     tabItems.push({
       name: 'query',
-      content: queryData.tabData?.children ? (
-        <TreeContainer
-          nodes={queryData.tabData.children}
-          onToggle={toggleField}
-          activePaths={activePaths}
-        />
-      ) : null,
+      content: activeTab === 'query' ? tree : null,
       trigger: {
         text: 'Query',
         pill:
-          queryData.fieldCounts.query > 0
-            ? { text: queryData.fieldCounts.query.toString() }
+          fieldCounts.query > 0
+            ? { text: fieldCounts.query.toString() }
             : undefined,
       },
     })
   }
 
-  if (mutationData.schemaData.mutation) {
+  if (roots.mutation) {
     tabItems.push({
       name: 'mutation',
-      content: mutationData.tabData?.children ? (
-        <TreeContainer
-          nodes={mutationData.tabData.children}
-          onToggle={toggleField}
-          activePaths={activePaths}
-        />
-      ) : null,
+      content: activeTab === 'mutation' ? tree : null,
       trigger: {
         text: 'Mutation',
         pill:
-          mutationData.fieldCounts.mutation > 0
-            ? { text: mutationData.fieldCounts.mutation.toString() }
+          fieldCounts.mutation > 0
+            ? { text: fieldCounts.mutation.toString() }
             : undefined,
       },
     })
   }
 
-  if (subscriptionData.schemaData.subscription) {
+  if (roots.subscription) {
     tabItems.push({
       name: 'subscription',
-      content: subscriptionData.tabData?.children ? (
-        <TreeContainer
-          nodes={subscriptionData.tabData.children}
-          onToggle={toggleField}
-          activePaths={activePaths}
-        />
-      ) : null,
+      content: activeTab === 'subscription' ? tree : null,
       trigger: {
         text: 'Subscription',
         pill:
-          subscriptionData.fieldCounts.subscription > 0
-            ? { text: subscriptionData.fieldCounts.subscription.toString() }
+          fieldCounts.subscription > 0
+            ? { text: fieldCounts.subscription.toString() }
             : undefined,
       },
     })
@@ -140,17 +143,12 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   // Add favorites tab
   tabItems.push({
     name: 'favorites',
-    content: favoritesData.tabData?.children ? (
-      <TreeContainer
-        nodes={favoritesData.tabData.children}
-        onToggle={toggleField}
-        activePaths={activePaths}
-      />
-    ) : (
-      <div className={schemaTreeStyles.emptyState}>
-        No favorites yet. Click on fields to add them to your favorites.
-      </div>
-    ),
+    content:
+      activeTab === 'favorites' ? (
+        <div className={schemaTreeStyles.emptyState}>
+          No favorites yet. Click on fields to add them to your favorites.
+        </div>
+      ) : null,
     trigger: {
       text: 'Favorites',
     },
