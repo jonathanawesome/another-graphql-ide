@@ -279,8 +279,7 @@ export function createSchemaTreeData(schema: GraphQLSchema) {
 
 /**
  * Depth-first walk of the currently visible tree into the flat array the
- * virtualizer renders. Iterative on purpose: a deeply expanded cyclic schema
- * would otherwise recurse as far as the user has drilled.
+ * virtualizer renders, expanded descendants included.
  */
 export function flattenTree(
   roots: readonly TreeNode[],

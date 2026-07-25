@@ -107,15 +107,24 @@ export const schemaTreeStyles = {
   listItem: style(
     {
       position: 'relative',
+      // The row is the tree's focus target, so keyboard focus has to be visible
+      // on it and not only on the controls inside it.
+      outline: 'none',
+      borderRadius: themeContract.radii.small,
+
+      selectors: {
+        '&:focus-visible': {
+          outline: `2px solid ${themeContract.colors.neutral7}`,
+          outlineOffset: -1,
+        },
+      },
     },
     'schema-tree-list-item'
   ),
 
-  // One rail per ancestor column. The tree used to be nested markup, where a
-  // row's <li> was as tall as its whole subtree and a single ::before could
-  // span it. Flattened, every row is one line tall, so each row draws the
-  // ancestor rails passing through it: full height while the group continues,
-  // stopping at the elbow on the last child.
+  // One rail per ancestor column, drawn per row now that the tree is a flat
+  // list: full height while that group continues, a stub on the row it ends at.
+  // Nested markup used to get this from a single ::before spanning the subtree.
   listItemGuide: recipe(
     {
       base: {

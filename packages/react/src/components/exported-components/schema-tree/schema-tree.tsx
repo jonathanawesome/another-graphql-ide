@@ -70,8 +70,8 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   )
   const { expanded, toggleExpanded } = useTreeExpansion(activeSchema)
 
-  // Only the visible tab is flattened. Base UI keeps every tab panel mounted,
-  // so without this the other three would each build and virtualize a list.
+  // Rows for the visible tab only. Base UI keeps every tab panel mounted, so
+  // each one that renders the tree mounts its own virtualizer.
   const rows = useMemo(
     () => flattenTree(visibleRoots[activeTab], expanded, getChildren),
     [visibleRoots, activeTab, expanded, getChildren]

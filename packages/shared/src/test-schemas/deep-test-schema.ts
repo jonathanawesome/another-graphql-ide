@@ -22,8 +22,8 @@ import { dateTimeScalar, urlScalar } from './scalar-stubs'
 
 /**
  * A deliberately DEEP and CYCLIC schema, the counterpart to
- * `performanceTestSchema`: that one is wide and flat (thousands of types, every
- * field a scalar), this one is small and unbounded downward. Together they
+ * `performanceTestSchema`: that one is wide and flat (thousands of types whose
+ * fields are all scalars), this one is small and unbounded downward. Together they
  * separate the two cost axes, so a regression in the schema tree or the editor
  * can be attributed to breadth or to depth rather than to "a big schema".
  *
@@ -38,7 +38,7 @@ import { dateTimeScalar, urlScalar } from './scalar-stubs'
  *
  * Every field map is built INSIDE the `fields` thunk. `packages/shared` is
  * source-only, so importing anything from it evaluates this module: thunked,
- * that costs ~78 type allocations. Hoisting the field maps into the loop body
+ * that costs 76 type allocations. Hoisting the field maps into the loop body
  * (as `performance-test-schema.ts` does) would move that work to import time.
  */
 
@@ -153,8 +153,8 @@ const nameField = {
 }
 
 /**
- * Interface with an object-typed field of its own, so an interface-typed field
- * is expandable rather than a bag of scalars.
+ * Interface carrying a composite field of its own (`self`), so an
+ * interface-typed field is expandable rather than a bag of scalars.
  */
 const DeepNode: GraphQLInterfaceType = new GraphQLInterfaceType({
   name: 'DeepNode',
@@ -319,8 +319,8 @@ for (let i = 0; i < NODE_COUNT; i++) {
           },
         }
 
-        // Reachable from Node0 only, so a walker that materializes the graph
-        // eagerly cannot multiply the 200 fields across the whole mesh.
+        // Only Node0 and Query.hub reach it, so a walker that materializes the
+        // graph eagerly cannot multiply the 200 fields across the whole mesh.
         if (i === 0) {
           fields.hub = {
             type: new GraphQLNonNull(HubNode),

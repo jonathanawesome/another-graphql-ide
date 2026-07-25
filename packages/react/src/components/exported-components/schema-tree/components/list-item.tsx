@@ -7,18 +7,23 @@ import {
   type IconButtonGroupProps,
 } from '../../../ui-components/icon-button-group/icon-button-group'
 import { schemaTreeStyles } from '../schema-tree.css'
+import { toggleTargetFor } from '../utils/toggle-target'
 import type { FlatRow } from '../utils/tree-utils'
 
 type ListItemProps = {
   row: FlatRow
   onToggle: (target: ToggleFieldTarget) => void
   onToggleExpand: (id: string) => void
+  /** Adopt this row as the tree's single tab stop. */
+  onFocus: (id: string) => void
+  /** Tree-wide navigation, handled on the focused row. */
+  onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void
+  /** Whether this row is that tab stop. */
+  isTabStop: boolean
   activePaths: Set<string>
-  ref?: React.Ref<HTMLLIElement>
+  ref?: React.Ref<HTMLDivElement>
   'data-index'?: number
 }
-
-const ROOT_OPERATIONS = ['query', 'mutation', 'subscription'] as const
 
 /** Matches the indent the nested lists used before the tree was flattened. */
 const INDENT_PX = 20
@@ -29,6 +34,9 @@ export const ListItem = ({
   row,
   onToggle,
   onToggleExpand,
+  onFocus,
+  onKeyDown,
+  isTabStop,
   activePaths,
   ref,
   'data-index': dataIndex,
@@ -38,24 +46,9 @@ export const ListItem = ({
   // Special handling for ARGUMENTS node
   const isArgumentsNode = node.type === 'arguments'
 
-  // Toggle this field or argument into or out of the document. The node id is
-  // the dotted path from the root operation, e.g. `query.user.posts.title` for
-  // a field or `query.user.arguments.id` for an argument.
+  const toggleTarget = toggleTargetFor(node)
   const handleToggle = () => {
-    const [root, ...rest] = node.id.split('.')
-    if (!isRootOperation(root)) return
-    if (node.type === 'field') {
-      onToggle({ rootOperation: root, path: rest })
-    } else if (node.type === 'argument') {
-      const argsIndex = rest.indexOf('arguments')
-      const argument = rest[argsIndex + 1]
-      if (argsIndex === -1 || argument === undefined) return
-      onToggle({
-        rootOperation: root,
-        path: rest.slice(0, argsIndex),
-        argument,
-      })
-    }
+    if (toggleTarget) onToggle(toggleTarget)
   }
 
   const canToggle = node.type === 'field' || node.type === 'argument'
@@ -67,6 +60,9 @@ export const ListItem = ({
     label: 'View Documentation',
     name: 'BookOpenText',
     size: 'mini',
+    // The row is the tab stop, so Tab does not walk every control in the tree.
+    // Quick Docs is mouse-only until it has a key binding of its own.
+    tabIndex: -1,
     tooltipOptions: { side: 'bottom' },
   }
 
@@ -87,13 +83,17 @@ export const ListItem = ({
   const actions: IconButtonGroupProps['icons'] = [baseAction]
 
   return (
-    // Flattening dropped the nested `role="group"` markup. Proper tree ARIA
-    // (role=tree/treeitem, aria-level) needs roving-focus keyboard navigation to
-    // not mislead assistive tech, so it waits for that work.
-    <li
+    <div
       className={schemaTreeStyles.listItem}
       ref={ref}
       data-index={dataIndex}
+      role="treeitem"
+      aria-level={depth + 1}
+      aria-expanded={hasChildren ? isExpanded : undefined}
+      aria-selected={toggleTarget ? activePaths.has(node.id) : false}
+      tabIndex={isTabStop ? 0 : -1}
+      onFocus={() => onFocus(node.id)}
+      onKeyDown={onKeyDown}
       style={{ paddingInlineStart: depth * INDENT_PX }}
     >
       {guides.map((continues, column) => {
@@ -124,6 +124,7 @@ export const ListItem = ({
             name="Chevron"
             rotate={isExpanded ? '90' : undefined}
             size="mini"
+            tabIndex={-1}
           />
         ) : (
           <div className={schemaTreeStyles.listItemLeafIndicatorContainer}>
@@ -138,13 +139,15 @@ export const ListItem = ({
             </span>
           ) : canToggle ? (
             // A native button so clicking the name toggles the field/argument
-            // into the document with keyboard + a11y support for free.
+            // into the document. Keyboard users activate the row itself, so it
+            // stays out of the tab order.
             <button
               type="button"
               className={`${schemaTreeStyles.listItemNameButton} ${schemaTreeStyles.listItemName(
                 { active: activePaths.has(node.id) }
               )}`}
               onClick={handleToggle}
+              tabIndex={-1}
             >
               {node.name}
             </button>
@@ -176,12 +179,6 @@ export const ListItem = ({
           )}
         </div>
       </div>
-    </li>
+    </div>
   )
-}
-
-function isRootOperation(
-  value: string | undefined
-): value is (typeof ROOT_OPERATIONS)[number] {
-  return ROOT_OPERATIONS.includes(value as (typeof ROOT_OPERATIONS)[number])
 }
