@@ -9,13 +9,20 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "graphql": "^16"
   },
   "dependencies": {
     "@another-graphql-ide/eslint-config": "workspace:*"
   },
   "devDependencies": {
     "@another-graphql-ide/tsconfig": "workspace:*",
-    "typescript": "catalog:"
+    "graphql": "^16",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
