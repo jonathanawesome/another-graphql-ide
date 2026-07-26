@@ -31,14 +31,7 @@ export type TreeNode = {
   graphqlType?: GraphQLType
   graphqlField?: GraphQLField<unknown, unknown>
   graphqlArgument?: GraphQLArgument
-  /** Composite types seen on the path to here, for detecting recursion. */
-  chain?: TypeChain
-  /** This node's type already appears above it, so expanding here loops. */
-  isRecursive?: boolean
 }
-
-/** Linked list rather than a Set: extending is O(1) and shares its tail. */
-export type TypeChain = { readonly name: string; readonly next?: TypeChain }
 
 export type TabType = 'query' | 'mutation' | 'subscription' | 'favorites'
 
@@ -67,18 +60,6 @@ const NO_GUIDES: readonly boolean[] = []
 
 const isComposite = (type: GraphQLNamedType) =>
   isObjectType(type) || isInterfaceType(type) || isUnionType(type)
-
-const chainHas = (chain: TypeChain | undefined, name: string): boolean => {
-  for (let link = chain; link; link = link.next) {
-    if (link.name === name) return true
-  }
-  return false
-}
-
-const extendChain = (
-  chain: TypeChain | undefined,
-  name: string
-): TypeChain => ({ name, next: chain })
 
 /**
  * Whether a node can be expanded, without building its children. Exact rather
@@ -125,31 +106,14 @@ function sortTreeNodes(nodes: TreeNode[]): TreeNode[] {
 function makeFieldNode(
   id: string,
   name: string,
-  field: GraphQLField<unknown, unknown>,
-  parentChain: TypeChain | undefined
+  field: GraphQLField<unknown, unknown>
 ): TreeNode {
-  const namedType = getNamedType(field.type)
-
-  // Scalars and enums repeat everywhere, so recursion only means something for
-  // composite types.
-  if (!isComposite(namedType)) {
-    return {
-      id,
-      name,
-      type: 'field',
-      graphqlType: field.type,
-      graphqlField: field,
-    }
-  }
-
   return {
     id,
     name,
     type: 'field',
     graphqlType: field.type,
     graphqlField: field,
-    chain: extendChain(parentChain, namedType.name),
-    isRecursive: chainHas(parentChain, namedType.name),
   }
 }
 
@@ -193,8 +157,7 @@ function createArgumentChildren(
  */
 function createTypeChildren(
   parentId: string,
-  type: GraphQLType | undefined,
-  parentChain: TypeChain | undefined
+  type: GraphQLType | undefined
 ): TreeNode[] {
   if (!type) return []
 
@@ -203,7 +166,7 @@ function createTypeChildren(
   if (isObjectType(namedType) || isInterfaceType(namedType)) {
     return sortTreeNodes(
       Object.entries(namedType.getFields()).map(([fieldName, field]) =>
-        makeFieldNode(`${parentId}.${fieldName}`, fieldName, field, parentChain)
+        makeFieldNode(`${parentId}.${fieldName}`, fieldName, field)
       )
     )
   }
@@ -215,8 +178,6 @@ function createTypeChildren(
         name: `... on ${possibleType.name}`,
         type: 'type' as const,
         graphqlType: possibleType,
-        chain: extendChain(parentChain, possibleType.name),
-        isRecursive: chainHas(parentChain, possibleType.name),
       }))
     )
   }
@@ -237,10 +198,10 @@ export function getNodeChildren(node: TreeNode): TreeNode[] {
     case 'field':
       return [
         ...createArgumentsNode(node.id, node.graphqlField),
-        ...createTypeChildren(node.id, node.graphqlType, node.chain),
+        ...createTypeChildren(node.id, node.graphqlType),
       ]
     default:
-      return createTypeChildren(node.id, node.graphqlType, node.chain)
+      return createTypeChildren(node.id, node.graphqlType)
   }
 }
 
@@ -254,7 +215,6 @@ function createRootNode(
     name,
     type: 'root',
     graphqlType: type,
-    chain: extendChain(undefined, type.name),
   }
 }
 

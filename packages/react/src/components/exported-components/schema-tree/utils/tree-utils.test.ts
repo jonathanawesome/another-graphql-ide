@@ -122,14 +122,12 @@ describe('getNodeChildren', () => {
     ).toEqual(['query.root.self.self.name.arguments.upper'])
   })
 
-  it('walks a cycle as far as asked, flagging repeats', () => {
+  it('walks a cycle as far as asked', () => {
     const ids: string[] = []
-    const recursive: (boolean | undefined)[] = []
     let node = childNamed(queryRoot(), 'root')
 
     for (let i = 0; i < 5; i++) {
       ids.push(node.id)
-      recursive.push(node.isRecursive)
       node = childNamed(node, 'self')
     }
 
@@ -140,14 +138,6 @@ describe('getNodeChildren', () => {
       'query.root.self.self.self',
       'query.root.self.self.self.self',
     ])
-    // `root` is the first Node on the path; every `self` below it repeats one.
-    expect(recursive).toEqual([false, true, true, true, true])
-  })
-
-  // Scalars repeat on nearly every type, so tracking them the same way would
-  // put a recursion badge on half the leaves in the tree.
-  it('treats scalar repetition as ordinary, not recursion', () => {
-    expect(descend(['root', 'id']).isRecursive).toBeUndefined()
   })
 })
 

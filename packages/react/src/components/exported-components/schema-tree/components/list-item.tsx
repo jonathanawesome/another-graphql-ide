@@ -160,18 +160,6 @@ export const ListItem = ({
               {node.name}
             </span>
           )}
-          {/* Expanding here loops back to a type already on this path. Marked,
-              never blocked: walking a cycle is a legitimate way to build a
-              deeply nested selection. */}
-          {node.isRecursive && (
-            <span
-              className={schemaTreeStyles.listItemRecursionBadge}
-              title={`${node.name} loops back to a type already on this path`}
-              aria-hidden="true"
-            >
-              ↻
-            </span>
-          )}
           {!isArgumentsNode && (
             <div className={schemaTreeStyles.listItemActionsContainer}>
               <IconButtonGroup icons={actions} />

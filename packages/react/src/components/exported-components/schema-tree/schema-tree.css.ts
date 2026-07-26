@@ -257,15 +257,4 @@ export const schemaTreeStyles = {
     },
     'schema-tree-list-item-name-actions-container'
   ),
-
-  // Marks a node whose type already appears above it on the same path.
-  listItemRecursionBadge: style(
-    {
-      color: themeContract.colors.neutral6,
-      fontSize: themeContract.px[12],
-      lineHeight: 1,
-      cursor: 'help',
-    },
-    'schema-tree-list-item-recursion-badge'
-  ),
 }
