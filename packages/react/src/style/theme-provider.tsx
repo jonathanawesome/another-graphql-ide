@@ -1,7 +1,10 @@
+import type { Theme } from '@another-graphql-ide/state'
 import { lightTheme, darkTheme } from '@another-graphql-ide/style'
 import { createContext, useEffect, useState, type ReactNode } from 'react'
 
-export type Theme = 'light' | 'dark' | 'system'
+import { useAppStore } from '../state'
+
+export type { Theme }
 
 export type ThemeContextValue = {
   theme: Theme
@@ -13,8 +16,6 @@ export const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 type ThemeProviderProps = {
   children: ReactNode
-  defaultTheme?: Theme
-  storageKey?: string
 }
 
 function getSystemTheme(): 'light' | 'dark' {
@@ -25,43 +26,19 @@ function getSystemTheme(): 'light' | 'dark' {
   return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-function getStoredTheme(storageKey: string): Theme | null {
-  if (typeof window === 'undefined') {
-    return null
-  }
-
-  try {
-    const stored = localStorage.getItem(storageKey)
-    if (stored && ['light', 'dark', 'system'].includes(stored)) {
-      return stored as Theme
-    }
-  } catch {
-    // Ignore localStorage errors
-  }
-
-  return null
-}
-
-function setStoredTheme(storageKey: string, theme: Theme): void {
-  if (typeof window === 'undefined') {
-    return
-  }
-
-  try {
-    localStorage.setItem(storageKey, theme)
-  } catch {
-    // Ignore localStorage errors
-  }
-}
-
-export function ThemeProvider({
-  children,
-  defaultTheme = 'system',
-  storageKey = 'jonui-theme',
-}: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    return getStoredTheme(storageKey) ?? defaultTheme
-  })
+/**
+ * Resolves the stored theme preference against the OS and puts the matching
+ * class on the document.
+ *
+ * The preference itself lives in the settings slice with every other
+ * preference, persisted under one key and validated on the way back in. What
+ * stays here is the part that needs a DOM: reading `prefers-color-scheme` and
+ * swapping the class. Keeping that split means the state package never grows a
+ * browser dependency.
+ */
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const theme = useAppStore.use.theme()
+  const setTheme = useAppStore.use.setTheme()
 
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(() => {
     return getSystemTheme()
@@ -93,11 +70,6 @@ export function ThemeProvider({
       root.classList.add(lightTheme)
     }
   }, [resolvedTheme])
-
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme)
-    setStoredTheme(storageKey, newTheme)
-  }
 
   return (
     <ThemeContext.Provider

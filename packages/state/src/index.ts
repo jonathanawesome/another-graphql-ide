@@ -13,6 +13,7 @@ export type { SchemaSlice, SchemaStatus } from './slices/schema/types'
 export type {
   SettingsSlice,
   ObjectFieldInsertionMode,
+  Theme,
 } from './slices/settings/types'
 
 export { createTransport, LOCAL_ENDPOINT } from './transport/transport'

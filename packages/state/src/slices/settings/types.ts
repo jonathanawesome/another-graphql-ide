@@ -7,6 +7,12 @@
 export type ObjectFieldInsertionMode = 'typename' | 'bare'
 
 /**
+ * Colour scheme preference. `system` follows the OS, which is resolved where
+ * the DOM is: this package stays free of `matchMedia`.
+ */
+export type Theme = 'light' | 'dark' | 'system'
+
+/**
  * User preferences. Every one is a flat top-level key on purpose: the generated
  * selectors are per key, so a component subscribes to the one preference it
  * reads, and persistence merges keys individually rather than replacing a
@@ -25,4 +31,7 @@ export type SettingsSlice = {
    * in hand, and reading one through a closure would go stale.
    */
   toggleShowFieldTypes: () => void
+
+  theme: Theme
+  setTheme: (theme: Theme) => void
 }

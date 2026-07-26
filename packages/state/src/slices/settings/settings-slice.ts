@@ -11,4 +11,7 @@ export const createSettingsSlice: AppSliceCreator<SettingsSlice> = set => ({
   setShowFieldTypes: showFieldTypes => set({ showFieldTypes }),
   toggleShowFieldTypes: () =>
     set(state => ({ showFieldTypes: !state.showFieldTypes })),
+
+  theme: 'system',
+  setTheme: theme => set({ theme }),
 })

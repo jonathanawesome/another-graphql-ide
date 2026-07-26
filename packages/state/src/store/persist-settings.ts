@@ -25,12 +25,13 @@ export const SETTINGS_STORAGE_KEY = 'another-graphql-ide-settings'
  */
 type PersistedSettings = Pick<
   AppState,
-  'objectFieldInsertionMode' | 'showFieldTypes'
+  'objectFieldInsertionMode' | 'showFieldTypes' | 'theme'
 >
 
 const partialize = (state: AppState): PersistedSettings => ({
   objectFieldInsertionMode: state.objectFieldInsertionMode,
   showFieldTypes: state.showFieldTypes,
+  theme: state.theme,
 })
 
 /**
@@ -54,6 +55,14 @@ const validSettings = (persisted: unknown): Partial<PersistedSettings> => {
 
   if (typeof candidate.showFieldTypes === 'boolean') {
     valid.showFieldTypes = candidate.showFieldTypes
+  }
+
+  if (
+    candidate.theme === 'light' ||
+    candidate.theme === 'dark' ||
+    candidate.theme === 'system'
+  ) {
+    valid.theme = candidate.theme
   }
 
   return valid

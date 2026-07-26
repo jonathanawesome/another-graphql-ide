@@ -67,6 +67,27 @@ describe('settings slice', () => {
   })
 })
 
+describe('theme', () => {
+  it('follows the OS until told otherwise', () => {
+    expect(createAGIStore().getState().theme).toBe('system')
+  })
+
+  it('survives to the next store, like any other preference', () => {
+    const { storage } = sharedStorage()
+
+    createAGIStore({ storage }).getState().setTheme('dark')
+
+    expect(createAGIStore({ storage }).getState().theme).toBe('dark')
+  })
+
+  it('ignores a stored value that is not a theme', () => {
+    const { storage, seed } = sharedStorage()
+    seed({ theme: 'chartreuse' })
+
+    expect(createAGIStore({ storage }).getState().theme).toBe('system')
+  })
+})
+
 describe('settings persistence', () => {
   it('carries preferences to the next store on the same storage', () => {
     const { storage } = sharedStorage()
@@ -88,6 +109,7 @@ describe('settings persistence', () => {
     expect(Object.keys(read().state ?? {}).sort()).toEqual([
       'objectFieldInsertionMode',
       'showFieldTypes',
+      'theme',
     ])
   })
 
