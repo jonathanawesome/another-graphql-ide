@@ -4,7 +4,17 @@ import { type ReactElement } from 'react'
 import { tooltipStyles } from './tooltip.css'
 
 export type TooltipProps = {
-  content: string
+  /**
+   * Usually a string. Wider so a tooltip can advertise a shortcut beside its
+   * label, which is the natural second home for `Kbd` after the settings panel:
+   *
+   * ```tsx
+   * content={<>Toggle return types <Kbd shortcut={id} tone="inverted" /></>}
+   * ```
+   *
+   * The popup is a dark surface, hence the inverted tone.
+   */
+  content: React.ReactNode
   side?: 'top' | 'right' | 'bottom' | 'left'
   trigger: React.ReactNode
 }

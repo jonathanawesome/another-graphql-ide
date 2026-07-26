@@ -1,6 +1,7 @@
 import type { GraphQLSchema } from 'graphql'
 import { useEffect, useMemo, useState } from 'react'
 
+import { useShortcut } from '../../../keyboard'
 import { useAppStore } from '../../../state'
 import { IconButton } from '../../ui-components/icon-button/icon-button'
 import { Input } from '../../ui-components/input/input'
@@ -33,6 +34,8 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const setSchema = useAppStore.use.setSchema()
   const toggleField = useAppStore.use.toggleField()
+  const showFieldTypes = useAppStore.use.showFieldTypes()
+  const toggleShowFieldTypes = useAppStore.use.toggleShowFieldTypes()
   const activeSchema = useAppStore.use.schema()
   const query = useAppStore.use.query()
   const cursor = useAppStore.use.cursor()
@@ -70,6 +73,10 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   )
   const { expanded, toggleExpanded } = useTreeExpansion(activeSchema)
 
+  // Registered once for the whole brick. The bus fires only the most recently
+  // mounted tree, so several on a page still toggle the shared setting once.
+  useShortcut('schema-tree.toggle-field-types', toggleShowFieldTypes)
+
   // Rows for the visible tab only. Base UI keeps every tab panel mounted, so
   // each one that renders the tree mounts its own virtualizer.
   const rows = useMemo(
@@ -91,6 +98,7 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
       rows={rows}
       onToggle={toggleField}
       onToggleExpand={toggleExpanded}
+      showTypes={showFieldTypes}
       activePaths={activePaths}
     />
   )

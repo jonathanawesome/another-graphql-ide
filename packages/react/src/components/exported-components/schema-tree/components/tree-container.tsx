@@ -12,6 +12,8 @@ type TreeContainerProps = {
   rows: FlatRow[]
   onToggle: (target: ToggleFieldTarget) => void
   onToggleExpand: (id: string) => void
+  /** Read once by the tree rather than subscribed to by every row. */
+  showTypes: boolean
   activePaths: Set<string>
 }
 
@@ -22,6 +24,7 @@ export const TreeContainer = ({
   rows,
   onToggle,
   onToggleExpand,
+  showTypes,
   activePaths,
 }: TreeContainerProps) => {
   const parentRef = React.useRef<HTMLDivElement>(null)
@@ -187,6 +190,7 @@ export const TreeContainer = ({
                   onFocus={setTabStopId}
                   onKeyDown={handleKeyDown}
                   isTabStop={virtualItem.index === focusIndex}
+                  showTypes={showTypes}
                   activePaths={activePaths}
                   ref={virtualizer.measureElement}
                 />

@@ -9,6 +9,7 @@ import {
 import { schemaTreeStyles } from '../schema-tree.css'
 import { toggleTargetFor } from '../utils/toggle-target'
 import type { FlatRow } from '../utils/tree-utils'
+import { typeLabelFor } from '../utils/type-label'
 
 type ListItemProps = {
   row: FlatRow
@@ -20,6 +21,8 @@ type ListItemProps = {
   onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void
   /** Whether this row is that tab stop. */
   isTabStop: boolean
+  /** Draw the field's return type, or the argument's input type, after its name. */
+  showTypes: boolean
   activePaths: Set<string>
   ref?: React.Ref<HTMLDivElement>
   'data-index'?: number
@@ -37,6 +40,7 @@ export const ListItem = ({
   onFocus,
   onKeyDown,
   isTabStop,
+  showTypes,
   activePaths,
   ref,
   'data-index': dataIndex,
@@ -47,6 +51,7 @@ export const ListItem = ({
   const isArgumentsNode = node.type === 'arguments'
 
   const toggleTarget = toggleTargetFor(node)
+  const typeLabel = showTypes ? typeLabelFor(node) : undefined
   const handleToggle = () => {
     if (toggleTarget) onToggle(toggleTarget)
   }
@@ -158,6 +163,13 @@ export const ListItem = ({
               })}
             >
               {node.name}
+            </span>
+          )}
+          {/* Outside the name button on purpose: it is a label, not part of
+              what clicking the field toggles into the document. */}
+          {typeLabel && (
+            <span className={schemaTreeStyles.listItemTypeLabel}>
+              {typeLabel}
             </span>
           )}
           {!isArgumentsNode && (

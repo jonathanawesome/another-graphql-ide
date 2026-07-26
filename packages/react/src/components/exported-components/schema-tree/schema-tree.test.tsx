@@ -1,5 +1,5 @@
 import { deepTestSchema } from '@another-graphql-ide/shared'
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // jsdom gives every element a zero-height rect, so the real virtualizer renders
@@ -182,6 +182,39 @@ describe('SchemaTree', () => {
 
       press('h') // hub
       expect(nameOf(focused())).toContain('hub')
+    })
+  })
+
+  describe('return types', () => {
+    it('are hidden until the setting is on', () => {
+      render(<SchemaTree schema={deepTestSchema} />)
+
+      expect(screen.queryByText('HubNode!')).toBeNull()
+
+      // Store writes from outside an event need act, or React has not
+      // re-rendered by the time the assertion runs.
+      act(() => useAppStore.setState({ showFieldTypes: true }))
+      expect(screen.getByText('HubNode!')).toBeDefined()
+    })
+
+    // The label sits beside the name button rather than inside it, so the
+    // field stays queryable by its own name and the type is not part of the
+    // click target that inserts it.
+    it('leave the field name intact', () => {
+      useAppStore.setState({ showFieldTypes: true })
+      render(<SchemaTree schema={deepTestSchema} />)
+
+      expect(screen.getByRole('button', { name: 'hub' })).toBeDefined()
+    })
+
+    it('toggle from the keyboard anywhere on the page', () => {
+      render(<SchemaTree schema={deepTestSchema} />)
+
+      // jsdom is not an Apple platform, so Mod is Control here.
+      fireEvent.keyDown(document, { key: 'l', ctrlKey: true, shiftKey: true })
+
+      expect(useAppStore.getState().showFieldTypes).toBe(true)
+      expect(screen.getByText('HubNode!')).toBeDefined()
     })
   })
 

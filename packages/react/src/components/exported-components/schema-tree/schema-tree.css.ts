@@ -230,6 +230,20 @@ export const schemaTreeStyles = {
     'schema-tree-list-item-name-button'
   ),
 
+  // Mono, smaller, and dimmer than the field name: three ways of staying
+  // subordinate to it, since the name is what a user scans for.
+  listItemTypeLabel: style(
+    {
+      fontFamily: themeContract.fonts.mono,
+      fontSize: themeContract.px[11],
+      color: themeContract.colors.neutral6,
+      whiteSpace: 'nowrap',
+      // Sits outside the name button, so it is never part of the click target.
+      pointerEvents: 'none',
+    },
+    'schema-tree-list-item-type-label'
+  ),
+
   listItemArgumentsLabel: style(
     {
       color: themeContract.colors.neutral6,
