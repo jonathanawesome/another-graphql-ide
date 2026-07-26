@@ -1,4 +1,6 @@
 export { createAGIStore, appStore } from './store/create-agi-store'
+export type { CreateAGIStoreOptions } from './store/create-agi-store'
+export { SETTINGS_STORAGE_KEY } from './store/persist-settings'
 export type { AppState } from './store/types'
 
 export type {

@@ -1,16 +1,12 @@
-import type { StateCreator } from 'zustand/vanilla'
-
-import type { AppState } from '../../store/types'
+import type { AppSliceCreator } from '../../store/types'
 
 import { computeToggle } from './toggle-field'
 import type { DocumentSlice } from './types'
 
-export const createDocumentSlice: StateCreator<
-  AppState,
-  [],
-  [],
-  DocumentSlice
-> = (set, get) => ({
+export const createDocumentSlice: AppSliceCreator<DocumentSlice> = (
+  set,
+  get
+) => ({
   query: '',
   variables: '',
   operationName: undefined,
