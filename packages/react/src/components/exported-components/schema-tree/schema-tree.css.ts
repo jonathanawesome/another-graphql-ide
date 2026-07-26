@@ -104,44 +104,46 @@ export const schemaTreeStyles = {
     'schema-tree-tree-list'
   ),
 
-  nestedList: style(
-    {
-      margin: 0,
-      padding: 0,
-      listStyle: 'none',
-      marginLeft: themeContract.px[20],
-    },
-    'schema-tree-nested-list'
-  ),
-
   listItem: style(
     {
       position: 'relative',
+      // The row is the tree's focus target, so keyboard focus has to be visible
+      // on it and not only on the controls inside it.
+      outline: 'none',
+      borderRadius: themeContract.radii.small,
 
       selectors: {
-        '&::before': {
-          content: '',
-          position: 'absolute',
-          top: 18,
-          left: 12,
-          height: 'calc(100% - 30px)',
-          width: 1,
-          backgroundColor: themeContract.colors.neutral5,
-        },
-
-        '&:last-of-type&::after': {
-          content: '',
-          position: 'absolute',
-          zIndex: 1,
-          top: 13,
-          left: -8,
-          height: 'calc(100% - 12px)',
-          width: 1,
-          backgroundColor: themeContract.colors.neutral2,
+        '&:focus-visible': {
+          outline: `2px solid ${themeContract.colors.neutral7}`,
+          outlineOffset: -1,
         },
       },
     },
     'schema-tree-list-item'
+  ),
+
+  // One rail per ancestor column, drawn per row now that the tree is a flat
+  // list: full height while that group continues, a stub on the row it ends at.
+  // Nested markup used to get this from a single ::before spanning the subtree.
+  listItemGuide: recipe(
+    {
+      base: {
+        content: '',
+        position: 'absolute',
+        top: 0,
+        width: 1,
+        backgroundColor: themeContract.colors.neutral5,
+      },
+
+      variants: {
+        continues: {
+          true: { bottom: 0 },
+          // Meets the horizontal tick drawn by listItemInner.
+          false: { height: 12 },
+        },
+      },
+    },
+    'schema-tree-list-item-guide'
   ),
 
   listItemInner: recipe(
@@ -228,6 +230,20 @@ export const schemaTreeStyles = {
     'schema-tree-list-item-name-button'
   ),
 
+  // Mono, smaller, and dimmer than the field name: three ways of staying
+  // subordinate to it, since the name is what a user scans for.
+  listItemTypeLabel: style(
+    {
+      fontFamily: themeContract.fonts.mono,
+      fontSize: themeContract.px[11],
+      color: themeContract.colors.neutral6,
+      whiteSpace: 'nowrap',
+      // Sits outside the name button, so it is never part of the click target.
+      pointerEvents: 'none',
+    },
+    'schema-tree-list-item-type-label'
+  ),
+
   listItemArgumentsLabel: style(
     {
       color: themeContract.colors.neutral6,
@@ -254,16 +270,5 @@ export const schemaTreeStyles = {
       },
     },
     'schema-tree-list-item-name-actions-container'
-  ),
-
-  nodeType: style({}, 'schema-tree-node-type'),
-
-  nodeChildren: style(
-    {
-      marginLeft: themeContract.px[16],
-      borderLeft: `1px solid ${themeContract.colors.neutral4}`,
-      paddingLeft: themeContract.px[8],
-    },
-    'schema-tree-node-children'
   ),
 }

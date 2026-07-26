@@ -17,6 +17,7 @@ export default defineConfig({
         { label: 'Icon Button' },
         { label: 'Icon Button Group' },
         { label: 'Input' },
+        { label: 'Kbd' },
         { label: 'Pill' },
         { label: 'Popover' },
         { label: 'Resizer' },

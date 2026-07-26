@@ -1,79 +1,65 @@
 import type { GraphQLSchema } from 'graphql'
-import { useMemo, useCallback } from 'react'
+import { useMemo } from 'react'
 
-import {
-  createSchemaTreeData,
-  type ListItemType,
-  type TabType,
-} from '../utils/tree-utils'
+import { createChildrenCache } from '../utils/children-cache'
+import { createSchemaTreeData, type TreeNode } from '../utils/tree-utils'
+
+const NO_ROOTS = { query: null, mutation: null, subscription: null }
 
 /**
- * Hook for managing schema tree data and search filtering
+ * Schema tree data for every tab, built once per schema.
+ *
+ * Roots describe themselves only; `getChildren` derives and caches one level at
+ * a time, so the cost of a schema is what the user opens rather than the size
+ * of its type graph.
  */
 export function useSchemaTree(
   schema: GraphQLSchema | undefined,
-  searchTerm: string,
-  activeTab: TabType
+  searchTerm: string
 ) {
-  // Parse schema into organized data by operation type. Empty when no schema
-  // is loaded yet, so the hook can be called unconditionally.
-  const schemaData = useMemo(
-    () =>
-      schema
-        ? createSchemaTreeData(schema)
-        : { query: null, mutation: null, subscription: null },
+  // The cache is created alongside the roots so it dies with them.
+  const { roots, getChildren } = useMemo(
+    () => ({
+      roots: schema ? createSchemaTreeData(schema) : NO_ROOTS,
+      getChildren: createChildrenCache(),
+    }),
     [schema]
   )
 
-  // Helper function to count fields matching search term
-  const getFilteredFieldCount = useCallback(
-    (rootNode: ListItemType | null, searchTerm: string): number => {
-      if (!rootNode?.children) return 0
-      if (!searchTerm.trim()) return rootNode.children.length
-
-      return rootNode.children.filter(child =>
-        child.name.toLowerCase().includes(searchTerm.toLowerCase())
-      ).length
-    },
-    []
-  )
-
-  // Get field counts for tab labels (filtered by search if active)
-  const fieldCounts = useMemo(
+  const rootChildren = useMemo(
     () => ({
-      query: getFilteredFieldCount(schemaData.query, searchTerm),
-      mutation: getFilteredFieldCount(schemaData.mutation, searchTerm),
-      subscription: getFilteredFieldCount(schemaData.subscription, searchTerm),
+      query: roots.query ? getChildren(roots.query) : [],
+      mutation: roots.mutation ? getChildren(roots.mutation) : [],
+      subscription: roots.subscription ? getChildren(roots.subscription) : [],
+      favorites: [] as TreeNode[], // TODO: implement favorites
     }),
-    [schemaData, searchTerm, getFilteredFieldCount]
+    [roots, getChildren]
   )
 
-  // Get current tab data with filtering
-  const tabData = useMemo(() => {
-    let rootNode: ListItemType | null
+  // Search filters root fields only, as it did before the tree went lazy.
+  const visibleRoots = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase()
+    if (!term) return rootChildren
 
-    if (activeTab === 'query') rootNode = schemaData.query
-    else if (activeTab === 'mutation') rootNode = schemaData.mutation
-    else if (activeTab === 'subscription') rootNode = schemaData.subscription
-    else return null // 'favorites' — TODO: implement favorites
-
-    if (!rootNode) return null
-
-    // Apply search filtering
-    if (!searchTerm.trim()) return rootNode
+    const matching = (nodes: TreeNode[]) =>
+      nodes.filter(node => node.name.toLowerCase().includes(term))
 
     return {
-      ...rootNode,
-      children:
-        rootNode.children?.filter(child =>
-          child.name.toLowerCase().includes(searchTerm.toLowerCase())
-        ) ?? [],
+      query: matching(rootChildren.query),
+      mutation: matching(rootChildren.mutation),
+      subscription: matching(rootChildren.subscription),
+      favorites: matching(rootChildren.favorites),
     }
-  }, [schemaData, activeTab, searchTerm])
+  }, [rootChildren, searchTerm])
 
-  return {
-    schemaData,
-    fieldCounts,
-    tabData,
-  }
+  const fieldCounts = useMemo(
+    () => ({
+      query: visibleRoots.query.length,
+      mutation: visibleRoots.mutation.length,
+      subscription: visibleRoots.subscription.length,
+    }),
+    [visibleRoots]
+  )
+
+  return { roots, visibleRoots, fieldCounts, getChildren }
 }

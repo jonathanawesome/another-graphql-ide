@@ -17,10 +17,11 @@ const EditorFrame = ({ children }: React.PropsWithChildren) => (
 
 const graphqlDoc = `# Schema-aware: try Ctrl-Space, hover fields, or type an unknown field.
 query ExampleQuery {
-  allFilms {
-    films {
-      title
-      director
+  person {
+    name
+    friends {
+      name
+      age
     }
   }
 }

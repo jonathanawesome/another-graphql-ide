@@ -52,13 +52,15 @@ const emptyPos = new Position(1, 2)
 // name on Query.
 const invalidQuery = 'query {\n  thisFieldDefinitelyDoesNotExist\n}'
 
-const schemaCases = [
+// Exported so a test can assert the "valid" case really is valid: a typo here
+// silently turns the lint benchmark into a second copy of the unknown-field one.
+export const schemaCases = [
   {
     variant: 'baseline (small)',
     schema: graphiqlTestSchema,
     validQuery:
-      'query {\n  allFilms {\n    films {\n      title\n    }\n  }\n}',
-    hoverPos: new Position(1, 4), // over "allFilms"
+      'query {\n  person {\n    name\n    friends {\n      name\n    }\n  }\n}',
+    hoverPos: new Position(1, 4), // over "person"
   },
   {
     variant: 'stress (performance)',

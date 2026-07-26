@@ -1,4 +1,5 @@
 import {
+  deepTestSchema,
   enterpriseTestSchema,
   graphiqlTestSchema,
   performanceTestSchema,
@@ -28,4 +29,11 @@ export const VeterinaryOfficeTestSchema = createPreview({
 export const PerformanceTestSchema = createPreview({
   label: 'Performance Test Schema',
   render: () => <SchemaTree schema={performanceTestSchema} />,
+})
+
+// The depth counterpart to the performance schema: small type set, cyclic, so
+// expansion never bottoms out.
+export const DeepTestSchema = createPreview({
+  label: 'Deep Test Schema',
+  render: () => <SchemaTree schema={deepTestSchema} />,
 })

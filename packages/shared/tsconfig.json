@@ -1,4 +1,4 @@
 {
   "extends": "@another-graphql-ide/tsconfig/react.json",
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "vitest.config.ts"]
 }

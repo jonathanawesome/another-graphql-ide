@@ -1,18 +1,14 @@
-import type { StateCreator } from 'zustand/vanilla'
-
-import type { AppState } from '../../store/types'
+import type { AppSliceCreator } from '../../store/types'
 import { createTransport } from '../../transport/transport'
 
 import type { ExecutionSlice } from './types'
 
 const DEFAULT_ENDPOINT = 'http://localhost:4000/graphql'
 
-export const createExecutionSlice: StateCreator<
-  AppState,
-  [],
-  [],
-  ExecutionSlice
-> = (set, get) => {
+export const createExecutionSlice: AppSliceCreator<ExecutionSlice> = (
+  set,
+  get
+) => {
   let controller: AbortController | null = null
 
   return {
