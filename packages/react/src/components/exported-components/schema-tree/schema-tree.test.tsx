@@ -1,5 +1,6 @@
 import { deepTestSchema } from '@another-graphql-ide/shared'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { buildSchema } from 'graphql'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // jsdom gives every element a zero-height rect, so the real virtualizer renders
@@ -28,6 +29,17 @@ vi.mock('@tanstack/react-virtual', () => ({
 
 const { useAppStore } = await import('../../../state')
 const { SchemaTree } = await import('./schema-tree')
+
+/**
+ * The smallest schema that never bottoms out. The deep fixture would do, but
+ * the virtualizer is mocked here so every row renders: nine expansions of it
+ * put ~130 tooltip-bearing rows in the DOM and re-query all of them each time,
+ * which is slow enough to time out on a CI runner.
+ */
+const cyclicSchema = buildSchema(`
+  type Query { root: Node! }
+  type Node { id: ID!, self: Node! }
+`)
 
 const expand = (label: string) =>
   fireEvent.click(screen.getByRole('button', { name: `Expand ${label}` }))
@@ -58,9 +70,9 @@ describe('SchemaTree', () => {
     expect(screen.getByRole('button', { name: 'kind' })).toBeDefined()
   })
 
-  // The cyclic mesh has no bottom, so this used to stop at the depth cap.
+  // A cycle has no bottom, so this used to stop at the depth cap.
   it('follows a cycle as deep as the user drills', () => {
-    render(<SchemaTree schema={deepTestSchema} />)
+    render(<SchemaTree schema={cyclicSchema} />)
 
     expand('root')
     for (let i = 0; i < 8; i++) expand('self')
