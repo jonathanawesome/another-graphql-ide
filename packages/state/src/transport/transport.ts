@@ -6,7 +6,11 @@ import {
 } from '@graphql-tools/utils'
 import { parse, type GraphQLSchema } from 'graphql'
 
-import type { ExecutionResult, Transport } from './types'
+import type {
+  CreateTransportOptions,
+  ExecutionResult,
+  Transport,
+} from './types'
 
 /**
  * Sentinel endpoint that runs operations in-process against the loaded schema
@@ -14,16 +18,6 @@ import type { ExecutionResult, Transport } from './types'
  * GitHub Pages build), so the play button still works offline.
  */
 export const LOCAL_ENDPOINT = 'local'
-
-export type CreateTransportOptions = {
-  endpoint: string
-  schema?: GraphQLSchema
-  headers?: Record<string, string>
-  /** Swapped into the HTTP executor, for auth wrappers and test doubles. */
-  fetch?: typeof globalThis.fetch
-}
-
-export type TransportFactory = (options: CreateTransportOptions) => Transport
 
 const isAsyncIterable = <T>(value: unknown): value is AsyncIterable<T> =>
   typeof value === 'object' && value !== null && Symbol.asyncIterator in value

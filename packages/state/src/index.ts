@@ -17,17 +17,15 @@ export type {
 } from './slices/settings/types'
 
 export { createTransport, LOCAL_ENDPOINT } from './transport/transport'
-export type {
-  CreateTransportOptions,
-  TransportFactory,
-} from './transport/transport'
 
 export { parseVariables } from './execution/parse-variables'
 export type { ParsedVariables } from './execution/parse-variables'
 export { runRequest } from './execution/run-request'
 export type { RunEvents, RunOutcome } from './execution/run-request'
 export type {
+  CreateTransportOptions,
   GraphQLRequest,
   ExecutionResult,
   Transport,
+  TransportFactory,
 } from './transport/types'

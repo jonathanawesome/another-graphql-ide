@@ -1,7 +1,6 @@
 import { parseVariables } from '../../execution/parse-variables'
 import { runRequest } from '../../execution/run-request'
 import type { AppSliceCreator } from '../../store/types'
-import { createTransport } from '../../transport/transport'
 
 import type { ExecutionSlice } from './types'
 
@@ -38,8 +37,7 @@ export const createExecutionSlice: AppSliceCreator<ExecutionSlice> = (
 
       set({ status: 'fetching', error: undefined, response: '' })
 
-      const { query, variables, operationName, endpoint, headers, schema } =
-        get()
+      const { query, variables, operationName, getTransport } = get()
 
       const parsed = parseVariables(variables)
       if (!parsed.ok) {
@@ -48,7 +46,7 @@ export const createExecutionSlice: AppSliceCreator<ExecutionSlice> = (
       }
 
       const outcome = await runRequest(
-        createTransport({ endpoint, schema, headers }),
+        getTransport(),
         { query, variables: parsed.value, operationName },
         signal,
         {
