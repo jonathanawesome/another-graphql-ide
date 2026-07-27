@@ -21,6 +21,7 @@ export default defineConfig({
         { label: 'Pill' },
         { label: 'Popover' },
         { label: 'Resizer' },
+        { label: 'Run Control' },
         { label: 'Separator' },
         { label: 'Tabs' },
         { label: 'Tooltip' },

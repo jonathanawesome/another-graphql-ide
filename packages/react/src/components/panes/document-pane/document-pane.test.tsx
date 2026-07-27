@@ -56,4 +56,23 @@ describe('DocumentPane', () => {
 
     expect(execute).toHaveBeenCalled()
   })
+
+  it('offers stop while a run is in flight', () => {
+    const cancel = vi.fn()
+    const store = createTestStore()
+    store.setState({ status: 'streaming', cancel })
+    renderWithProvider(<DocumentPane />, { store })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Stop operation' }))
+
+    expect(cancel).toHaveBeenCalled()
+  })
+
+  it('surfaces an execution error', () => {
+    const store = createTestStore()
+    store.setState({ status: 'error', error: 'Failed to fetch' })
+    renderWithProvider(<DocumentPane />, { store })
+
+    expect(screen.getByRole('alert').textContent).toBe('Failed to fetch')
+  })
 })

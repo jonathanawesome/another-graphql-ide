@@ -1,5 +1,7 @@
-import { Button } from '../../ui-components/button/button'
+import type { ExecutionStatus } from '@another-graphql-ide/state'
+
 import { IconButtonGroup } from '../../ui-components/icon-button-group/icon-button-group'
+import { RunControl } from '../../ui-components/run-control/run-control'
 import { Separator } from '../../ui-components/separator/separator'
 
 import { sharedStyles } from './shared.css'
@@ -9,6 +11,9 @@ export type DocumentHeaderProps = {
   onExecute?: () => void
   onCopy?: () => void
   onPrettify?: () => void
+  status?: ExecutionStatus
+  onCancel?: () => void
+  error?: string
 }
 
 export const DocumentHeader = ({
@@ -16,6 +21,9 @@ export const DocumentHeader = ({
   onExecute,
   onCopy,
   onPrettify,
+  status = 'idle',
+  onCancel,
+  error,
 }: DocumentHeaderProps) => {
   return (
     <div className={sharedStyles.container}>
@@ -68,11 +76,12 @@ export const DocumentHeader = ({
         <div className={sharedStyles.separatorContainer}>
           <Separator orientation="vertical" />
         </div>
-        <Button
-          action={onExecute}
-          label="Execute operation"
+        <RunControl
+          status={status}
+          onRun={() => onExecute?.()}
+          onCancel={onCancel}
           text={operationName ?? 'Run'}
-          withLeftIcon="Play"
+          error={error}
         />
       </div>
     </div>
