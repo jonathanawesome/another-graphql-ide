@@ -14,14 +14,3 @@ export const Default = createPreview(() => (
     ]}
   />
 ))
-
-export const Example = createPreview(() => (
-  <IconButtonGroup
-    icons={[
-      { name: 'BookOpenText', size: 'mini', label: 'BookOpenText' },
-      { name: 'Caret', size: 'mini', label: 'Caret' },
-      { name: 'Combine', size: 'mini', label: 'Combine' },
-      { name: 'Settings2', size: 'mini', label: 'Settings2' },
-    ]}
-  />
-))
