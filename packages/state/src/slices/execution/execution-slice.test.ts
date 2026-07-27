@@ -69,6 +69,86 @@ describe('execution slice', () => {
     expect(executeMock).not.toHaveBeenCalled()
   })
 
+  // Terminal status is identical either way, so pin the whole sequence.
+  it('moves through fetching and streaming on the way to idle', async () => {
+    executeMock.mockReturnValue(
+      iterableOf({ data: { n: 1 } }, { data: { n: 2 } })
+    )
+    const store = createAGIStore()
+    store.getState().setQuery('subscription { n }')
+
+    const seen: string[] = []
+    store.subscribe(state => seen.push(state.status))
+
+    await store.getState().execute()
+
+    expect(seen).toEqual(['fetching', 'streaming', 'streaming', 'idle'])
+  })
+
+  it('cancel aborts the signal and stops further writes', async () => {
+    let resumeStream!: () => void
+    const gate = new Promise<void>(resolve => {
+      resumeStream = resolve
+    })
+
+    let firstChunkConsumed!: () => void
+    const firstChunk = new Promise<void>(resolve => {
+      firstChunkConsumed = resolve
+    })
+
+    let signal: AbortSignal | undefined
+    executeMock.mockImplementation((_request, options) => {
+      signal = options?.signal
+      return (async function* () {
+        yield { data: { n: 1 } }
+        // Resumes only when the consumer pulls again, so chunk one is written.
+        firstChunkConsumed()
+        await gate
+        yield { data: { n: 2 } }
+      })()
+    })
+
+    const store = createAGIStore()
+    store.getState().setQuery('subscription { n }')
+
+    const running = store.getState().execute()
+    await firstChunk
+    const responseBeforeCancel = store.getState().response
+
+    store.getState().cancel()
+    resumeStream()
+    await running
+
+    expect(signal?.aborted).toBe(true)
+    expect(store.getState().status).toBe('idle')
+    expect(store.getState().response).toBe(responseBeforeCancel)
+  })
+
+  it('cancel is a no-op when nothing is in flight', () => {
+    const store = createAGIStore()
+
+    expect(() => store.getState().cancel()).not.toThrow()
+    expect(store.getState().status).toBe('idle')
+  })
+
+  it('aborts the previous run when execute is called again', async () => {
+    const signals: (AbortSignal | undefined)[] = []
+    executeMock.mockImplementation((_request, options) => {
+      signals.push(options?.signal)
+      return iterableOf({ data: { ok: true } })
+    })
+
+    const store = createAGIStore()
+    store.getState().setQuery('{ ok }')
+
+    await store.getState().execute()
+    await store.getState().execute()
+
+    expect(signals).toHaveLength(2)
+    expect(signals[0]?.aborted).toBe(true)
+    expect(signals[1]?.aborted).toBe(false)
+  })
+
   it('parses variables and forwards them to the transport', async () => {
     executeMock.mockReturnValue(iterableOf({ data: {} }))
     const store = createAGIStore()
