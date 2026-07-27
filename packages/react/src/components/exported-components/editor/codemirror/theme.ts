@@ -16,6 +16,7 @@ export const editorTheme = (dark: boolean) =>
         color: themeContract.colors.neutral8,
         backgroundColor: themeContract.colors.neutral2,
         fontFamily: themeContract.fonts.mono,
+        fontSize: themeContract.px[13],
       },
       '.cm-content': {
         fontFamily: themeContract.fonts.mono,
