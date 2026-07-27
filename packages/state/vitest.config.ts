@@ -1,11 +1,20 @@
+import { createRequire } from 'node:module'
+
 import { defineConfig } from 'vitest/config'
+
+const require = createRequire(import.meta.url)
 
 export default defineConfig({
   // Collapse graphql to a single instance. Under pnpm, @graphql-tools/executor
   // resolves graphql through its own peer link, so without deduping the schema a
   // test builds is not `instanceof` the executor's graphql (its duplicate-module
   // guard throws). Vite already dedupes graphql in the app build.
-  resolve: { dedupe: ['graphql'] },
+  // dedupe alone misses the executor's incremental delivery path, so pin the
+  // entry too, matching packages/react.
+  resolve: {
+    dedupe: ['graphql'],
+    alias: { graphql: require.resolve('graphql') },
+  },
   test: {
     // state has no DOM dependencies; transport and slices are pure node
     environment: 'node',

@@ -10,6 +10,7 @@ type BuildHTTPExecutorOptions = {
   endpoint: string
   headers?: () => Record<string, string>
   retry?: number
+  fetch?: typeof globalThis.fetch
 }
 
 const { buildHTTPExecutorMock } = vi.hoisted(() => ({
@@ -75,6 +76,29 @@ describe('createTransport', () => {
     expect(typeof options?.headers).toBe('function')
     expect(options?.headers?.()).toEqual({ a: '1' })
     expect(options?.retry).toBeUndefined()
+  })
+
+  it('forwards an injected fetch to the executor', () => {
+    buildHTTPExecutorMock.mockReturnValue(() => Promise.resolve({}))
+    const customFetch = vi.fn<typeof globalThis.fetch>()
+
+    createTransport({
+      endpoint: 'http://localhost/graphql',
+      fetch: customFetch,
+    })
+
+    expect(buildHTTPExecutorMock.mock.calls[0]?.[0]?.fetch).toBe(customFetch)
+  })
+
+  // Present-but-undefined would opt into the executor's fetch overload and
+  // override its default, so the key has to be absent.
+  it('omits fetch entirely when none is given', () => {
+    buildHTTPExecutorMock.mockReturnValue(() => Promise.resolve({}))
+
+    createTransport({ endpoint: 'http://localhost/graphql' })
+
+    const options = buildHTTPExecutorMock.mock.calls[0]?.[0] ?? {}
+    expect('fetch' in options).toBe(false)
   })
 })
 
@@ -178,6 +202,21 @@ describe('createTransport (local executor)', () => {
       { data: { count: 2 } },
       { data: { count: 3 } },
     ])
+  })
+
+  // normalizedExecutor yields raw @defer patches. Unmerged, the final value
+  // would be the patch alone, with the initial data gone.
+  it('merges incremental @defer payloads into a whole document', async () => {
+    const transport = createTransport({
+      endpoint: LOCAL_ENDPOINT,
+      schema: localSchema,
+    })
+
+    const results = (await collect(
+      transport.execute({ query: '{ add(a: 1, b: 2) ... @defer { hello } }' })
+    )) as { data?: Record<string, unknown>; hasNext?: boolean }[]
+
+    expect(results.at(-1)?.data).toEqual({ add: 3, hello: 'world' })
   })
 
   it('errors clearly when the local sentinel has no schema', async () => {
