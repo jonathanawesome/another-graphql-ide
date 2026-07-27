@@ -4,13 +4,15 @@ import { Button } from '../button/button'
 
 import { runControlStyles } from './run-control.css'
 
-export type RunControlProps = {
+export type RunControlProps = React.HTMLAttributes<HTMLDivElement> & {
   status: ExecutionStatus
   onRun: () => void
   onCancel?: () => void
   /** Button text when idle. */
   text?: string
   error?: string
+  /** Forwarded to the container so an overlay can anchor to this control. */
+  ref?: React.Ref<HTMLDivElement>
 }
 
 /**
@@ -23,11 +25,13 @@ export const RunControl = ({
   onCancel,
   text = 'Run',
   error,
+  ref,
+  ...props
 }: RunControlProps) => {
   const running = status === 'fetching' || status === 'streaming'
 
   return (
-    <div className={runControlStyles.container}>
+    <div {...props} ref={ref} className={runControlStyles.container}>
       {/* In the DOM rather than only in a tooltip, so the message is reachable
           without hovering. */}
       {status === 'error' && error && (

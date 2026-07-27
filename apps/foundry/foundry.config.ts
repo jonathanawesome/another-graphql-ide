@@ -10,6 +10,15 @@ export default defineConfig({
   title: 'another-graphql-ide',
   nav: [
     {
+      label: 'Recipes',
+      children: [
+        { label: 'Docs Editor' },
+        { label: 'Run Button' },
+        { label: 'Multiple Instances' },
+        { label: 'Docs Page' },
+      ],
+    },
+    {
       label: 'UI Components',
       children: [
         { label: 'Button' },
