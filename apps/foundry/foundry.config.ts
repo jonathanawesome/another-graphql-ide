@@ -46,6 +46,7 @@ export default defineConfig({
         { label: 'Schema Tree' },
         { label: 'Schema Tree Settings' },
         { label: 'Schema Tree + Editor' },
+        { label: 'Variables Editor' },
       ],
     },
   ],
