@@ -230,6 +230,14 @@ describe('SchemaTree', () => {
     })
   })
 
+  it('toggles the insertion mode from the keyboard', () => {
+    render(<SchemaTree schema={deepTestSchema} />)
+
+    fireEvent.keyDown(document, { key: 'x', ctrlKey: true, shiftKey: true })
+
+    expect(useAppStore.getState().objectFieldInsertionMode).toBe('bare')
+  })
+
   it('filters root fields by search term', () => {
     render(<SchemaTree schema={deepTestSchema} />)
 

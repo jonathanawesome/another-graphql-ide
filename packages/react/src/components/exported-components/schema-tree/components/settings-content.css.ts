@@ -11,6 +11,14 @@ export const settingsContentStyles = {
     fontWeight: 600,
     color: themeContract.colors.neutral7,
   }),
+  // A heading that carries a shortcut chip, kept at the trailing edge like the
+  // one on a labelled control.
+  titleRow: style({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: themeContract.px[16],
+  }),
   group: style({
     display: 'flex',
     flexDirection: 'column',

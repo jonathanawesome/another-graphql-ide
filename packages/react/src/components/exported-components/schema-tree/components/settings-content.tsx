@@ -35,7 +35,14 @@ export const SettingsContent = () => {
 
   return (
     <div className={settingsContentStyles.container}>
-      <div className={settingsContentStyles.title}>Object field insertion</div>
+      {/* The shortcut flips the pair rather than picking one option, so it sits
+          with the heading instead of on either radio. */}
+      <div className={settingsContentStyles.titleRow}>
+        <span className={settingsContentStyles.title}>
+          Object field insertion
+        </span>
+        <Kbd shortcut="schema-tree.toggle-insertion-mode" />
+      </div>
       <RadioGroup
         className={settingsContentStyles.group}
         value={mode}

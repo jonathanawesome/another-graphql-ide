@@ -36,6 +36,7 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   const toggleField = useAppStore.use.toggleField()
   const showFieldTypes = useAppStore.use.showFieldTypes()
   const toggleShowFieldTypes = useAppStore.use.toggleShowFieldTypes()
+  const toggleInsertionMode = useAppStore.use.toggleObjectFieldInsertionMode()
   const activeSchema = useAppStore.use.schema()
   const query = useAppStore.use.query()
   const cursor = useAppStore.use.cursor()
@@ -76,6 +77,7 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   // Registered once for the whole brick. The bus fires only the most recently
   // mounted tree, so several on a page still toggle the shared setting once.
   useShortcut('schema-tree.toggle-field-types', toggleShowFieldTypes)
+  useShortcut('schema-tree.toggle-insertion-mode', toggleInsertionMode)
 
   // Rows for the visible tab only. Base UI keeps every tab panel mounted, so
   // each one that renders the tree mounts its own virtualizer.
