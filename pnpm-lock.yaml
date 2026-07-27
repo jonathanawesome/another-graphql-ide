@@ -125,6 +125,9 @@ importers:
       '@another-graphql-ide/react':
         specifier: workspace:*
         version: link:../../packages/react
+      '@another-graphql-ide/state':
+        specifier: workspace:*
+        version: link:../../packages/state
       '@another-graphql-ide/style':
         specifier: workspace:*
         version: link:../../packages/style

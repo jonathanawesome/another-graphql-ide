@@ -1,7 +1,8 @@
 import { deepTestSchema } from '@another-graphql-ide/shared'
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
-import { buildSchema } from 'graphql'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { AGIInitialState } from '@another-graphql-ide/state'
+import { act, fireEvent, screen, within } from '@testing-library/react'
+import { buildSchema, type GraphQLSchema } from 'graphql'
+import { describe, expect, it, vi } from 'vitest'
 
 // jsdom gives every element a zero-height rect, so the real virtualizer renders
 // an empty window. Swap in one that renders the whole list: what these tests
@@ -27,7 +28,8 @@ vi.mock('@tanstack/react-virtual', () => ({
   }),
 }))
 
-const { useAppStore } = await import('../../../state')
+const { createTestStore, renderWithProvider } =
+  await import('../../../test-utils/render-with-provider')
 const { SchemaTree } = await import('./schema-tree')
 
 /**
@@ -50,20 +52,27 @@ const nth = <T,>(items: T[], index: number): T => {
   return item
 }
 
-describe('SchemaTree', () => {
-  beforeEach(() => {
-    useAppStore.setState(useAppStore.getInitialState(), true)
+// Each render gets its own store, which is what replaces the reset that used to
+// run before every test. showFieldTypes is pinned off because a type label per
+// row is exactly the DOM growth that makes the cycle test slow.
+const renderTree = (
+  schema: GraphQLSchema,
+  initialState: AGIInitialState = {}
+) =>
+  renderWithProvider(<SchemaTree schema={schema} />, {
+    store: createTestStore({ showFieldTypes: false, ...initialState }),
   })
 
+describe('SchemaTree', () => {
   it('renders root fields for the schema it is given', () => {
-    render(<SchemaTree schema={deepTestSchema} />)
+    renderTree(deepTestSchema)
 
     expect(screen.getByRole('button', { name: 'root' })).toBeDefined()
     expect(screen.getByRole('button', { name: 'Expand root' })).toBeDefined()
   })
 
   it('reveals children only once a node is expanded', () => {
-    render(<SchemaTree schema={deepTestSchema} />)
+    renderTree(deepTestSchema)
 
     expect(screen.queryByRole('button', { name: 'kind' })).toBeNull()
     expand('root')
@@ -72,7 +81,7 @@ describe('SchemaTree', () => {
 
   // A cycle has no bottom, so this used to stop at the depth cap.
   it('follows a cycle as deep as the user drills', () => {
-    render(<SchemaTree schema={cyclicSchema} />)
+    renderTree(cyclicSchema)
 
     expand('root')
     for (let i = 0; i < 8; i++) expand('self')
@@ -82,19 +91,19 @@ describe('SchemaTree', () => {
   })
 
   it('inserts a nested field into the document on click', () => {
-    render(<SchemaTree schema={deepTestSchema} />)
+    const { store } = renderTree(deepTestSchema)
 
     expand('root')
     expand('self')
     // Rows are depth-first, so the nested `id` comes before the root-level one.
     fireEvent.click(nth(screen.getAllByRole('button', { name: 'id' }), 0))
 
-    expect(useAppStore.getState().query).toMatch(/self\s*{\s*id/)
+    expect(store.getState().query).toMatch(/self\s*{\s*id/)
   })
 
   // The old eager builder only attached ARGUMENTS to root-level fields.
   it('exposes arguments below the root level', () => {
-    render(<SchemaTree schema={deepTestSchema} />)
+    renderTree(deepTestSchema)
 
     expand('root')
     expand('self')
@@ -120,14 +129,13 @@ describe('SchemaTree', () => {
     // which jsdom cannot do. That row is the tree's only tab stop, so this is
     // where a real Tab press would land.
     const openTree = () => {
-      render(<SchemaTree schema={deepTestSchema} />)
-      const first = nth(rows(), 0)
-      first.focus()
-      return first
+      const { store } = renderTree(deepTestSchema)
+      nth(rows(), 0).focus()
+      return store
     }
 
     it('exposes the tree as one tab stop', () => {
-      render(<SchemaTree schema={deepTestSchema} />)
+      renderTree(deepTestSchema)
 
       const tabbable = rows().filter(row => row.tabIndex === 0)
       expect(tabbable).toHaveLength(1)
@@ -179,11 +187,11 @@ describe('SchemaTree', () => {
     })
 
     it('toggles the focused field into the document with Enter', () => {
-      openTree()
+      const store = openTree()
 
       press('Enter')
 
-      expect(useAppStore.getState().query).toContain('entry0')
+      expect(store.getState().query).toContain('entry0')
       // Selection in this tree means "present in the document", not "focused",
       // which is why the tree is marked aria-multiselectable.
       expect(focused().getAttribute('aria-selected')).toBe('true')
@@ -199,13 +207,13 @@ describe('SchemaTree', () => {
 
   describe('return types', () => {
     it('are hidden until the setting is on', () => {
-      render(<SchemaTree schema={deepTestSchema} />)
+      const { store } = renderTree(deepTestSchema)
 
       expect(screen.queryByText('HubNode!')).toBeNull()
 
       // Store writes from outside an event need act, or React has not
       // re-rendered by the time the assertion runs.
-      act(() => useAppStore.setState({ showFieldTypes: true }))
+      act(() => store.setState({ showFieldTypes: true }))
       expect(screen.getByText('HubNode!')).toBeDefined()
     })
 
@@ -213,33 +221,32 @@ describe('SchemaTree', () => {
     // field stays queryable by its own name and the type is not part of the
     // click target that inserts it.
     it('leave the field name intact', () => {
-      useAppStore.setState({ showFieldTypes: true })
-      render(<SchemaTree schema={deepTestSchema} />)
+      renderTree(deepTestSchema, { showFieldTypes: true })
 
       expect(screen.getByRole('button', { name: 'hub' })).toBeDefined()
     })
 
     it('toggle from the keyboard anywhere on the page', () => {
-      render(<SchemaTree schema={deepTestSchema} />)
+      const { store } = renderTree(deepTestSchema)
 
       // jsdom is not an Apple platform, so Mod is Control here.
       fireEvent.keyDown(document, { key: 'l', ctrlKey: true, shiftKey: true })
 
-      expect(useAppStore.getState().showFieldTypes).toBe(true)
+      expect(store.getState().showFieldTypes).toBe(true)
       expect(screen.getByText('HubNode!')).toBeDefined()
     })
   })
 
   it('toggles the insertion mode from the keyboard', () => {
-    render(<SchemaTree schema={deepTestSchema} />)
+    const { store } = renderTree(deepTestSchema)
 
     fireEvent.keyDown(document, { key: 'x', ctrlKey: true, shiftKey: true })
 
-    expect(useAppStore.getState().objectFieldInsertionMode).toBe('bare')
+    expect(store.getState().objectFieldInsertionMode).toBe('bare')
   })
 
   it('filters root fields by search term', () => {
-    render(<SchemaTree schema={deepTestSchema} />)
+    renderTree(deepTestSchema)
 
     fireEvent.change(screen.getByPlaceholderText('Search schema...'), {
       target: { value: 'hub' },

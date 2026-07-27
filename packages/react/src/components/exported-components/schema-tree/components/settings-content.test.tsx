@@ -1,27 +1,28 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { fireEvent, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 
-const { useAppStore } = await import('../../../../state')
-const { SettingsContent } = await import('./settings-content')
+import {
+  createTestStore,
+  renderWithProvider,
+} from '../../../../test-utils/render-with-provider'
+
+import { SettingsContent } from './settings-content'
 
 describe('SettingsContent', () => {
-  beforeEach(() => {
-    useAppStore.setState(useAppStore.getInitialState(), true)
-  })
-
   it('toggles return types from the checkbox', () => {
-    render(<SettingsContent />)
+    const { store } = renderWithProvider(<SettingsContent />)
 
     fireEvent.click(
       screen.getByRole('checkbox', { name: /show return types/i })
     )
 
-    expect(useAppStore.getState().showFieldTypes).toBe(true)
+    expect(store.getState().showFieldTypes).toBe(true)
   })
 
   it('reflects the setting when it was changed elsewhere', () => {
-    useAppStore.setState({ showFieldTypes: true })
-    render(<SettingsContent />)
+    renderWithProvider(<SettingsContent />, {
+      store: createTestStore({ showFieldTypes: true }),
+    })
 
     expect(
       screen.getByRole('checkbox', { name: /show return types/i })
@@ -35,7 +36,7 @@ describe('SettingsContent', () => {
    * Apple platform, hence Control rather than Command.
    */
   it('advertises the keyboard shortcut beside the setting', () => {
-    render(<SettingsContent />)
+    renderWithProvider(<SettingsContent />)
 
     expect(screen.getByText('Control Shift L')).toBeDefined()
   })

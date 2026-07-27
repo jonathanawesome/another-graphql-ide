@@ -117,7 +117,3 @@ export const createAGIStore = ({
       })
     )
   )
-
-// Shared singleton store instance. Removed once the React binding takes its
-// store from a provider instead.
-export const appStore = createAGIStore()

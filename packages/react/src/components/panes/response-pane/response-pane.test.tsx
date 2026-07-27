@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('../../exported-components/editor/editor', () => ({
   Editor: ({
@@ -21,17 +21,23 @@ vi.mock('../../exported-components/editor/editor', () => ({
   ),
 }))
 
-const { useAppStore } = await import('../../../state')
+const { createTestStore, renderWithProvider } =
+  await import('../../../test-utils/render-with-provider')
 const { ResponsePane } = await import('./response-pane')
 
-describe('ResponsePane', () => {
-  beforeEach(() => {
-    useAppStore.setState(useAppStore.getInitialState(), true)
-  })
+// response is an output, not config, so it is set on the store rather than
+// seeded through initialState.
+const storeShowing = (response: string) => {
+  const store = createTestStore()
+  store.setState({ response })
+  return store
+}
 
+describe('ResponsePane', () => {
   it('renders the response in a read-only json5 editor', () => {
-    useAppStore.setState({ response: '{"data":{"ok":true}}' })
-    render(<ResponsePane />)
+    renderWithProvider(<ResponsePane />, {
+      store: storeShowing('{"data":{"ok":true}}'),
+    })
 
     const editor = screen.getByTestId('editor')
     expect(editor.getAttribute('data-language')).toBe('json5')
@@ -45,8 +51,7 @@ describe('ResponsePane', () => {
       value: { writeText },
       configurable: true,
     })
-    useAppStore.setState({ response: 'copy me' })
-    render(<ResponsePane />)
+    renderWithProvider(<ResponsePane />, { store: storeShowing('copy me') })
 
     fireEvent.click(screen.getByRole('button', { name: 'Copy response' }))
 
