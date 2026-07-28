@@ -13,7 +13,13 @@ import type { ShortcutId } from './shortcuts'
  */
 export const useShortcut = (id: ShortcutId, handler: () => void) => {
   const latest = useRef(handler)
-  latest.current = handler
+
+  // Written in an effect, not during render: a render React discards would
+  // otherwise leave its handler behind. The bus only calls this from a keyboard
+  // event, which is always after effects have flushed.
+  useEffect(() => {
+    latest.current = handler
+  })
 
   useEffect(() => registerShortcut(id, () => latest.current()), [id])
 }

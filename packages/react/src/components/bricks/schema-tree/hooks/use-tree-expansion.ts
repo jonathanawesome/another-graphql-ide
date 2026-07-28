@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 const EMPTY: ReadonlySet<string> = new Set()
 
@@ -16,8 +16,14 @@ const EMPTY: ReadonlySet<string> = new Set()
 export function useTreeExpansion(schemaKey: unknown) {
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(EMPTY)
 
-  // Paths from the previous schema mean nothing in the new one.
-  useEffect(() => setExpanded(EMPTY), [schemaKey])
+  // Paths from the previous schema mean nothing in the new one. Adjusted during
+  // render rather than in an effect, which is the pattern React documents for
+  // resetting state on a prop change and avoids a second render pass.
+  const [seenKey, setSeenKey] = useState(schemaKey)
+  if (schemaKey !== seenKey) {
+    setSeenKey(schemaKey)
+    setExpanded(EMPTY)
+  }
 
   const toggleExpanded = useCallback((id: string) => {
     setExpanded(previous => {

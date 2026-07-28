@@ -16,12 +16,11 @@ const starterQuery = `query ExampleQuery {
 }
 `
 
-const parameterizedQuery = `query Deferred($id: ID) {
-  test {
-    id
-  }
-  ... @defer {
-    isTest
+// streamable(delay: Int) is the schema's one argument-bearing query field, so
+// the variable is actually sent rather than declared and ignored.
+const parameterizedQuery = `query Greetings($delay: Int) {
+  streamable(delay: $delay) {
+    text
   }
 }
 `
@@ -30,13 +29,15 @@ const parameterizedQuery = `query Deferred($id: ID) {
 // behaves in the static Pages build.
 const Embedded = ({
   query,
+  variables,
   children,
-}: React.PropsWithChildren<{ query: string }>) => (
+}: React.PropsWithChildren<{ query: string; variables?: string }>) => (
   <div style={{ maxWidth: 720 }}>
     <AGIProvider
       endpoint={LOCAL_ENDPOINT}
       schema={graphiqlTestSchema}
       defaultQuery={query}
+      defaultVariables={variables}
       theme={false}
     >
       {children}
@@ -65,7 +66,10 @@ export const SideBySide = createPreview({
 export const WithVariables = createPreview({
   label: 'With variables',
   render: () => (
-    <Embedded query={parameterizedQuery}>
+    <Embedded
+      query={parameterizedQuery}
+      variables={'{\n  // json5, so this comment is fine\n  delay: 100,\n}'}
+    >
       <DocsEditor height={520} showVariables />
     </Embedded>
   ),

@@ -51,14 +51,22 @@ export const useCodemirror = ({
   const viewRef = useRef<EditorView | null>(null)
   const { resolvedTheme } = useTheme()
 
-  // Keep the latest onChange without recreating the view; guard programmatic
-  // value syncs from re-firing it.
+  // Keep the latest callbacks without recreating the view; guard programmatic
+  // value syncs from re-firing them.
+  //
+  // Assigned in an effect rather than during render, so a render React throws
+  // away cannot leave its callbacks behind. CodeMirror only invokes these from
+  // its update listener, which is always after effects have flushed.
   const onChangeRef = useRef(onChange)
-  onChangeRef.current = onChange
   const onActiveOperationChangeRef = useRef(onActiveOperationChange)
-  onActiveOperationChangeRef.current = onActiveOperationChange
   const onSelectionChangeRef = useRef(onSelectionChange)
-  onSelectionChangeRef.current = onSelectionChange
+
+  useEffect(() => {
+    onChangeRef.current = onChange
+    onActiveOperationChangeRef.current = onActiveOperationChange
+    onSelectionChangeRef.current = onSelectionChange
+  })
+
   const isSyncingRef = useRef(false)
 
   // Track the previous language so a schema-only change can use the cheaper
@@ -91,6 +99,7 @@ export const useCodemirror = ({
       viewRef.current = null
     }
     // Mount-only; subsequent prop changes are handled by the effects below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps would rebuild the view and lose caret, history and scroll
   }, [])
 
   // Language / schema changes.
@@ -161,6 +170,7 @@ export const useCodemirror = ({
     view.dispatch({ selection: { anchor, head } })
     view.focus()
     // Keyed on nonce so each toggle applies once, even to a repeated range.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the whole object as a dep would re-apply the same selection
   }, [pendingSelection?.nonce])
 
   return containerRef

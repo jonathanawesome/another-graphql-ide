@@ -11,7 +11,7 @@ export default defineConfig([
   baseConfig,
   {
     files: ['**/*.tsx'],
-    plugins: { react, 'react-hooks': reactHooks, 'jsx-a11y': jsxA11y },
+    plugins: { react, 'jsx-a11y': jsxA11y },
     languageOptions: {
       globals: { ...globals.browser },
     },
@@ -25,7 +25,6 @@ export default defineConfig([
     },
     rules: {
       ...jsxA11y.flatConfigs.strict.rules,
-      ...reactHooks.configs.recommended.rules,
 
       // jsx-filename-extension must stay off: it is the only rule that calls
       // the removed context.getFilename() unguarded. it enforces JSX living in
@@ -44,6 +43,15 @@ export default defineConfig([
       'react/require-render-return': 'error',
       'react/self-closing-comp': 'error',
     },
+  },
+  {
+    // Hooks live in .ts as often as .tsx here, and the rules that matter most
+    // for them (refs, set-state-in-effect, exhaustive-deps) have nothing to do
+    // with JSX. Scoping this to .tsx left use-codemirror, use-shortcut and
+    // friends unchecked.
+    files: ['**/*.{ts,tsx}'],
+    plugins: { 'react-hooks': reactHooks },
+    rules: reactHooks.configs.recommended.rules,
   },
   {
     files: ['**/*.test.tsx'],
