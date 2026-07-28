@@ -15,7 +15,7 @@
     "@another-graphql-ide/style": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-foundry": "0.0.6"
+    "react-foundry": "0.0.7"
   },
   "devDependencies": {
     "@another-graphql-ide/eslint-config": "workspace:*",
