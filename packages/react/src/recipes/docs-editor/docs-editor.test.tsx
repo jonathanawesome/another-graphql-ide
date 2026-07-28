@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('../../components/exported-components/editor/editor', () => ({
+vi.mock('../../components/bricks/editor/editor', () => ({
   Editor: ({
     language,
     value,

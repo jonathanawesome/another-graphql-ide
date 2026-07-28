@@ -1,6 +1,6 @@
-import { Editor } from '../../components/exported-components/editor/editor'
-import { VariablesEditor } from '../../components/exported-components/variables-editor/variables-editor'
-import { RunControl } from '../../components/ui-components/run-control/run-control'
+import { Editor } from '../../components/bricks/editor/editor'
+import { VariablesEditor } from '../../components/bricks/variables-editor/variables-editor'
+import { RunControl } from '../../components/primitives/run-control/run-control'
 import { useAppStore } from '../../state'
 
 import { docsEditorStyles } from './docs-editor.css'

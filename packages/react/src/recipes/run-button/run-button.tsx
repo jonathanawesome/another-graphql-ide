@@ -1,8 +1,8 @@
 import type { ExecutionResult } from '@another-graphql-ide/state'
 import { useEffect, useState } from 'react'
 
-import { Popover } from '../../components/ui-components/popover/popover'
-import { RunControl } from '../../components/ui-components/run-control/run-control'
+import { Popover } from '../../components/primitives/popover/popover'
+import { RunControl } from '../../components/primitives/run-control/run-control'
 import { useOperation } from '../../state'
 
 import { runButtonStyles } from './run-button.css'

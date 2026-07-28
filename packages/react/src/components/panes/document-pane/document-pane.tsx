@@ -1,5 +1,5 @@
 import { useAppStore } from '../../../state'
-import { Editor } from '../../exported-components/editor/editor'
+import { Editor } from '../../bricks/editor/editor'
 import { copyText } from '../copy-text'
 import { DocumentHeader } from '../document-response-headers/document-header'
 

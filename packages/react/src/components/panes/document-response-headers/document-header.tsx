@@ -1,8 +1,8 @@
 import type { ExecutionStatus } from '@another-graphql-ide/state'
 
-import { IconButtonGroup } from '../../ui-components/icon-button-group/icon-button-group'
-import { RunControl } from '../../ui-components/run-control/run-control'
-import { Separator } from '../../ui-components/separator/separator'
+import { IconButtonGroup } from '../../primitives/icon-button-group/icon-button-group'
+import { RunControl } from '../../primitives/run-control/run-control'
+import { Separator } from '../../primitives/separator/separator'
 
 import { sharedStyles } from './shared.css'
 
