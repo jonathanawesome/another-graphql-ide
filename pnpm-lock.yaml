@@ -125,6 +125,9 @@ importers:
       '@another-graphql-ide/react':
         specifier: workspace:*
         version: link:../../packages/react
+      '@another-graphql-ide/state':
+        specifier: workspace:*
+        version: link:../../packages/state
       '@another-graphql-ide/style':
         specifier: workspace:*
         version: link:../../packages/style
@@ -360,6 +363,12 @@ importers:
       '@graphql-tools/executor-http':
         specifier: 3.3.0
         version: 3.3.0(@types/node@26.1.1)(graphql@16.14.2)
+      '@graphql-tools/utils':
+        specifier: 11.2.2
+        version: 11.2.2(graphql@16.14.2)
+      json5:
+        specifier: 2.2.3
+        version: 2.2.3
       zustand:
         specifier: 'catalog:'
         version: 5.0.14(@types/react@19.2.17)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))

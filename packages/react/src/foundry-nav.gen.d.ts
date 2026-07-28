@@ -3,7 +3,7 @@
 
 declare module 'react-foundry' {
   interface Register {
-    navPath: "UI Components" | "UI Components/Button" | "UI Components/Icon" | "UI Components/Icon Button" | "UI Components/Icon Button Group" | "UI Components/Input" | "UI Components/Kbd" | "UI Components/Pill" | "UI Components/Popover" | "UI Components/Resizer" | "UI Components/Separator" | "UI Components/Tabs" | "UI Components/Tooltip" | "UI Components/App Navigation Item" | "Navigation" | "Navigation/App Navigation" | "Navigation/Editor Group Tabs" | "Panes" | "Panes/Document Header" | "Panes/Response Header" | "Exported Components" | "Exported Components/Connection Bar" | "Exported Components/Editor" | "Exported Components/Editor Group" | "Exported Components/Headers Editor" | "Exported Components/Schema Tree" | "Exported Components/Schema Tree Settings" | "Exported Components/Schema Tree + Editor"
+    navPath: "Recipes" | "Recipes/Docs Editor" | "Recipes/Run Button" | "Recipes/Multiple Instances" | "Recipes/Docs Page" | "Bricks" | "Bricks/Connection Bar" | "Bricks/Editor" | "Bricks/Editor Group" | "Bricks/Headers Editor" | "Bricks/Schema Tree" | "Bricks/Schema Tree Settings" | "Bricks/Schema Tree + Editor" | "Bricks/Variables Editor" | "Panes" | "Panes/Document Header" | "Panes/Response Header" | "Primitives" | "Primitives/App Navigation Item" | "Primitives/Button" | "Primitives/Icon" | "Primitives/Icon Button" | "Primitives/Icon Button Group" | "Primitives/Input" | "Primitives/Kbd" | "Primitives/Pill" | "Primitives/Popover" | "Primitives/Resizer" | "Primitives/Run Control" | "Primitives/Separator" | "Primitives/Tabs" | "Primitives/Tooltip" | "Chrome" | "Chrome/App Navigation" | "Chrome/Editor Group Tabs"
   }
 }
 

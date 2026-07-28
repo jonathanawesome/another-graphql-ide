@@ -19,6 +19,7 @@ import {
   GraphQLUnionType,
 } from 'graphql'
 
+import { directivesWithIncrementalDelivery } from './incremental-directives'
 import { dateTimeScalar, emailScalar, jsonScalar } from './scalar-stubs'
 
 // Base interface for all entities
@@ -387,6 +388,7 @@ const MutationType = new GraphQLObjectType({
 
 // Create the performance test schema
 export const performanceTestSchema = new GraphQLSchema({
+  directives: directivesWithIncrementalDelivery,
   query: QueryType,
   mutation: MutationType,
   description: `Performance test schema with ${enums.length + objectTypes.length + inputTypes.length + interfaceTypes.length + unionTypes.length} types for GraphQL tooling performance testing`,

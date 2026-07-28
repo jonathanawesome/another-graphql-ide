@@ -1,8 +1,16 @@
 import { normalizedExecutor } from '@graphql-tools/executor'
 import { buildHTTPExecutor } from '@graphql-tools/executor-http'
+import {
+  mergeIncrementalResult,
+  type ExecutionResult as ToolsExecutionResult,
+} from '@graphql-tools/utils'
 import { parse, type GraphQLSchema } from 'graphql'
 
-import type { ExecutionResult, Transport } from './types'
+import type {
+  CreateTransportOptions,
+  ExecutionResult,
+  Transport,
+} from './types'
 
 /**
  * Sentinel endpoint that runs operations in-process against the loaded schema
@@ -10,12 +18,6 @@ import type { ExecutionResult, Transport } from './types'
  * GitHub Pages build), so the play button still works offline.
  */
 export const LOCAL_ENDPOINT = 'local'
-
-export type CreateTransportOptions = {
-  endpoint: string
-  schema?: GraphQLSchema
-  headers?: Record<string, string>
-}
 
 const isAsyncIterable = <T>(value: unknown): value is AsyncIterable<T> =>
   typeof value === 'object' && value !== null && Symbol.asyncIterator in value
@@ -28,10 +30,15 @@ const isAsyncIterable = <T>(value: unknown): value is AsyncIterable<T> =>
 const createHTTPTransport = ({
   endpoint,
   headers = {},
+  fetch,
 }: Omit<CreateTransportOptions, 'schema'>): Transport => {
   // headers as a function reapplies them per attempt; retry left unset so there
   // is no auto-retry (avoids the header-drop bug; never re-fires mutations).
-  const executor = buildHTTPExecutor({ endpoint, headers: () => headers })
+  // Two call sites because buildHTTPExecutor has no overload taking an optional
+  // fetch: it is either required or omitted entirely.
+  const executor = fetch
+    ? buildHTTPExecutor({ endpoint, headers: () => headers, fetch })
+    : buildHTTPExecutor({ endpoint, headers: () => headers })
 
   return {
     async *execute(request, options) {
@@ -77,10 +84,35 @@ const createLocalTransport = ({
       signal: options?.signal,
     })
 
-    if (isAsyncIterable<ExecutionResult>(outcome)) {
-      yield* outcome
-    } else {
+    if (!isAsyncIterable<ExecutionResult>(outcome)) {
       yield outcome as ExecutionResult
+      return
+    }
+
+    // buildHTTPExecutor merges incremental payloads for us; normalizedExecutor
+    // yields raw patches, so match it here rather than in every caller.
+    // Accumulator is graphql-tools' stricter result type, which the merge
+    // helper requires and which widens back to ours on the way out.
+    let merged: ToolsExecutionResult | null = null
+    let started = false
+
+    for await (const part of outcome) {
+      if (!started) {
+        started = true
+        // Only incremental delivery marks payloads with hasNext. Subscription
+        // events are independent and must not be merged (errors would stack).
+        if (part.hasNext !== undefined) merged = {}
+      }
+
+      if (merged) {
+        mergeIncrementalResult({
+          incrementalResult: part,
+          executionResult: merged,
+        })
+        yield merged
+      } else {
+        yield part
+      }
     }
   },
 })
@@ -95,7 +127,8 @@ export const createTransport = ({
   endpoint,
   schema,
   headers,
+  fetch,
 }: CreateTransportOptions): Transport =>
   endpoint === LOCAL_ENDPOINT
     ? createLocalTransport({ schema })
-    : createHTTPTransport({ endpoint, headers })
+    : createHTTPTransport({ endpoint, headers, fetch })

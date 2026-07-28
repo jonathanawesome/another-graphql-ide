@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('../../exported-components/editor/editor', () => ({
+vi.mock('../../bricks/editor/editor', () => ({
   Editor: ({
     language,
     value,
@@ -22,17 +22,15 @@ vi.mock('../../exported-components/editor/editor', () => ({
   ),
 }))
 
-const { useAppStore } = await import('../../../state')
+const { createTestStore, renderWithProvider } =
+  await import('../../../test-utils/render-with-provider')
 const { DocumentPane } = await import('./document-pane')
 
 describe('DocumentPane', () => {
-  beforeEach(() => {
-    useAppStore.setState(useAppStore.getInitialState(), true)
-  })
-
   it('binds the query to a graphql editor', () => {
-    useAppStore.setState({ query: '{ isTest }' })
-    render(<DocumentPane />)
+    renderWithProvider(<DocumentPane />, {
+      store: createTestStore({ query: '{ isTest }' }),
+    })
 
     const editor = screen.getByTestId('editor')
     expect(editor.getAttribute('data-language')).toBe('graphql')
@@ -40,18 +38,41 @@ describe('DocumentPane', () => {
   })
 
   it('updates the store query on edit', () => {
-    render(<DocumentPane />)
+    const { store } = renderWithProvider(<DocumentPane />)
+
     fireEvent.click(screen.getByTestId('editor-change'))
-    expect(useAppStore.getState().query).toBe('typed')
+
+    expect(store.getState().query).toBe('typed')
   })
 
   it('runs the operation when Execute is clicked', () => {
     const execute = vi.fn()
-    useAppStore.setState({ execute })
-    render(<DocumentPane />)
+    const store = createTestStore()
+    // Actions are outside AGIInitialState by design, so this one is swapped in.
+    store.setState({ execute })
+    renderWithProvider(<DocumentPane />, { store })
 
     fireEvent.click(screen.getByRole('button', { name: 'Execute operation' }))
 
     expect(execute).toHaveBeenCalled()
+  })
+
+  it('offers stop while a run is in flight', () => {
+    const cancel = vi.fn()
+    const store = createTestStore()
+    store.setState({ status: 'streaming', cancel })
+    renderWithProvider(<DocumentPane />, { store })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Stop operation' }))
+
+    expect(cancel).toHaveBeenCalled()
+  })
+
+  it('surfaces an execution error', () => {
+    const store = createTestStore()
+    store.setState({ status: 'error', error: 'Failed to fetch' })
+    renderWithProvider(<DocumentPane />, { store })
+
+    expect(screen.getByRole('alert').textContent).toBe('Failed to fetch')
   })
 })

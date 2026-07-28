@@ -5,11 +5,12 @@ import { SHORTCUTS, type ShortcutId } from './shortcuts'
  * One listener for the whole page, however many bricks are mounted.
  *
  * This library has no app shell to hang a global listener on, so each brick
- * opts in with `useShortcut`. A listener per instance would be wrong rather
- * than merely wasteful: two schema trees on one page would each toggle the
- * shared store, and an even number of them is a silent no-op. Registrations
- * stack per shortcut and only the newest fires, which is also the behavior a
- * modal or overlay will want later.
+ * opts in with `useShortcut`. Registrations stack per shortcut and only the
+ * newest fires, which is what a modal or overlay will want later.
+ *
+ * The bus is page-global while stores are now per-provider, so with two
+ * providers on a page a shortcut reaches whichever brick mounted last. Scoping
+ * registrations to a provider is a follow-up.
  */
 const handlers = new Map<ShortcutId, (() => void)[]>()
 

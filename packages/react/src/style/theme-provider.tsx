@@ -2,7 +2,9 @@ import type { Theme } from '@another-graphql-ide/state'
 import { lightTheme, darkTheme } from '@another-graphql-ide/style'
 import { createContext, useEffect, useState, type ReactNode } from 'react'
 
-import { useAppStore } from '../state'
+// Direct import, not the ../state barrel: AGIProvider renders ThemeProvider, so
+// going through the barrel would make the two files circular.
+import { useAppStore } from '../state/use-app-store'
 
 export type { Theme }
 

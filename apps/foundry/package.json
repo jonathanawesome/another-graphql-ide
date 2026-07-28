@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@another-graphql-ide/react": "workspace:*",
+    "@another-graphql-ide/state": "workspace:*",
     "@another-graphql-ide/style": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",

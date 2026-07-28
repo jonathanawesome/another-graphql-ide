@@ -19,6 +19,7 @@ import {
   GraphQLUnionType,
 } from 'graphql'
 
+import { directivesWithIncrementalDelivery } from './incremental-directives'
 import {
   dateScalar,
   dateTimeScalar,
@@ -397,6 +398,7 @@ const TestSubscriptionType = new GraphQLObjectType({
 })
 
 export const graphiqlTestSchema = new GraphQLSchema({
+  directives: directivesWithIncrementalDelivery,
   query: TestType,
   mutation: TestMutationType,
   subscription: TestSubscriptionType,

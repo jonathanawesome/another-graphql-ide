@@ -36,6 +36,13 @@ export const SHORTCUTS = {
     label: 'Toggle return types',
     group: 'Schema tree',
   },
+  // Every mnemonic letter is spoken for: T reopens a tab, O and B are the
+  // bookmark managers, I is devtools. X is arbitrary, but it is free.
+  'schema-tree.toggle-insertion-mode': {
+    combo: ['Mod', 'Shift', 'X'],
+    label: 'Toggle __typename insertion',
+    group: 'Schema tree',
+  },
 } as const satisfies Record<string, ShortcutDefinition>
 
 /** `satisfies` above keeps this a union of literals, so a typo is a type error. */

@@ -18,6 +18,7 @@ import {
   type GraphQLFieldConfigMap,
 } from 'graphql'
 
+import { directivesWithIncrementalDelivery } from './incremental-directives'
 import { dateTimeScalar, urlScalar } from './scalar-stubs'
 
 /**
@@ -446,6 +447,7 @@ const SubscriptionType = new GraphQLObjectType({
 })
 
 export const deepTestSchema = new GraphQLSchema({
+  directives: directivesWithIncrementalDelivery,
   query: QueryType,
   mutation: MutationType,
   subscription: SubscriptionType,

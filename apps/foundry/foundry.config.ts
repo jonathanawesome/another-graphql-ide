@@ -10,8 +10,35 @@ export default defineConfig({
   title: 'another-graphql-ide',
   nav: [
     {
-      label: 'UI Components',
+      label: 'Recipes',
       children: [
+        { label: 'Docs Editor' },
+        { label: 'Run Button' },
+        { label: 'Multiple Instances' },
+        { label: 'Docs Page' },
+      ],
+    },
+    {
+      label: 'Bricks',
+      children: [
+        { label: 'Connection Bar' },
+        { label: 'Editor' },
+        { label: 'Editor Group' },
+        { label: 'Headers Editor' },
+        { label: 'Schema Tree' },
+        { label: 'Schema Tree Settings' },
+        { label: 'Schema Tree + Editor' },
+        { label: 'Variables Editor' },
+      ],
+    },
+    {
+      label: 'Panes',
+      children: [{ label: 'Document Header' }, { label: 'Response Header' }],
+    },
+    {
+      label: 'Primitives',
+      children: [
+        { label: 'App Navigation Item' },
         { label: 'Button' },
         { label: 'Icon' },
         { label: 'Icon Button' },
@@ -21,31 +48,15 @@ export default defineConfig({
         { label: 'Pill' },
         { label: 'Popover' },
         { label: 'Resizer' },
+        { label: 'Run Control' },
         { label: 'Separator' },
         { label: 'Tabs' },
         { label: 'Tooltip' },
-        { label: 'App Navigation Item' },
       ],
     },
     {
-      label: 'Navigation',
+      label: 'Chrome',
       children: [{ label: 'App Navigation' }, { label: 'Editor Group Tabs' }],
-    },
-    {
-      label: 'Panes',
-      children: [{ label: 'Document Header' }, { label: 'Response Header' }],
-    },
-    {
-      label: 'Exported Components',
-      children: [
-        { label: 'Connection Bar' },
-        { label: 'Editor' },
-        { label: 'Editor Group' },
-        { label: 'Headers Editor' },
-        { label: 'Schema Tree' },
-        { label: 'Schema Tree Settings' },
-        { label: 'Schema Tree + Editor' },
-      ],
     },
   ],
   viteConfig: {

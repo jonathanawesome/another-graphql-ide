@@ -1,5 +1,6 @@
 import { useAppStore } from '../../../state'
-import { Editor } from '../../exported-components/editor/editor'
+import { Editor } from '../../bricks/editor/editor'
+import { copyText } from '../copy-text'
 import { DocumentHeader } from '../document-response-headers/document-header'
 
 import { documentPaneStyles } from './document-pane.css'
@@ -13,13 +14,19 @@ export const DocumentPane = () => {
   const setOperationName = useAppStore.use.setOperationName()
   const setCursor = useAppStore.use.setCursor()
   const execute = useAppStore.use.execute()
+  const cancel = useAppStore.use.cancel()
+  const status = useAppStore.use.status()
+  const error = useAppStore.use.error()
 
   return (
     <div className={documentPaneStyles.container}>
       <DocumentHeader
         operationName={operationName}
         onExecute={() => void execute()}
-        onCopy={() => void navigator.clipboard.writeText(query)}
+        onCopy={() => copyText(query)}
+        onCancel={cancel}
+        status={status}
+        error={error}
       />
       <div className={documentPaneStyles.editor}>
         <Editor

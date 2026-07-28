@@ -1,9 +1,15 @@
+import type { AppState } from '@another-graphql-ide/state'
 import { darkTheme, lightTheme } from '@another-graphql-ide/style'
 import { act, render } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { StoreApi } from 'zustand/vanilla'
 
-const { useAppStore } = await import('../state')
-const { ThemeProvider } = await import('./theme-provider')
+import { AGIProvider } from '../state/agi-provider'
+import { useAppStore } from '../state/use-app-store'
+import { createTestStore } from '../test-utils/render-with-provider'
+
+import { ThemeProvider } from './theme-provider'
 
 /** jsdom has no matchMedia, and the provider asks it for the system theme. */
 const systemPrefers = (scheme: 'light' | 'dark') => {
@@ -17,29 +23,42 @@ const systemPrefers = (scheme: 'light' | 'dark') => {
   )
 }
 
+// theme={false} so AGIProvider supplies only the store: this file is testing the
+// ThemeProvider it would otherwise have rendered for us.
+const renderThemed = (
+  children: ReactNode,
+  store: StoreApi<AppState> = createTestStore()
+) => ({
+  store,
+  ...render(
+    <AGIProvider store={store} theme={false}>
+      <ThemeProvider>{children}</ThemeProvider>
+    </AGIProvider>
+  ),
+})
+
 const rootClasses = () => document.documentElement.className
 
 describe('ThemeProvider', () => {
   beforeEach(() => {
-    useAppStore.setState(useAppStore.getInitialState(), true)
     document.documentElement.className = ''
     systemPrefers('light')
   })
 
   it('follows the OS while the preference is system', () => {
     systemPrefers('dark')
-    render(<ThemeProvider>child</ThemeProvider>)
+    renderThemed('child')
 
     expect(rootClasses()).toContain(darkTheme)
   })
 
-  // The preference now lives in the store, so anything holding the store can
-  // drive the theme, which is how foundry pushes its toolbar toggle in.
+  // The preference lives in the store, so anything holding the store can drive
+  // the theme, which is how foundry pushes its toolbar toggle in.
   it('takes an explicit preference from the store', () => {
-    render(<ThemeProvider>child</ThemeProvider>)
+    const { store } = renderThemed('child')
     expect(rootClasses()).toContain(lightTheme)
 
-    act(() => useAppStore.setState({ theme: 'dark' }))
+    act(() => store.setState({ theme: 'dark' }))
 
     expect(rootClasses()).toContain(darkTheme)
     expect(rootClasses()).not.toContain(lightTheme)
@@ -53,14 +72,20 @@ describe('ThemeProvider', () => {
       return null
     }
 
-    render(
-      <ThemeProvider>
-        <Probe />
-      </ThemeProvider>
-    )
+    const { store } = renderThemed(<Probe />)
     act(() => setTheme?.('dark'))
 
-    expect(useAppStore.getState().theme).toBe('dark')
+    expect(store.getState().theme).toBe('dark')
+    expect(rootClasses()).toContain(darkTheme)
+  })
+
+  it('is supplied by AGIProvider unless opted out', () => {
+    render(
+      <AGIProvider store={createTestStore({ theme: 'dark' })}>
+        child
+      </AGIProvider>
+    )
+
     expect(rootClasses()).toContain(darkTheme)
   })
 })

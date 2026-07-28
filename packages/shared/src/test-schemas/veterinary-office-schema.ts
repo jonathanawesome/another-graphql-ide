@@ -17,6 +17,7 @@ import {
   GraphQLString,
 } from 'graphql'
 
+import { directivesWithIncrementalDelivery } from './incremental-directives'
 import { dateTimeScalar, emailScalar, phoneNumberScalar } from './scalar-stubs'
 
 // Enums
@@ -663,6 +664,7 @@ const VetOperations = new GraphQLObjectType({
 
 // Create and export the schema with custom root type names
 export const veterinaryOfficeSchema = new GraphQLSchema({
+  directives: directivesWithIncrementalDelivery,
   query: VetQueries,
   mutation: VetOperations,
   description:

@@ -1,5 +1,6 @@
+import { parseVariables } from '../../execution/parse-variables'
+import { runRequest } from '../../execution/run-request'
 import type { AppSliceCreator } from '../../store/types'
-import { createTransport } from '../../transport/transport'
 
 import type { ExecutionSlice } from './types'
 
@@ -28,45 +29,37 @@ export const createExecutionSlice: AppSliceCreator<ExecutionSlice> = (
     },
 
     execute: async () => {
-      const { query, variables, operationName, endpoint, headers, schema } =
-        get()
-
-      let parsedVariables: Record<string, unknown> | undefined
-      if (variables.trim()) {
-        try {
-          parsedVariables = JSON.parse(variables) as Record<string, unknown>
-        } catch {
-          set({ status: 'error', error: 'Variables are not valid JSON' })
-          return
-        }
-      }
-
+      // Abort first, so a run rejected for bad variables still cancels the
+      // previous one rather than leaving it streaming over the error.
       controller?.abort()
       controller = new AbortController()
       const { signal } = controller
 
       set({ status: 'fetching', error: undefined, response: '' })
 
-      const transport = createTransport({ endpoint, schema, headers })
-      try {
-        for await (const result of transport.execute(
-          { query, variables: parsedVariables, operationName },
-          { signal }
-        )) {
-          if (signal.aborted) return
-          set({
-            status: 'streaming',
-            response: JSON.stringify(result, null, 2),
-          })
-        }
-        if (!signal.aborted) set({ status: 'idle' })
-      } catch (error) {
-        if (signal.aborted) return
-        set({
-          status: 'error',
-          error: error instanceof Error ? error.message : String(error),
-        })
+      const { query, variables, operationName, getTransport } = get()
+
+      const parsed = parseVariables(variables)
+      if (!parsed.ok) {
+        set({ status: 'error', error: parsed.message })
+        return
       }
+
+      const outcome = await runRequest(
+        getTransport(),
+        { query, variables: parsed.value, operationName },
+        signal,
+        {
+          onResult: result =>
+            set({
+              status: 'streaming',
+              response: JSON.stringify(result, null, 2),
+            }),
+          onError: error => set({ status: 'error', error }),
+        }
+      )
+
+      if (outcome === 'completed') set({ status: 'idle' })
     },
   }
 }

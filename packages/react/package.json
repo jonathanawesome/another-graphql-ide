@@ -6,7 +6,8 @@
   "exports": {
     "./style": "./src/style/index.ts",
     "./state": "./src/state/index.ts",
-    "./components": "./src/components/index.ts"
+    "./components": "./src/components/index.ts",
+    "./recipes": "./src/recipes/index.ts"
   },
   "sideEffects": [
     "*.css.ts",

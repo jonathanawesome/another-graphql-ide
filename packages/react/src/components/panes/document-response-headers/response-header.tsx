@@ -1,4 +1,4 @@
-import { IconButtonGroup } from '../../ui-components/icon-button-group/icon-button-group'
+import { IconButtonGroup } from '../../primitives/icon-button-group/icon-button-group'
 
 import { sharedStyles } from './shared.css'
 

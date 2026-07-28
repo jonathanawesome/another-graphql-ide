@@ -18,6 +18,7 @@ globalStyle('body', {
   margin: 0,
   fontFamily: themeContract.fonts.sans,
   fontSize: themeContract.px[14],
+  color: themeContract.colors.neutral7,
   WebkitFontSmoothing: 'antialiased',
   MozOsxFontSmoothing: 'grayscale',
 })

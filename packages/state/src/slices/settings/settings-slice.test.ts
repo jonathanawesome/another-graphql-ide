@@ -65,6 +65,18 @@ describe('settings slice', () => {
     store.getState().toggleShowFieldTypes()
     expect(store.getState().showFieldTypes).toBe(false)
   })
+
+  it('flips the insertion mode between the two modes', () => {
+    const store = createAGIStore()
+
+    expect(store.getState().objectFieldInsertionMode).toBe('typename')
+
+    store.getState().toggleObjectFieldInsertionMode()
+    expect(store.getState().objectFieldInsertionMode).toBe('bare')
+
+    store.getState().toggleObjectFieldInsertionMode()
+    expect(store.getState().objectFieldInsertionMode).toBe('typename')
+  })
 })
 
 describe('theme', () => {

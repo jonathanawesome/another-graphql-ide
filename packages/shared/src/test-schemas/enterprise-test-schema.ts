@@ -14,6 +14,7 @@ import {
   GraphQLUnionType,
 } from 'graphql'
 
+import { directivesWithIncrementalDelivery } from './incremental-directives'
 import {
   dateTimeScalar,
   emailScalar,
@@ -1283,6 +1284,7 @@ const SubscriptionType = new GraphQLObjectType({
 
 // Create and export the schema
 export const enterpriseTestSchema = new GraphQLSchema({
+  directives: directivesWithIncrementalDelivery,
   query: QueryType,
   mutation: MutationType,
   subscription: SubscriptionType,

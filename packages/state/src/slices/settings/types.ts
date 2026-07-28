@@ -22,6 +22,12 @@ export type Theme = 'light' | 'dark' | 'system'
 export type SettingsSlice = {
   objectFieldInsertionMode: ObjectFieldInsertionMode
   setObjectFieldInsertionMode: (mode: ObjectFieldInsertionMode) => void
+  /**
+   * Flips to the other mode. Like the toggle below, this exists because a
+   * keyboard shortcut has no current value in hand; it stays a toggle rather
+   * than a cycle only as long as there are two modes.
+   */
+  toggleObjectFieldInsertionMode: () => void
 
   /** Show each field's return type, and each argument's input type, on its row. */
   showFieldTypes: boolean
