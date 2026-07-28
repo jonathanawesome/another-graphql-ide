@@ -59,8 +59,8 @@ const renderTree = (
   schema: GraphQLSchema,
   initialState: AGIInitialState = {}
 ) =>
-  renderWithProvider(<SchemaTree schema={schema} />, {
-    store: createTestStore({ showFieldTypes: false, ...initialState }),
+  renderWithProvider(<SchemaTree />, {
+    store: createTestStore({ schema, showFieldTypes: false, ...initialState }),
   })
 
 describe('SchemaTree', () => {

@@ -8,6 +8,7 @@ import {
 import { LOCAL_ENDPOINT } from '@another-graphql-ide/state'
 import { createPreview, type NavPath } from 'react-foundry'
 
+import { AGIProvider } from '../../../state'
 import { Resizer } from '../../ui-components/resizer/resizer'
 import { EditorGroup } from '../editor-group/editor-group'
 
@@ -30,12 +31,11 @@ const SCHEMAS = {
 const endpointFor = (path: string) =>
   import.meta.env.PROD ? LOCAL_ENDPOINT : `http://localhost:4000${path}`
 
-// Both bricks share the singleton store: EditorGroup bridges the schema into
-// state, the SchemaTree reads it back, and clicking a field's insert button
-// toggles it into the editor's document at the cursor's operation.
+// One provider spanning both bricks, which is what lets clicking a field in the
+// tree toggle it into the editor's document at the cursor's operation.
 //
-// Switching schemas does not remount: EditorGroup syncs both props into the
-// store and the transport is rebuilt per execution, so the document you have
+// Switching schemas does not remount: the provider syncs the schema prop into
+// the store and the transport is rebuilt per execution, so the document you have
 // been writing survives the switch (and lints against the new schema).
 export const ClickToInsert = createPreview({
   label: 'Click a field to insert it',
@@ -50,18 +50,18 @@ export const ClickToInsert = createPreview({
     const { schema, path } = SCHEMAS[values.schema]
 
     return (
-      <div style={{ display: 'flex', gap: 12, height: 560, width: '100%' }}>
-        <Resizer
-          orientation="horizontal"
-          defaultSizePercent={30}
-          minSizePercent={20}
-          maxSizePercent={60}
-          firstPane={<SchemaTree />}
-          secondPane={
-            <EditorGroup schema={schema} endpoint={endpointFor(path)} />
-          }
-        />
-      </div>
+      <AGIProvider schema={schema} endpoint={endpointFor(path)} theme={false}>
+        <div style={{ display: 'flex', gap: 12, height: 560, width: '100%' }}>
+          <Resizer
+            orientation="horizontal"
+            defaultSizePercent={30}
+            minSizePercent={20}
+            maxSizePercent={60}
+            firstPane={<SchemaTree />}
+            secondPane={<EditorGroup />}
+          />
+        </div>
+      </AGIProvider>
     )
   },
 })

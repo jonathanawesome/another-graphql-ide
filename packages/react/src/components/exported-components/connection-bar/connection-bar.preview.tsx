@@ -1,5 +1,6 @@
 import { createPreview, type NavPath } from 'react-foundry'
 
+import { AGIProvider } from '../../../state'
 import { EditorGroup } from '../editor-group/editor-group'
 
 import { ConnectionBar } from './connection-bar'
@@ -21,28 +22,31 @@ query Countries {
 }
 `
 
-// ConnectionBar and EditorGroup share the singleton store: seeding the endpoint
-// through EditorGroup lands it in the bar's input; Connect introspects it and
-// loads the schema back into the editor for autocomplete + execution.
+// One provider spanning both bricks, which is what makes the handshake work:
+// the endpoint it seeds shows up in the bar's input, Connect introspects it, and
+// the resulting schema reaches the editor for autocomplete and execution.
 export const ConnectAndQuery = createPreview({
   label: 'Connect to an endpoint',
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
-        height: 560,
-        width: '100%',
-      }}
+    <AGIProvider
+      endpoint={COUNTRIES_ENDPOINT}
+      defaultQuery={starterQuery}
+      theme={false}
     >
-      <ConnectionBar />
-      <div style={{ flex: 1, minHeight: 0 }}>
-        <EditorGroup
-          endpoint={COUNTRIES_ENDPOINT}
-          defaultQuery={starterQuery}
-        />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+          height: 560,
+          width: '100%',
+        }}
+      >
+        <ConnectionBar />
+        <div style={{ flex: 1, minHeight: 0 }}>
+          <EditorGroup />
+        </div>
       </div>
-    </div>
+    </AGIProvider>
   ),
 })

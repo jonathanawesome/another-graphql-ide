@@ -1,5 +1,6 @@
 import { useAppStore } from '../../../state'
 import { Editor } from '../../exported-components/editor/editor'
+import { copyText } from '../copy-text'
 import { DocumentHeader } from '../document-response-headers/document-header'
 
 import { documentPaneStyles } from './document-pane.css'
@@ -22,7 +23,7 @@ export const DocumentPane = () => {
       <DocumentHeader
         operationName={operationName}
         onExecute={() => void execute()}
-        onCopy={() => void navigator.clipboard.writeText(query)}
+        onCopy={() => copyText(query)}
         onCancel={cancel}
         status={status}
         error={error}

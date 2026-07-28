@@ -1,5 +1,4 @@
-import type { GraphQLSchema } from 'graphql'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { useShortcut } from '../../../keyboard'
 import { useAppStore } from '../../../state'
@@ -22,17 +21,8 @@ const TAB_TYPES = ['query', 'mutation', 'subscription', 'favorites'] as const
 const asTabType = (value: string | null | undefined): TabType =>
   TAB_TYPES.includes(value as TabType) ? (value as TabType) : 'query'
 
-export type SchemaTreeProps = {
-  /**
-   * Optional schema to seed shared state with. When omitted, the tree reads the
-   * schema another brick (e.g. EditorGroup) placed in the store.
-   */
-  schema?: GraphQLSchema
-}
-
-export const SchemaTree = ({ schema }: SchemaTreeProps) => {
+export const SchemaTree = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
-  const setSchema = useAppStore.use.setSchema()
   const toggleField = useAppStore.use.toggleField()
   const showFieldTypes = useAppStore.use.showFieldTypes()
   const toggleShowFieldTypes = useAppStore.use.toggleShowFieldTypes()
@@ -63,19 +53,14 @@ export const SchemaTree = ({ schema }: SchemaTreeProps) => {
   }
   const activeTab = asTabType(manualTab ?? activeOpType)
 
-  // Bridge the optional seed prop into shared state.
-  useEffect(() => {
-    if (schema) setSchema(schema)
-  }, [schema, setSchema])
-
   const { roots, visibleRoots, fieldCounts, getChildren } = useSchemaTree(
     activeSchema,
     searchTerm
   )
   const { expanded, toggleExpanded } = useTreeExpansion(activeSchema)
 
-  // Registered once for the whole brick. The bus fires only the most recently
-  // mounted tree, so several on a page still toggle the shared setting once.
+  // Registered once for the whole brick. The bus is page-global, so with
+  // several trees mounted only the newest responds.
   useShortcut('schema-tree.toggle-field-types', toggleShowFieldTypes)
   useShortcut('schema-tree.toggle-insertion-mode', toggleInsertionMode)
 

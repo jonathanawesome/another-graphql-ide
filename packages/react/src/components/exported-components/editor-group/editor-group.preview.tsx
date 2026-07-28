@@ -2,6 +2,8 @@ import { graphiqlTestSchema } from '@another-graphql-ide/shared'
 import { LOCAL_ENDPOINT } from '@another-graphql-ide/state'
 import { createPreview, type NavPath } from 'react-foundry'
 
+import { AGIProvider } from '../../../state'
+
 import { EditorGroup } from './editor-group'
 
 export const nav: NavPath = 'Exported Components/Editor Group'
@@ -23,21 +25,30 @@ query ExampleQuery {
 }
 `
 
-// EditorGroup fills its parent, so the preview gets a bounded box.
-const EditorGroupFrame = ({ children }: React.PropsWithChildren) => (
-  <div style={{ height: 520, width: '100%' }}>{children}</div>
+// EditorGroup fills its parent, so the preview gets a bounded box. Config now
+// arrives through the provider rather than props.
+const Framed = ({
+  endpoint: url,
+  children,
+}: React.PropsWithChildren<{ endpoint: string }>) => (
+  <div style={{ height: 520, width: '100%' }}>
+    <AGIProvider
+      endpoint={url}
+      schema={graphiqlTestSchema}
+      defaultQuery={starterQuery}
+      theme={false}
+    >
+      {children}
+    </AGIProvider>
+  </div>
 )
 
 export const SchemaAwareLiveTransport = createPreview({
   label: 'Schema-aware + live transport',
   render: () => (
-    <EditorGroupFrame>
-      <EditorGroup
-        schema={graphiqlTestSchema}
-        endpoint={endpoint}
-        defaultQuery={starterQuery}
-      />
-    </EditorGroupFrame>
+    <Framed endpoint={endpoint}>
+      <EditorGroup />
+    </Framed>
   ),
 })
 
@@ -47,12 +58,8 @@ export const SchemaAwareLiveTransport = createPreview({
 export const LocalExecution = createPreview({
   label: 'In-process execution (no server)',
   render: () => (
-    <EditorGroupFrame>
-      <EditorGroup
-        schema={graphiqlTestSchema}
-        endpoint={LOCAL_ENDPOINT}
-        defaultQuery={starterQuery}
-      />
-    </EditorGroupFrame>
+    <Framed endpoint={LOCAL_ENDPOINT}>
+      <EditorGroup />
+    </Framed>
   ),
 })
