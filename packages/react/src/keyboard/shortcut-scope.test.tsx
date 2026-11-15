@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@tanstack/react-virtual', () => ({
@@ -15,32 +15,55 @@ const { createTestStore } = await import('../test-utils/render-with-provider')
 const { SchemaTree } =
   await import('../components/bricks/schema-tree/schema-tree')
 
-/**
- * Characterization of a known limitation, so the eventual fix has something to
- * flip rather than a silent behavior change.
- *
- * The shortcut bus is page-global while stores are per-provider, so a shortcut
- * reaches only the most recently mounted brick. With one store that was
- * invisible; with two it means the tree you are looking at may not respond.
- */
+/** jsdom is not an Apple platform, so Mod is Control here. */
+const toggleKeys = { key: 'l', ctrlKey: true, shiftKey: true }
+
+const renderTwoTrees = () => {
+  const first = createTestStore()
+  const second = createTestStore()
+
+  render(
+    <>
+      <AGIProvider store={first} theme={false}>
+        <SchemaTree />
+      </AGIProvider>
+      <AGIProvider store={second} theme={false}>
+        <SchemaTree />
+      </AGIProvider>
+    </>
+  )
+
+  // With no schema each tree renders only its empty state, inside its marker.
+  const [firstRoot, secondRoot] = screen.getAllByText('No schema loaded.')
+  if (!firstRoot || !secondRoot) throw new Error('expected two trees')
+
+  return { first, second, firstRoot, secondRoot }
+}
+
 describe('keyboard shortcuts across providers', () => {
-  it('reaches only the most recently mounted tree', () => {
-    const first = createTestStore()
-    const second = createTestStore()
+  it('reaches the tree whose instance has focus', () => {
+    const { first, second, firstRoot } = renderTwoTrees()
 
-    render(
-      <>
-        <AGIProvider store={first} theme={false}>
-          <SchemaTree />
-        </AGIProvider>
-        <AGIProvider store={second} theme={false}>
-          <SchemaTree />
-        </AGIProvider>
-      </>
-    )
+    fireEvent.keyDown(firstRoot, toggleKeys)
 
-    // jsdom is not an Apple platform, so Mod is Control here.
-    fireEvent.keyDown(document, { key: 'l', ctrlKey: true, shiftKey: true })
+    expect(first.getState().showFieldTypes).toBe(true)
+    expect(second.getState().showFieldTypes).toBe(false)
+  })
+
+  it('remembers the last instance used once focus leaves it', () => {
+    const { first, second, firstRoot } = renderTwoTrees()
+
+    fireEvent.pointerDown(firstRoot)
+    fireEvent.keyDown(document, toggleKeys)
+
+    expect(first.getState().showFieldTypes).toBe(true)
+    expect(second.getState().showFieldTypes).toBe(false)
+  })
+
+  it('falls back to the newest tree before any interaction', () => {
+    const { first, second } = renderTwoTrees()
+
+    fireEvent.keyDown(document, toggleKeys)
 
     expect(second.getState().showFieldTypes).toBe(true)
     expect(first.getState().showFieldTypes).toBe(false)

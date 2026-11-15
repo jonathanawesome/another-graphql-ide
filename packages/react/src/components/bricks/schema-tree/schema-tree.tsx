@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 
 import { useShortcut } from '../../../keyboard'
 import { useAppStore } from '../../../state'
+import { useInstanceAttr } from '../../../state/instance-id'
 import { IconButton } from '../../primitives/icon-button/icon-button'
 import { Input } from '../../primitives/input/input'
 import { Popover } from '../../primitives/popover/popover'
@@ -61,6 +62,7 @@ export const SchemaTree = () => {
 
   // Registered once for the whole brick. The bus is page-global, so with
   // several trees mounted only the newest responds.
+  const instanceAttr = useInstanceAttr()
   useShortcut('schema-tree.toggle-field-types', toggleShowFieldTypes)
   useShortcut('schema-tree.toggle-insertion-mode', toggleInsertionMode)
 
@@ -73,7 +75,7 @@ export const SchemaTree = () => {
 
   if (!activeSchema) {
     return (
-      <div className={schemaTreeStyles.container}>
+      <div {...instanceAttr} className={schemaTreeStyles.container}>
         <div className={schemaTreeStyles.emptyState}>No schema loaded.</div>
       </div>
     )
@@ -150,7 +152,7 @@ export const SchemaTree = () => {
   })
 
   return (
-    <div className={schemaTreeStyles.container}>
+    <div {...instanceAttr} className={schemaTreeStyles.container}>
       <div className={schemaTreeStyles.header}>
         <Input
           handleChange={e => setSearchTerm(e.target.value)}

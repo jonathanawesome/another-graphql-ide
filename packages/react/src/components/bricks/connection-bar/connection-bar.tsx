@@ -1,6 +1,7 @@
 import type { SchemaStatus } from '@another-graphql-ide/state'
 
 import { useAppStore } from '../../../state'
+import { useInstanceAttr } from '../../../state/instance-id'
 import { Button } from '../../primitives/button/button'
 import { IconButton } from '../../primitives/icon-button/icon-button'
 import { Input } from '../../primitives/input/input'
@@ -36,8 +37,10 @@ export const ConnectionBar = () => {
     </span>
   )
 
+  const instanceAttr = useInstanceAttr()
+
   return (
-    <div className={styles.container}>
+    <div {...instanceAttr} className={styles.container}>
       <div className={styles.endpoint}>
         <Input
           name="graphql-endpoint"
