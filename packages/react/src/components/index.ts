@@ -24,4 +24,7 @@ export { Popover } from './primitives/popover/popover'
 export type { PopoverProps } from './primitives/popover/popover'
 export { Resizer } from './primitives/resizer/resizer'
 export { RunControl } from './primitives/run-control/run-control'
-export type { RunControlProps } from './primitives/run-control/run-control'
+export type {
+  RunControlProps,
+  RunStatus,
+} from './primitives/run-control/run-control'
