@@ -18,6 +18,10 @@ export default defineConfig({
         { label: 'Docs Page' },
         { label: 'Split Instance' },
         { label: 'Side by Side' },
+        { label: 'Tutorial Steps' },
+        { label: 'IDE in a Drawer' },
+        { label: 'Schema Reference' },
+        { label: 'Custom Brick' },
       ],
     },
     {
