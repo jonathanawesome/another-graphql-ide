@@ -26,4 +26,23 @@ export default defineConfig([
       ],
     },
   },
+  {
+    // Layouts are built only from what the package exports, so a missing
+    // export shows up here instead of being papered over with a deep import.
+    files: ['src/layouts/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../*/*', '@another-graphql-ide/state'],
+              message:
+                'Layouts import only from ../components, ../recipes or ../state.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ])
