@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react'
 import { createPreview, type NavPath } from 'react-foundry'
 
 import { Button, EditorGroup, Icon } from '../components'
-import { AGIProvider, useAGIStore, useAppStore } from '../state'
+import {
+  AGIProvider,
+  useAGIStore,
+  useAppStore,
+  useInstanceAttr,
+} from '../state'
 
 import { SCHEMAS, endpointFor } from './fixtures'
 
@@ -12,9 +17,11 @@ export const nav: NavPath = 'Layouts/Custom Brick'
 const StatusBadge = () => {
   const status = useAppStore.use.status()
   const endpoint = useAppStore.use.endpoint()
+  const instanceAttr = useInstanceAttr()
 
   return (
     <div
+      {...instanceAttr}
       style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}
     >
       <Icon name="CircleFill" />
@@ -34,6 +41,8 @@ const RunHistory = () => {
   const store = useAGIStore()
   const setQuery = useAppStore.use.setQuery()
   const [entries, setEntries] = useState<Entry[]>([])
+  // Claims this element for the instance, so shortcuts pressed here stay here.
+  const instanceAttr = useInstanceAttr()
 
   useEffect(() => {
     let id = 0
@@ -59,11 +68,18 @@ const RunHistory = () => {
   }, [store])
 
   if (entries.length === 0) {
-    return <p style={{ fontSize: 12, opacity: 0.6 }}>Run something.</p>
+    return (
+      <p {...instanceAttr} style={{ fontSize: 12, opacity: 0.6 }}>
+        Run something.
+      </p>
+    )
   }
 
   return (
-    <ol style={{ display: 'grid', gap: 8, listStyle: 'none', padding: 0 }}>
+    <ol
+      {...instanceAttr}
+      style={{ display: 'grid', gap: 8, listStyle: 'none', padding: 0 }}
+    >
       {entries.map(entry => (
         <li
           key={entry.id}

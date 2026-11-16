@@ -24,7 +24,14 @@ const OPTIONS: { value: ObjectFieldInsertionMode; label: string }[] = [
  * way to reach it, and reading the keys from the registry means the note cannot
  * drift from the binding that fires.
  */
-export const SettingsContent = () => {
+export type SettingsContentProps = {
+  /** False for a browse-only tree, where insertion settings do not apply. */
+  showInsertion?: boolean
+}
+
+export const SettingsContent = ({
+  showInsertion = true,
+}: SettingsContentProps) => {
   const mode = useAppStore.use.objectFieldInsertionMode()
   const setMode = useAppStore.use.setObjectFieldInsertionMode()
   const showFieldTypes = useAppStore.use.showFieldTypes()
@@ -35,33 +42,42 @@ export const SettingsContent = () => {
 
   return (
     <div className={settingsContentStyles.container}>
-      {/* The shortcut flips the pair rather than picking one option, so it sits
-          with the heading instead of on either radio. */}
-      <div className={settingsContentStyles.titleRow}>
-        <span className={settingsContentStyles.title}>
-          Object field insertion
-        </span>
-        <Kbd shortcut="schema-tree.toggle-insertion-mode" />
-      </div>
-      <RadioGroup
-        className={settingsContentStyles.group}
-        value={mode}
-        onValueChange={value => setMode(value)}
-      >
-        {OPTIONS.map(option => (
-          <label key={option.value} className={settingsContentStyles.option}>
-            <Radio.Root
-              className={settingsContentStyles.radio}
-              value={option.value}
-            >
-              <Radio.Indicator className={settingsContentStyles.indicator} />
-            </Radio.Root>
-            {option.label}
-          </label>
-        ))}
-      </RadioGroup>
+      {showInsertion && (
+        <>
+          {/* The shortcut flips the pair rather than picking one option, so it
+              sits with the heading instead of on either radio. */}
+          <div className={settingsContentStyles.titleRow}>
+            <span className={settingsContentStyles.title}>
+              Object field insertion
+            </span>
+            <Kbd shortcut="schema-tree.toggle-insertion-mode" />
+          </div>
+          <RadioGroup
+            className={settingsContentStyles.group}
+            value={mode}
+            onValueChange={value => setMode(value)}
+          >
+            {OPTIONS.map(option => (
+              <label
+                key={option.value}
+                className={settingsContentStyles.option}
+              >
+                <Radio.Root
+                  className={settingsContentStyles.radio}
+                  value={option.value}
+                >
+                  <Radio.Indicator
+                    className={settingsContentStyles.indicator}
+                  />
+                </Radio.Root>
+                {option.label}
+              </label>
+            ))}
+          </RadioGroup>
 
-      <Separator orientation="horizontal" />
+          <Separator orientation="horizontal" />
+        </>
+      )}
 
       <div className={settingsContentStyles.title}>Display</div>
       <div className={settingsContentStyles.group}>

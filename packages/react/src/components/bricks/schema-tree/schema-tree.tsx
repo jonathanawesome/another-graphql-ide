@@ -22,7 +22,12 @@ const TAB_TYPES = ['query', 'mutation', 'subscription', 'favorites'] as const
 const asTabType = (value: string | null | undefined): TabType =>
   TAB_TYPES.includes(value as TabType) ? (value as TabType) : 'query'
 
-export const SchemaTree = () => {
+export type SchemaTreeProps = {
+  /** Browse only: fields cannot be inserted into the document. */
+  readOnly?: boolean
+}
+
+export const SchemaTree = ({ readOnly = false }: SchemaTreeProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const toggleField = useAppStore.use.toggleField()
   const showFieldTypes = useAppStore.use.showFieldTypes()
@@ -60,11 +65,14 @@ export const SchemaTree = () => {
   )
   const { expanded, toggleExpanded } = useTreeExpansion(activeSchema)
 
-  // Registered once for the whole brick. The bus is page-global, so with
-  // several trees mounted only the newest responds.
+  // Registered once for the whole brick, scoped to this instance.
   const instanceAttr = useInstanceAttr()
   useShortcut('schema-tree.toggle-field-types', toggleShowFieldTypes)
-  useShortcut('schema-tree.toggle-insertion-mode', toggleInsertionMode)
+  useShortcut(
+    'schema-tree.toggle-insertion-mode',
+    toggleInsertionMode,
+    !readOnly
+  )
 
   // Rows for the visible tab only. Base UI keeps every tab panel mounted, so
   // each one that renders the tree mounts its own virtualizer.
@@ -85,7 +93,7 @@ export const SchemaTree = () => {
   const tree = (
     <TreeContainer
       rows={rows}
-      onToggle={toggleField}
+      onToggle={readOnly ? undefined : toggleField}
       onToggleExpand={toggleExpanded}
       showTypes={showFieldTypes}
       activePaths={activePaths}
@@ -164,7 +172,7 @@ export const SchemaTree = () => {
         />
         <div className={schemaTreeStyles.headerActionContainer}>
           <Popover
-            content={<SettingsContent />}
+            content={<SettingsContent showInsertion={!readOnly} />}
             trigger={
               <IconButton
                 ghost={true}

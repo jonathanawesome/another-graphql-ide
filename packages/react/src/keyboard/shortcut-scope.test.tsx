@@ -11,6 +11,7 @@ vi.mock('@tanstack/react-virtual', () => ({
 }))
 
 const { AGIProvider } = await import('../state/agi-provider')
+const { useInstanceAttr } = await import('../state')
 const { createTestStore } = await import('../test-utils/render-with-provider')
 const { SchemaTree } =
   await import('../components/bricks/schema-tree/schema-tree')
@@ -55,6 +56,36 @@ describe('keyboard shortcuts across providers', () => {
 
     fireEvent.pointerDown(firstRoot)
     fireEvent.keyDown(document, toggleKeys)
+
+    expect(first.getState().showFieldTypes).toBe(true)
+    expect(second.getState().showFieldTypes).toBe(false)
+  })
+
+  it('routes from a custom brick that claims its instance', () => {
+    const CustomBrick = () => (
+      <button type="button" {...useInstanceAttr()}>
+        custom
+      </button>
+    )
+    const first = createTestStore()
+    const second = createTestStore()
+
+    render(
+      <>
+        <AGIProvider store={first} theme={false}>
+          <SchemaTree />
+          <CustomBrick />
+        </AGIProvider>
+        <AGIProvider store={second} theme={false}>
+          <SchemaTree />
+        </AGIProvider>
+      </>
+    )
+
+    fireEvent.keyDown(
+      screen.getByRole('button', { name: 'custom' }),
+      toggleKeys
+    )
 
     expect(first.getState().showFieldTypes).toBe(true)
     expect(second.getState().showFieldTypes).toBe(false)

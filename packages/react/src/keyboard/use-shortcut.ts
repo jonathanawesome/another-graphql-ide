@@ -14,7 +14,12 @@ import type { ShortcutId } from './shortcuts'
  * and re-register it. That would reshuffle the stack the bus uses to decide
  * which registration wins, and would make the winner depend on render order.
  */
-export const useShortcut = (id: ShortcutId, handler: () => void) => {
+export const useShortcut = (
+  id: ShortcutId,
+  handler: () => void,
+  /** Hooks cannot be conditional, so a brick turns a shortcut off here. */
+  enabled = true
+) => {
   const instance = useInstanceId()
   const latest = useRef(handler)
 
@@ -26,7 +31,10 @@ export const useShortcut = (id: ShortcutId, handler: () => void) => {
   })
 
   useEffect(
-    () => registerShortcut(instance, id, () => latest.current()),
-    [instance, id]
+    () =>
+      enabled
+        ? registerShortcut(instance, id, () => latest.current())
+        : undefined,
+    [instance, id, enabled]
   )
 }

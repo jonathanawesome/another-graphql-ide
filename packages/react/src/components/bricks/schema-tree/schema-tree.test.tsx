@@ -255,4 +255,49 @@ describe('SchemaTree', () => {
     expect(screen.getByRole('button', { name: 'hub' })).toBeDefined()
     expect(screen.queryByRole('button', { name: 'root' })).toBeNull()
   })
+
+  describe('readOnly', () => {
+    const renderReadOnly = () =>
+      renderWithProvider(<SchemaTree readOnly />, {
+        store: createTestStore({
+          schema: deepTestSchema,
+          showFieldTypes: false,
+        }),
+      })
+
+    it('shows field names as text, not insert buttons', () => {
+      const { store } = renderReadOnly()
+
+      expect(screen.queryByRole('button', { name: 'root' })).toBeNull()
+      fireEvent.click(screen.getByText('root'))
+
+      expect(store.getState().query).toBe('')
+    })
+
+    it('expands with Enter instead of inserting', () => {
+      const { store } = renderReadOnly()
+      const row = nth(screen.getAllByRole('treeitem'), 0)
+      row.focus()
+
+      fireEvent.keyDown(row, { key: 'Enter' })
+
+      expect(row.getAttribute('aria-expanded')).toBe('true')
+      expect(store.getState().query).toBe('')
+    })
+
+    it('is not multiselectable, since nothing can be selected', () => {
+      renderReadOnly()
+
+      const tree = screen.getByRole('tree')
+      expect(tree.hasAttribute('aria-multiselectable')).toBe(false)
+    })
+
+    it('leaves the insertion mode shortcut unbound', () => {
+      const { store } = renderReadOnly()
+
+      fireEvent.keyDown(document, { key: 'x', ctrlKey: true, shiftKey: true })
+
+      expect(store.getState().objectFieldInsertionMode).not.toBe('bare')
+    })
+  })
 })

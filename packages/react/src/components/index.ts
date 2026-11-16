@@ -6,6 +6,7 @@ export type { EditorProps } from './bricks/editor/editor'
 export { ConnectionBar } from './bricks/connection-bar/connection-bar'
 export { EditorGroup } from './bricks/editor-group/editor-group'
 export { SchemaTree } from './bricks/schema-tree/schema-tree'
+export type { SchemaTreeProps } from './bricks/schema-tree/schema-tree'
 export { VariablesEditor } from './bricks/variables-editor/variables-editor'
 export type { VariablesEditorProps } from './bricks/variables-editor/variables-editor'
 

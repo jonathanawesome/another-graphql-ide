@@ -13,7 +13,7 @@ import { typeLabelFor } from '../utils/type-label'
 
 type ListItemProps = {
   row: FlatRow
-  onToggle: (target: ToggleFieldTarget) => void
+  onToggle?: (target: ToggleFieldTarget) => void
   onToggleExpand: (id: string) => void
   /** Adopt this row as the tree's single tab stop. */
   onFocus: (id: string) => void
@@ -50,13 +50,14 @@ export const ListItem = ({
   // Special handling for ARGUMENTS node
   const isArgumentsNode = node.type === 'arguments'
 
-  const toggleTarget = toggleTargetFor(node)
+  const toggleTarget = onToggle && toggleTargetFor(node)
   const typeLabel = showTypes ? typeLabelFor(node) : undefined
   const handleToggle = () => {
-    if (toggleTarget) onToggle(toggleTarget)
+    if (onToggle && toggleTarget) onToggle(toggleTarget)
   }
 
-  const canToggle = node.type === 'field' || node.type === 'argument'
+  const canToggle =
+    !!onToggle && (node.type === 'field' || node.type === 'argument')
 
   type IconItem = IconButtonGroupProps['icons'][number]
 

@@ -11,9 +11,7 @@ const prose = { fontSize: 14, lineHeight: 1.6, margin: '12px 0' }
 
 /**
  * The tree as a browsable reference in a docs sidebar, with no editor.
- *
- * Known gap: clicking a field still toggles it into the store's document,
- * which nothing here shows. A browse-only mode would fix that.
+ * readOnly turns off insertion, since there is no document to insert into.
  */
 export const Sidebar = createPreview({
   label: 'Schema tree as a docs sidebar',
@@ -30,7 +28,7 @@ export const Sidebar = createPreview({
         }}
       >
         <aside style={{ minHeight: 0 }}>
-          <SchemaTree />
+          <SchemaTree readOnly />
         </aside>
         <article style={{ maxWidth: 560 }}>
           <h1 style={{ fontSize: 22 }}>API reference</h1>

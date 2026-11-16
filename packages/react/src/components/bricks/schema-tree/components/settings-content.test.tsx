@@ -35,6 +35,13 @@ describe('SettingsContent', () => {
    * so this cannot advertise a binding that does not fire. jsdom is not an
    * Apple platform, hence Control rather than Command.
    */
+  it('hides insertion settings for a browse-only tree', () => {
+    renderWithProvider(<SettingsContent showInsertion={false} />)
+
+    expect(screen.queryByText('Object field insertion')).toBeNull()
+    expect(screen.getByText('Show return types')).toBeDefined()
+  })
+
   it('advertises the keyboard shortcut beside the setting', () => {
     renderWithProvider(<SettingsContent />)
 

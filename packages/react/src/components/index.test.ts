@@ -40,6 +40,7 @@ describe('public exports', () => {
       'LOCAL_ENDPOINT',
       'useAGIStore',
       'useAppStore',
+      'useInstanceAttr',
       'useOperation',
     ])
   })
