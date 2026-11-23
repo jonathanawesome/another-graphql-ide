@@ -2,6 +2,7 @@ import {
   graphiqlTestSchema,
   performanceTestSchema,
 } from '@another-graphql-ide/shared'
+import { EditorState } from '@codemirror/state'
 import {
   buildClientSchema,
   introspectionFromSchema,
@@ -16,7 +17,19 @@ import {
   Position,
 } from 'graphql-language-service'
 
-import { makeSupergraph, subgraphSdl } from '../../sdl-viewer/__fixtures__/sdl'
+import {
+  makeLineData,
+  makeSupergraph,
+  subgraphSdl,
+} from '../../sdl-viewer/__fixtures__/sdl'
+import {
+  initialLineState,
+  lineStateField,
+  setHoverLine,
+  setLineData,
+  type LineData,
+} from '../../sdl-viewer/codemirror/line-state'
+import { sdlField } from '../../sdl-viewer/codemirror/sdl-field'
 import { indexSdl } from '../../sdl-viewer/codemirror/sdl-index'
 
 import { makeLargeDocument } from './__fixtures__/large-doc'
@@ -95,6 +108,31 @@ const introspectionOf = (schema: GraphQLSchema): IntrospectionQuery => {
 
 // Built once at import, like the large document above.
 const largeSupergraph = makeSupergraph(4000)
+
+// The SdlViewer's state, as the viewer installs it, without a DOM.
+const viewerState = (sdl: string, data: LineData) =>
+  EditorState.create({
+    doc: sdl,
+    extensions: [
+      sdlField,
+      lineStateField.init(state => initialLineState(state, data)),
+    ],
+  })
+
+// Built on first use: a full map costs an extra index of the supergraph.
+let supergraphViewer:
+  { data: Required<LineData>; state: EditorState; hover: number } | undefined
+const viewer = () => {
+  if (!supergraphViewer) {
+    const data = makeLineData(largeSupergraph)
+    supergraphViewer = {
+      data,
+      state: viewerState(largeSupergraph, data),
+      hover: 1,
+    }
+  }
+  return supergraphViewer
+}
 
 export const stressMeasurementGroups: StressGroup[] = [
   {
@@ -195,6 +233,36 @@ export const stressMeasurementGroups: StressGroup[] = [
         variant: 'supergraph (4,000 types)',
         run: () => {
           indexSdl(largeSupergraph)
+        },
+      },
+    ],
+  },
+  {
+    group: 'sdl viewer rows',
+    note: 'supergraph (4,000 types), an annotation on every coordinate',
+    cases: [
+      {
+        variant: 'create state (includes the index)',
+        run: () => {
+          viewerState(largeSupergraph, viewer().data)
+        },
+      },
+      {
+        variant: 'hover move',
+        run: () => {
+          const v = viewer()
+          v.hover = (v.hover % 1000) + 1
+          // Reading .state applies the transaction.
+          return v.state.update({ effects: setHoverLine.of(v.hover) }).state
+        },
+      },
+      {
+        variant: 'new dimmed set (a third of rows)',
+        run: () => {
+          const { data, state } = viewer()
+          return state.update({
+            effects: setLineData.of({ ...data, dimmed: new Set(data.dimmed) }),
+          }).state
         },
       },
     ],

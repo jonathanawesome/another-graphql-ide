@@ -42,7 +42,7 @@ describe('Popover', () => {
     expect(onOpenChange.mock.calls[0]?.[0]).toBe(false)
   })
 
-  // The close button used to be labelled for the schema tree specifically.
+  // The close button used to be labeled for the schema tree specifically.
   it('labels the close button generically', () => {
     render(<Popover open content={<p>panel</p>} trigger={trigger} />)
 

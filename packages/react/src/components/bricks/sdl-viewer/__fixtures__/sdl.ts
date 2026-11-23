@@ -1,3 +1,6 @@
+import type { LineData, SdlAnnotation, SdlTag } from '../codemirror/line-state'
+import { indexSdl, type Coordinate } from '../codemirror/sdl-index'
+
 /** A small federation subgraph: extensions, @key, arguments, enums, inputs. */
 export const subgraphSdl = `"""
 A customer account.
@@ -77,4 +80,26 @@ export const makeSupergraph = (types: number, fields = 8) => {
   }
 
   return `${parts.join('\n\n')}\n`
+}
+
+/**
+ * Host data for every coordinate in `sdl`: an annotation on each, a tag on
+ * every eleventh and every third dimmed. Deterministic, like a real map.
+ */
+export const makeLineData = (sdl: string): Required<LineData> => {
+  const annotations = new Map<Coordinate, SdlAnnotation>()
+  const tags = new Map<Coordinate, SdlTag>()
+  const dimmed = new Set<Coordinate>()
+  let i = 0
+  for (const coordinate of indexSdl(sdl).lineOfCoordinate.keys()) {
+    const ratio = ((i * 37) % 100) / 100
+    annotations.set(coordinate, {
+      value: ratio === 0 ? 'unused' : `${(ratio * 500).toFixed(1)}K`,
+      ratio,
+    })
+    if (i % 11 === 0) tags.set(coordinate, { label: 'shared' })
+    if (i % 3 === 0) dimmed.add(coordinate)
+    i++
+  }
+  return { annotations, tags, dimmed }
 }

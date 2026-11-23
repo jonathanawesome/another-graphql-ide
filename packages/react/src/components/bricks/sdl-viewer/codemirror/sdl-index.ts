@@ -31,7 +31,7 @@ export type SdlToken = { from: number; to: number; kind: SdlTokenKind }
 export type SdlIndex = {
   /** False when graphql-js rejected the SDL. Tokens are still filled in. */
   parsed: boolean
-  /** Colour classes in document order. */
+  /** color classes in document order. */
   tokens: SdlToken[]
   /** Fold range per 1-based line, from after `{` to before `}`. */
   folds: Map<number, { from: number; to: number }>
@@ -65,7 +65,7 @@ const emptyIndex = (): SdlIndex => ({
   lineOfCoordinate: new Map(),
 })
 
-// Only used to colour SDL the parser rejected.
+// Only used to color SDL the parser rejected.
 const KEYWORDS = new Set([
   'schema',
   'scalar',
@@ -85,7 +85,7 @@ const KEYWORDS = new Set([
 ])
 
 /**
- * One graphql-js parse of an SDL document: token colours, fold ranges,
+ * One graphql-js parse of an SDL document: token colors, fold ranges,
  * definition offsets and the line to coordinate maps both ways. Never throws.
  */
 export const indexSdl = (sdl: string): SdlIndex => {
@@ -106,7 +106,7 @@ export const indexSdl = (sdl: string): SdlIndex => {
     for (const definition of ast.definitions) indexDefinition(definition, index)
   }
 
-  index.tokens = colour(sdl, roles, Boolean(ast))
+  index.tokens = color(sdl, roles, Boolean(ast))
   return index
 }
 
@@ -135,7 +135,7 @@ const NAME_ROLE: Partial<Record<string, SdlTokenKind>> = {
   [Kind.DIRECTIVE]: 'directive',
 }
 
-// Values coloured as a whole rather than through a name.
+// Values colored as a whole rather than through a name.
 const VALUE_ROLE: Partial<Record<string, SdlTokenKind>> = {
   [Kind.ENUM]: 'enumValue',
   [Kind.BOOLEAN]: 'enumValue',
@@ -286,14 +286,10 @@ const indexDefinition = (definition: DefinitionNode, index: SdlIndex) => {
 }
 
 /**
- * Colours from the lexer, so text the parser rejects still gets them. Walks the
+ * colors from the lexer, so text the parser rejects still gets them. Walks the
  * token list rather than `advance()`, which skips comments.
  */
-const colour = (
-  sdl: string,
-  roles: Uint8Array,
-  parsed: boolean
-): SdlToken[] => {
+const color = (sdl: string, roles: Uint8Array, parsed: boolean): SdlToken[] => {
   const lexer = new Lexer(new Source(sdl))
   const first = lexer.token
   try {

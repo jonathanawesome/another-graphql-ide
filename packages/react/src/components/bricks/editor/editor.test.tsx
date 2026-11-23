@@ -40,7 +40,7 @@ describe('Editor', () => {
     expect(content(container)?.getAttribute('data-probe')).toBe('on')
   })
 
-  it('leaves operation behaviour out by default', () => {
+  it('leaves operation behavior out by default', () => {
     const { container } = render(
       <Editor language="graphql" defaultValue={twoOperations} />
     )

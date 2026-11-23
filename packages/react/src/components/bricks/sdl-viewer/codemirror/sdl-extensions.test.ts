@@ -3,7 +3,8 @@ import { EditorState } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { goToDefinition, sdlExtensions, sdlField } from './sdl-extensions'
+import { goToDefinition, sdlExtensions } from './sdl-extensions'
+import { sdlField } from './sdl-field'
 
 const sdl = `type Query {
   user: User

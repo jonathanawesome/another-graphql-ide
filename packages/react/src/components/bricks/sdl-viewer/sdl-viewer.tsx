@@ -2,14 +2,30 @@ import { useMemo } from 'react'
 
 import { Editor } from '../editor/editor'
 
-import { sdlExtensions } from './codemirror/sdl-extensions'
+import type { SdlAnnotation, SdlTag } from './codemirror/line-state'
+import type { Coordinate } from './codemirror/sdl-index'
 import { formatSdl } from './format-sdl'
+import { useSdlExtensions } from './use-sdl-extensions'
 
 export type SdlViewerProps = {
   /** The whole schema as SDL text. */
   sdl: string
-  /** Pretty-print before showing. Text that does not parse is shown as is. */
+  /**
+   * Pretty-print before showing. Text that does not parse is shown as is.
+   * On by default when annotations or tags are given, since they need one
+   * coordinate per line.
+   */
   format?: boolean
+  /** Per-line annotation: a value, and an optional 0..1 ratio for the bar. */
+  annotations?: ReadonlyMap<Coordinate, SdlAnnotation>
+  /** Per-line tag shown before the annotation. */
+  tags?: ReadonlyMap<Coordinate, SdlTag>
+  /** Lines to render dimmed, e.g. filtered out by the host. */
+  dimmed?: ReadonlySet<Coordinate>
+  /** Moves the selected row to this coordinate when it changes. */
+  selected?: Coordinate
+  /** Called when the user selects a row, with its coordinate if it has one. */
+  onSelect?: (coordinate: Coordinate | undefined) => void
   /** Overrides the surrounding ThemeProvider. Light when neither is set. */
   theme?: 'light' | 'dark'
   /** Optional visual frame around the viewer. */
@@ -19,24 +35,38 @@ export type SdlViewerProps = {
 }
 
 /**
- * A read-only view of a schema as SDL, with colours, folding, search and
- * modifier-click go-to-definition. Prop-driven; needs no AGIProvider.
+ * A read-only view of a schema as SDL, with colors, folding, search,
+ * modifier-click go-to-definition, row selection and a per-line annotation
+ * column keyed by schema coordinate. Prop-driven; needs no AGIProvider.
  */
 export const SdlViewer = ({
   sdl,
-  format = false,
+  format,
+  annotations,
+  tags,
+  dimmed,
+  selected,
+  onSelect,
   theme,
   frame,
   height,
 }: SdlViewerProps) => {
-  const text = useMemo(() => (format ? formatSdl(sdl) : sdl), [format, sdl])
+  const pretty = format ?? (annotations !== undefined || tags !== undefined)
+  const text = useMemo(() => (pretty ? formatSdl(sdl) : sdl), [pretty, sdl])
+  const extensions = useSdlExtensions({
+    annotations,
+    tags,
+    dimmed,
+    selected,
+    onSelect,
+  })
 
   return (
     <Editor
       value={text}
       readOnly
       theme={theme}
-      extensions={sdlExtensions}
+      extensions={extensions}
       frame={frame}
       height={height}
     />

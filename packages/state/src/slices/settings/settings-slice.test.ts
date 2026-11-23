@@ -135,7 +135,7 @@ describe('settings persistence', () => {
     expect(state.objectFieldInsertionMode).toBe('typename')
   })
 
-  it('keeps a valid neighbour when one stored value is malformed', () => {
+  it('keeps a valid neighbor when one stored value is malformed', () => {
     const { storage, seed } = sharedStorage()
     seed({ showFieldTypes: true, objectFieldInsertionMode: 'nonsense' })
 

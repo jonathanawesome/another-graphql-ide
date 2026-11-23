@@ -12,7 +12,7 @@ export const settingsContentStyles = {
     color: themeContract.colors.neutral7,
   }),
   // A heading that carries a shortcut chip, kept at the trailing edge like the
-  // one on a labelled control.
+  // one on a labeled control.
   titleRow: style({
     display: 'flex',
     alignItems: 'center',

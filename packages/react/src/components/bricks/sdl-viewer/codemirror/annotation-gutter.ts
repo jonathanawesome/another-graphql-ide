@@ -1,0 +1,92 @@
+import { GutterMarker, gutter, type ViewUpdate } from '@codemirror/view'
+
+import { pillClass } from '../../../primitives/pill/pill.css'
+
+import {
+  lineStateField,
+  setLineData,
+  type LineData,
+  type SdlAnnotation,
+  type SdlTag,
+} from './line-state'
+import { sdlField } from './sdl-field'
+
+class AnnotationMarker extends GutterMarker {
+  readonly annotation: SdlAnnotation | undefined
+  readonly tag: SdlTag | undefined
+
+  constructor(annotation: SdlAnnotation | undefined, tag: SdlTag | undefined) {
+    super()
+    this.annotation = annotation
+    this.tag = tag
+  }
+
+  override eq(other: AnnotationMarker) {
+    return (
+      other.tag?.label === this.tag?.label &&
+      other.annotation?.value === this.annotation?.value &&
+      other.annotation?.ratio === this.annotation?.ratio
+    )
+  }
+
+  override toDOM() {
+    const row = document.createElement('div')
+    row.className = 'cm-sdl-annotation'
+    if (this.tag) {
+      const tag = row.appendChild(document.createElement('span'))
+      tag.className = `${pillClass} cm-sdl-tag`
+      tag.textContent = this.tag.label
+    }
+    if (this.annotation) {
+      const { ratio, value } = this.annotation
+      if (ratio !== undefined) {
+        const bar = row.appendChild(document.createElement('span'))
+        bar.className = 'cm-sdl-bar'
+        const fill = bar.appendChild(document.createElement('span'))
+        fill.style.width = `${Math.round(Math.min(Math.max(ratio, 0), 1) * 100)}%`
+      }
+      const text = row.appendChild(document.createElement('span'))
+      text.className = 'cm-sdl-value'
+      text.textContent = value
+    }
+    return row
+  }
+}
+
+// Sized for the widest row, so the column keeps its width while scrolling.
+const spacerFor = ({ annotations, tags }: LineData) => {
+  let longest: SdlTag | undefined
+  for (const tag of tags?.values() ?? []) {
+    if (!longest || tag.label.length > longest.label.length) longest = tag
+  }
+  const annotation = annotations?.size ? { value: '', ratio: 0 } : undefined
+  return new AnnotationMarker(annotation, longest)
+}
+
+const dataChanged = (update: ViewUpdate) =>
+  update.transactions.some(tr => tr.effects.some(e => e.is(setLineData)))
+
+/** The trailing column: an optional tag, then a bar and a value. */
+export const annotationGutter = gutter({
+  class: 'cm-sdl-annotations',
+  side: 'after',
+  // Every row gets an element, so row tints run through the column.
+  renderEmptyElements: true,
+  lineMarker(view, line) {
+    const number = view.state.doc.lineAt(line.from).number
+    const coordinate = view.state
+      .field(sdlField)
+      .index.coordinateAtLine.get(number)
+    if (coordinate === undefined) return null
+    const { data } = view.state.field(lineStateField)
+    const annotation = data.annotations?.get(coordinate)
+    const tag = data.tags?.get(coordinate)
+    return annotation || tag ? new AnnotationMarker(annotation, tag) : null
+  },
+  lineMarkerChange: dataChanged,
+  initialSpacer: view => spacerFor(view.state.field(lineStateField).data),
+  updateSpacer: (spacer, update) =>
+    dataChanged(update)
+      ? spacerFor(update.state.field(lineStateField).data)
+      : spacer,
+})

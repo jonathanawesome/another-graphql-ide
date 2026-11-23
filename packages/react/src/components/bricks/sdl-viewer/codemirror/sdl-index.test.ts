@@ -115,7 +115,7 @@ describe('indexSdl', () => {
     expect(indexSdl('type Mutation { noop: Boolean }').folds.size).toBe(0)
   })
 
-  it('colours names by their role', () => {
+  it('colors names by their role', () => {
     const cases: [string, SdlTokenKind, number?][] = [
       ['type', 'keyword'],
       ['User', 'type'],
@@ -152,7 +152,7 @@ describe('indexSdl', () => {
     expect(index.coordinateAtLine.size).toBe(0)
   })
 
-  it('still colours unparseable SDL from the lexer', () => {
+  it('still colors unparseable SDL from the lexer', () => {
     const kinds = indexSdl(
       'type User @deprecated {\n  name: "unterminated'
     ).tokens.map(token => token.kind)

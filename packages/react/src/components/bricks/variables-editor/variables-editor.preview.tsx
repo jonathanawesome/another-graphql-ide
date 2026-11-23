@@ -20,7 +20,7 @@ const Framed = ({
 )
 
 export const WithLabel = createPreview({
-  label: 'Labelled',
+  label: 'Labeled',
   render: () => (
     <Framed variables={'{\n  "id": "abc123"\n}'}>
       <VariablesEditor label="Variables" />

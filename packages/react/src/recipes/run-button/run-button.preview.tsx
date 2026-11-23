@@ -27,7 +27,7 @@ export const Standalone = createPreview({
   ),
 })
 
-export const Labelled = createPreview({
+export const Labeled = createPreview({
   label: 'Custom text',
   render: () => (
     <Host>
