@@ -1,5 +1,5 @@
 import { EditorView } from '@codemirror/view'
-import { act, render } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { selectLine } from './codemirror/line-state'
@@ -193,6 +193,95 @@ describe('SdlViewer', () => {
       )
 
       expect(rowText(container, '.cm-sdl-selected')).toEqual(['  name: String'])
+    })
+  })
+
+  describe('find bar', () => {
+    const sdl =
+      'type A { legacyId: ID legacyName: String } type B { legacy: Int }'
+
+    const field = () =>
+      screen.findByRole('textbox', { name: 'Search this schema' })
+    const count = () => screen.getByText(/ of \d+$/).textContent
+    const type = async (text: string) =>
+      fireEvent.change(await field(), { target: { value: text } })
+
+    it('shows the field and the column heading', async () => {
+      render(
+        <SdlViewer
+          sdl={sdl}
+          annotations={new Map()}
+          annotationLabel="Requests"
+        />
+      )
+
+      expect(((await field()) as HTMLInputElement).value).toBe('')
+      screen.getByText('Requests')
+      expect(screen.queryByRole('button', { name: 'Next match' })).toBeNull()
+    })
+
+    it('counts matches and moves to the first', async () => {
+      const { container } = render(<SdlViewer sdl={sdl} format />)
+      await type('legacy')
+
+      await screen.findByText('1 of 3')
+      expect(findAll(container, '.cm-searchMatch').length).toBe(3)
+    })
+
+    it('steps through matches with the buttons and Enter', async () => {
+      render(<SdlViewer sdl={sdl} format />)
+      await type('legacy')
+      await screen.findByText('1 of 3')
+
+      fireEvent.click(screen.getByRole('button', { name: 'Next match' }))
+      expect(count()).toBe('2 of 3')
+
+      fireEvent.keyDown(await field(), { key: 'Enter' })
+      expect(count()).toBe('3 of 3')
+
+      fireEvent.keyDown(await field(), { key: 'Enter', shiftKey: true })
+      expect(count()).toBe('2 of 3')
+
+      fireEvent.click(screen.getByRole('button', { name: 'Previous match' }))
+      expect(count()).toBe('1 of 3')
+    })
+
+    it('leaves the typed text unselected, so typing carries on', async () => {
+      render(<SdlViewer sdl={sdl} format />)
+      const input = (await field()) as HTMLInputElement
+      input.focus()
+      await type('legacy')
+      await screen.findByText('1 of 3')
+      expect(input.selectionStart).toBe(6)
+
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(input.selectionStart).toBe(6)
+    })
+
+    it('says so when nothing matches and disables the arrows', async () => {
+      render(<SdlViewer sdl={sdl} format />)
+      await type('legasy')
+
+      await screen.findByText('No matches')
+      expect(screen.getByRole('button', { name: 'Next match' })).toHaveProperty(
+        'disabled',
+        true
+      )
+      expect(
+        screen.getByRole('button', { name: 'Previous match' })
+      ).toHaveProperty('disabled', true)
+    })
+
+    it('clears with Escape and the clear button', async () => {
+      render(<SdlViewer sdl={sdl} format />)
+      await type('legacy')
+      fireEvent.keyDown(await field(), { key: 'Escape' })
+      expect(((await field()) as HTMLInputElement).value).toBe('')
+
+      await type('legacy')
+      fireEvent.click(screen.getByRole('button', { name: 'Clear search' }))
+      expect(((await field()) as HTMLInputElement).value).toBe('')
+      expect(screen.queryByText(/of 3/)).toBeNull()
     })
   })
 })

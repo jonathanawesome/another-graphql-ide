@@ -1,9 +1,11 @@
 import { useMemo } from 'react'
+import { createPortal } from 'react-dom'
 
 import { Editor } from '../editor/editor'
 
 import type { SdlAnnotation, SdlTag } from './codemirror/line-state'
 import type { Coordinate } from './codemirror/sdl-index'
+import { FindBar } from './find-bar'
 import { formatSdl } from './format-sdl'
 import { useSdlExtensions } from './use-sdl-extensions'
 
@@ -18,6 +20,8 @@ export type SdlViewerProps = {
   format?: boolean
   /** Per-line annotation: a value, and an optional 0..1 ratio for the bar. */
   annotations?: ReadonlyMap<Coordinate, SdlAnnotation>
+  /** Heading over the annotation column, shown in the find bar. */
+  annotationLabel?: string
   /** Per-line tag shown before the annotation. */
   tags?: ReadonlyMap<Coordinate, SdlTag>
   /** Lines to render dimmed, e.g. filtered out by the host. */
@@ -35,7 +39,7 @@ export type SdlViewerProps = {
 }
 
 /**
- * A read-only view of a schema as SDL, with colors, folding, search,
+ * A read-only view of a schema as SDL, with colors, folding, a find bar,
  * modifier-click go-to-definition, row selection and a per-line annotation
  * column keyed by schema coordinate. Prop-driven; needs no AGIProvider.
  */
@@ -43,6 +47,7 @@ export const SdlViewer = ({
   sdl,
   format,
   annotations,
+  annotationLabel,
   tags,
   dimmed,
   selected,
@@ -53,7 +58,7 @@ export const SdlViewer = ({
 }: SdlViewerProps) => {
   const pretty = format ?? (annotations !== undefined || tags !== undefined)
   const text = useMemo(() => (pretty ? formatSdl(sdl) : sdl), [pretty, sdl])
-  const extensions = useSdlExtensions({
+  const { extensions, findPanel } = useSdlExtensions({
     annotations,
     tags,
     dimmed,
@@ -62,13 +67,25 @@ export const SdlViewer = ({
   })
 
   return (
-    <Editor
-      value={text}
-      readOnly
-      theme={theme}
-      extensions={extensions}
-      frame={frame}
-      height={height}
-    />
+    <>
+      <Editor
+        value={text}
+        readOnly
+        theme={theme}
+        extensions={extensions}
+        frame={frame}
+        height={height}
+      />
+      {findPanel &&
+        createPortal(
+          <FindBar
+            view={findPanel.view}
+            store={findPanel.store}
+            label={annotationLabel}
+            withColumn={annotations !== undefined || tags !== undefined}
+          />,
+          findPanel.dom
+        )}
+    </>
   )
 }

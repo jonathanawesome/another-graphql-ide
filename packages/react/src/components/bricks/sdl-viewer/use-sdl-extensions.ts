@@ -3,6 +3,7 @@ import { EditorView, ViewPlugin } from '@codemirror/view'
 import { useEffect, useState } from 'react'
 
 import { annotationGutter } from './codemirror/annotation-gutter'
+import { FindStore, findExtensions } from './codemirror/find'
 import {
   coordinateAtLine,
   initialLineState,
@@ -34,10 +35,17 @@ class Handlers {
   }
 }
 
-const createHandlers = (params: UseSdlExtensionsParams) => {
+/** The open find panel, for the find bar to render into. */
+export type FindPanel = { view: EditorView; dom: HTMLElement; store: FindStore }
+
+const createHandlers = (
+  params: UseSdlExtensionsParams,
+  setPanel: (panel: FindPanel | null) => void
+) => {
   const handlers = new Handlers()
   handlers.update(params.onSelect)
   const column = new Compartment()
+  const store = new FindStore()
   const { annotations, tags, dimmed, selected } = params
 
   const extensions: Extension = [
@@ -47,6 +55,9 @@ const createHandlers = (params: UseSdlExtensionsParams) => {
     ),
     linePointer,
     column.of(hasColumn(params) ? annotationGutter : []),
+    findExtensions(store, panel =>
+      setPanel(panel ? { ...panel, store } : null)
+    ),
     // Only user selections are reported; host ones arrive as syncSelected.
     EditorView.updateListener.of(update => {
       for (const tr of update.transactions) {
@@ -71,13 +82,16 @@ const createHandlers = (params: UseSdlExtensionsParams) => {
 }
 
 /**
- * The SDL viewer's extensions: colors, folding, go-to-definition, row states
- * and the annotation column, kept in step with the host's props. The value is
- * stable across renders.
+ * The SDL viewer's extensions: colors, folding, go-to-definition, row states,
+ * the annotation column and search, kept in step with the host's props. The
+ * extensions are stable across renders; `findPanel` is set once the panel opens.
  */
-export const useSdlExtensions = (params: UseSdlExtensionsParams): Extension => {
+export const useSdlExtensions = (
+  params: UseSdlExtensionsParams
+): { extensions: Extension; findPanel: FindPanel | null } => {
+  const [findPanel, setFindPanel] = useState<FindPanel | null>(null)
   const [{ handlers, column, extensions }] = useState(() =>
-    createHandlers(params)
+    createHandlers(params, setFindPanel)
   )
   const { annotations, tags, dimmed, selected, onSelect } = params
   const withColumn = hasColumn(params)
@@ -119,5 +133,5 @@ export const useSdlExtensions = (params: UseSdlExtensionsParams): Extension => {
     view.dispatch({ effects: syncSelected.of(selected) })
   }, [handlers, selected])
 
-  return extensions
+  return { extensions, findPanel }
 }

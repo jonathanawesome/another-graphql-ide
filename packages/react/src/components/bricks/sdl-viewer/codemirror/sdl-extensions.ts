@@ -102,13 +102,29 @@ const sdlTheme = EditorView.theme({
   '.cm-foldGutter .cm-gutterElement:not(.cm-sdl-hover) span[title="Fold line"]':
     { visibility: 'hidden' },
 
+  // Find bar panel and its matches.
+  '.cm-panels': {
+    color: themeContract.colors.neutral7,
+    backgroundColor: themeContract.colors.neutral2,
+  },
+  '.cm-panels.cm-panels-top': {
+    borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+  },
+  '.cm-searchMatch': {
+    backgroundColor: themeContract.colors.neutral4,
+    outline: 'none',
+  },
+  '.cm-searchMatch.cm-searchMatch-selected': {
+    backgroundColor: themeContract.colors.neutral5,
+  },
+
   // Annotation column. Long lines scroll under it, so it needs an edge.
   '.cm-gutters.cm-gutters-after': {
     borderInlineStart: `1px solid ${themeContract.colors.neutral4}`,
   },
   '.cm-sdl-annotations .cm-gutterElement': {
-    paddingInlineStart: themeContract.px[12],
-    paddingInlineEnd: themeContract.px[16],
+    paddingInlineStart: themeContract.px[8],
+    paddingInlineEnd: themeContract.px[8],
   },
   '.cm-sdl-annotation': {
     display: 'flex',

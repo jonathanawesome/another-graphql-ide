@@ -33,6 +33,7 @@ const Annotated = ({ sdl, dim }: { sdl: string; dim: boolean }) => {
         <SdlViewer
           sdl={sdl}
           annotations={data.annotations}
+          annotationLabel="Requests"
           tags={data.tags}
           dimmed={dim ? data.dimmed : undefined}
           selected={selected}
