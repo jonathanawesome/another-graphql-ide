@@ -76,6 +76,9 @@ const row = `${SDL_LINE_HEIGHT}px`
 
 // The theme contract has no syntax tokens yet, so these reuse the palette the
 // operation editor highlights with.
+// The contract has no error color yet; same literal red as ConnectionBar.
+const ERROR_COLOR = 'oklch(63% 0.23 25)'
+
 const sdlTheme = EditorView.theme({
   '.cm-line, .cm-gutterElement': { lineHeight: row },
   '.cm-sdl-keyword, .cm-sdl-directive': { color: themeContract.colors.brand },
@@ -108,6 +111,26 @@ const sdlTheme = EditorView.theme({
   // Type links keep the type's color and underline on hover.
   '.cm-sdl-link': { color: 'inherit', textDecoration: 'none' },
   '.cm-sdl-link:hover': { textDecoration: 'underline' },
+
+  // Hover card: the popover's surface around the host's content.
+  '.cm-tooltip.cm-tooltip-hover': {
+    marginTop: themeContract.px[4],
+    color: themeContract.colors.neutral8,
+    backgroundColor: themeContract.colors.neutral1,
+    border: `1px solid ${themeContract.colors.neutral4}`,
+    borderRadius: themeContract.radii.large,
+    boxShadow: themeContract.shadows.wide,
+    overflow: 'hidden',
+  },
+  '.cm-sdl-card': {
+    width: '360px',
+    maxWidth: 'calc(100vw - 32px)',
+    boxSizing: 'border-box',
+    padding: themeContract.px[16],
+    fontFamily: themeContract.fonts.sans,
+    fontSize: themeContract.px[13],
+    lineHeight: 1.5,
+  },
 
   // Find bar panel and its matches.
   '.cm-panels': {
@@ -153,6 +176,22 @@ const sdlTheme = EditorView.theme({
     display: 'block',
     height: '100%',
     backgroundColor: themeContract.colors.brand,
+  },
+  '.cm-sdl-error': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: themeContract.px[8],
+    fontFamily: themeContract.fonts.sans,
+    fontSize: themeContract.px[12],
+    color: themeContract.colors.neutral7,
+    whiteSpace: 'nowrap',
+  },
+  '.cm-sdl-error::before': {
+    content: '""',
+    width: themeContract.px[6],
+    height: themeContract.px[6],
+    borderRadius: '50%',
+    backgroundColor: ERROR_COLOR,
   },
   '.cm-sdl-value': {
     minWidth: '56px',

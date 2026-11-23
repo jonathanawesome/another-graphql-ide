@@ -96,6 +96,7 @@ export const makeLineData = (sdl: string): Required<LineData> => {
     annotations.set(coordinate, {
       value: ratio === 0 ? 'unused' : `${(ratio * 500).toFixed(1)}K`,
       ratio,
+      error: i % 7 === 4 ? `${((i % 5) + 0.4).toFixed(1)}% errors` : undefined,
     })
     if (i % 11 === 0) tags.set(coordinate, { label: 'shared' })
     if (i % 3 === 0) dimmed.add(coordinate)

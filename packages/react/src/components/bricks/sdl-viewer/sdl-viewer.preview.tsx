@@ -1,3 +1,4 @@
+import { themeContract } from '@another-graphql-ide/style'
 import { useState } from 'react'
 import { createPreview, type NavPath } from 'react-foundry'
 
@@ -30,6 +31,46 @@ const typeHref = (name: string) =>
     ? `#types/${name}`
     : undefined
 
+// Host content, loosely after the design: the brick only supplies the card.
+const muted = { color: themeContract.colors.neutral6 }
+const eyebrow = {
+  ...muted,
+  fontSize: 11,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+} as const
+const mono = { fontFamily: themeContract.fonts.mono }
+
+const HoverContent = ({
+  coordinate,
+  data,
+}: {
+  coordinate: string
+  data: ReturnType<typeof makeLineData>
+}) => {
+  const typeName = coordinate.split('.')[0] ?? coordinate
+  const href = typeHref(typeName)
+  const annotation = data.annotations.get(coordinate)
+  const tag = data.tags.get(coordinate)
+  return (
+    <div style={{ display: 'grid', gap: 10 }}>
+      <span style={eyebrow}>
+        {coordinate.includes('.') ? 'Field' : 'Type'} · defined in users
+        {tag ? ` · ${tag.label}` : ''}
+      </span>
+      <span style={mono}>{coordinate}</span>
+      <span>
+        {annotation?.ratio
+          ? `In ${annotation.value} requests in the last 7 days.`
+          : 'Not requested in the last 7 days.'}
+        {annotation?.error &&
+          ` ${annotation.error.replace(' errors', '')} of resolutions returned an error.`}
+      </span>
+      {href && <a href={href}>Open the type →</a>}
+    </div>
+  )
+}
+
 // Selection is the host's: the line below echoes what onSelect reported.
 const Annotated = ({
   sdl,
@@ -45,7 +86,12 @@ const Annotated = ({
   const [reveal, setReveal] = useState<{ coordinate: string; nonce: number }>()
   return (
     <div
-      style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1fr)',
+        gap: 8,
+        width: '100%',
+      }}
     >
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <Button
@@ -71,6 +117,9 @@ const Annotated = ({
           onSelect={setSelected}
           reveal={reveal}
           typeHref={typeHref}
+          renderHover={coordinate => (
+            <HoverContent coordinate={coordinate} data={data} />
+          )}
           status={`${data.annotations.size.toLocaleString()} coordinates`}
           frame="bordered"
         />

@@ -64,20 +64,31 @@ const selectMatch = (view: EditorView, start: number, length: number) =>
     userEvent: 'select.search',
   })
 
-/** Width of the annotation column, so the heading sits over it. */
-const useColumnWidth = (view: EditorView, withColumn: boolean) => {
-  const [width, setWidth] = useState<number>()
+type ColumnSize = { width: number; scrollbar: number }
+
+/**
+ * Width of the annotation column plus the scrollbar beside it, so the
+ * heading sits over the column and its label over the values.
+ */
+const useColumnSize = (view: EditorView, shown: boolean) => {
+  const [size, setSize] = useState<ColumnSize>()
   useEffect(() => {
-    const column = withColumn
+    const column = shown
       ? view.dom.querySelector<HTMLElement>('.cm-gutters-after')
       : null
     if (!column || typeof ResizeObserver === 'undefined') return
-    // Fires once on observe, then on every resize.
-    const observer = new ResizeObserver(() => setWidth(column.offsetWidth))
+    const scroller = view.scrollDOM
+    // Fires once on observe, then on every resize. The scroller's content
+    // box shrinks when a scrollbar appears.
+    const observer = new ResizeObserver(() => {
+      const scrollbar = scroller.offsetWidth - scroller.clientWidth
+      setSize({ width: column.offsetWidth + scrollbar, scrollbar })
+    })
     observer.observe(column)
+    observer.observe(scroller)
     return () => observer.disconnect()
-  }, [view, withColumn])
-  return withColumn ? width : undefined
+  }, [view, shown])
+  return shown ? size : undefined
 }
 
 export type FindBarProps = {
@@ -85,7 +96,10 @@ export type FindBarProps = {
   store: FindStore
   /** Heading over the annotation column. */
   label?: string
+  /** The viewer has annotation data, so the column can show. */
   withColumn: boolean
+  collapsed?: boolean
+  onToggleColumn?: () => void
 }
 
 /**
@@ -93,7 +107,14 @@ export type FindBarProps = {
  * next, and the annotation column's heading. The query lives in CodeMirror's
  * search state, so Cmd/Ctrl-F and the match highlights stay in step with it.
  */
-export const FindBar = ({ view, store, label, withColumn }: FindBarProps) => {
+export const FindBar = ({
+  view,
+  store,
+  label,
+  withColumn,
+  collapsed = false,
+  onToggleColumn,
+}: FindBarProps) => {
   const { query, from, to, doc } = useSyncExternalStore(
     store.subscribe,
     store.getSnapshot
@@ -104,7 +125,7 @@ export const FindBar = ({ view, store, label, withColumn }: FindBarProps) => {
     matches: number[]
   }>()
   const jumpedFor = useRef('')
-  const columnWidth = useColumnWidth(view, withColumn)
+  const columnSize = useColumnSize(view, withColumn && !collapsed)
 
   useEffect(() => {
     if (!query) {
@@ -226,13 +247,32 @@ export const FindBar = ({ view, store, label, withColumn }: FindBarProps) => {
           />
         </>
       )}
-      {label !== undefined && (
+      {(label !== undefined || withColumn) && (
         <div
           className={styles.heading}
-          style={columnWidth === undefined ? undefined : { width: columnWidth }}
+          style={
+            columnSize && {
+              width: columnSize.width,
+              paddingInlineEnd: 8 + columnSize.scrollbar,
+            }
+          }
         >
           <span className={styles.divider} />
-          {label}
+          {withColumn && onToggleColumn && (
+            <IconButton
+              ghost
+              size="mini"
+              name="Chevron"
+              rotate={collapsed ? '180' : undefined}
+              label={
+                collapsed
+                  ? `Show ${label ?? 'annotation'} column`
+                  : `Hide ${label ?? 'annotation'} column`
+              }
+              action={onToggleColumn}
+            />
+          )}
+          {!collapsed && <span className={styles.label}>{label}</span>}
         </div>
       )}
     </div>

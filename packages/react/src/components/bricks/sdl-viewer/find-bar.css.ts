@@ -55,7 +55,7 @@ export const findBarStyles = {
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: themeContract.px[8],
-    paddingInlineEnd: themeContract.px[16],
+    paddingInlineEnd: themeContract.px[8],
     fontSize: themeContract.px[11],
     fontWeight: 600,
     letterSpacing: themeContract.px[1],
@@ -63,8 +63,9 @@ export const findBarStyles = {
     color: themeContract.colors.neutral6,
   }),
 
+  label: style({ marginInlineStart: 'auto' }),
+
   divider: style({
-    marginInlineEnd: 'auto',
     width: '1px',
     height: themeContract.px[16],
     backgroundColor: themeContract.colors.neutral4,

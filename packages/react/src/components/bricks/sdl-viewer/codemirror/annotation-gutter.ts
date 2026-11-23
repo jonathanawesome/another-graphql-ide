@@ -25,7 +25,8 @@ class AnnotationMarker extends GutterMarker {
     return (
       other.tag?.label === this.tag?.label &&
       other.annotation?.value === this.annotation?.value &&
-      other.annotation?.ratio === this.annotation?.ratio
+      other.annotation?.ratio === this.annotation?.ratio &&
+      other.annotation?.error === this.annotation?.error
     )
   }
 
@@ -38,7 +39,12 @@ class AnnotationMarker extends GutterMarker {
       tag.textContent = this.tag.label
     }
     if (this.annotation) {
-      const { ratio, value } = this.annotation
+      const { ratio, value, error } = this.annotation
+      if (error) {
+        const mark = row.appendChild(document.createElement('span'))
+        mark.className = 'cm-sdl-error'
+        mark.textContent = error
+      }
       if (ratio !== undefined) {
         const bar = row.appendChild(document.createElement('span'))
         bar.className = 'cm-sdl-bar'
@@ -59,14 +65,20 @@ const spacerFor = ({ annotations, tags }: LineData) => {
   for (const tag of tags?.values() ?? []) {
     if (!longest || tag.label.length > longest.label.length) longest = tag
   }
-  const annotation = annotations?.size ? { value: '', ratio: 0 } : undefined
+  let error: string | undefined
+  for (const { error: next } of annotations?.values() ?? []) {
+    if (next && next.length > (error?.length ?? 0)) error = next
+  }
+  const annotation = annotations?.size
+    ? { value: '', ratio: 0, error }
+    : undefined
   return new AnnotationMarker(annotation, longest)
 }
 
 const dataChanged = (update: ViewUpdate) =>
   update.transactions.some(tr => tr.effects.some(e => e.is(setLineData)))
 
-/** The trailing column: an optional tag, then a bar and a value. */
+/** The trailing column: an optional tag and error, then a bar and a value. */
 export const annotationGutter = gutter({
   class: 'cm-sdl-annotations',
   side: 'after',

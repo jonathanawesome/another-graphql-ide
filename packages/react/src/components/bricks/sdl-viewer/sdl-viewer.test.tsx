@@ -2,6 +2,7 @@ import { EditorView } from '@codemirror/view'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
+import { hoverCardSource, type HoverCard } from './codemirror/hover-card'
 import { selectLine } from './codemirror/line-state'
 import { goToDefinition } from './codemirror/sdl-extensions'
 import { SdlViewer } from './sdl-viewer'
@@ -88,7 +89,10 @@ describe('SdlViewer', () => {
           annotations={
             new Map([
               ['User.id', { value: '486.0K', ratio: 0.5 }],
-              ['User.name', { value: 'unused', ratio: 0 }],
+              [
+                'User.name',
+                { value: 'unused', ratio: 0, error: '2.1% errors' },
+              ],
             ])
           }
           tags={new Map([['User.id', { label: 'shared' }]])}
@@ -102,6 +106,9 @@ describe('SdlViewer', () => {
         'unused',
       ])
       expect(shown(container, '.cm-sdl-tag')[0]?.textContent).toBe('shared')
+      expect(
+        shown(container, '.cm-sdl-error').map(error => error.textContent)
+      ).toEqual(['2.1% errors'])
       const [fill] = shown(container, '.cm-sdl-bar > span')
       expect(fill instanceof HTMLElement && fill.style.width).toBe('50%')
     })
@@ -193,6 +200,42 @@ describe('SdlViewer', () => {
       )
 
       expect(rowText(container, '.cm-sdl-selected')).toEqual(['  name: String'])
+    })
+
+    it('collapses the column from the find bar', async () => {
+      const onChange = vi.fn()
+      const annotations = new Map([['User.id', { value: '486.0K' }]])
+      const { container, rerender } = render(
+        <SdlViewer
+          sdl={sdl}
+          annotations={annotations}
+          annotationLabel="Requests"
+          onColumnCollapsedChange={onChange}
+        />
+      )
+      fireEvent.click(
+        await screen.findByRole('button', { name: 'Hide Requests column' })
+      )
+      expect(onChange).toHaveBeenLastCalledWith(true)
+      expect(shown(container, '.cm-sdl-value')).toHaveLength(0)
+      expect(screen.queryByText('Requests')).toBeNull()
+
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Show Requests column' })
+      )
+      expect(onChange).toHaveBeenLastCalledWith(false)
+      expect(shown(container, '.cm-sdl-value')).toHaveLength(1)
+
+      // Controlled: the prop wins.
+      rerender(
+        <SdlViewer
+          sdl={sdl}
+          annotations={annotations}
+          annotationLabel="Requests"
+          columnCollapsed
+        />
+      )
+      expect(shown(container, '.cm-sdl-value')).toHaveLength(0)
     })
   })
 
@@ -373,6 +416,43 @@ describe('SdlViewer', () => {
       )
       expect(scroll).toHaveBeenCalledTimes(2)
       scroll.mockRestore()
+    })
+
+    it('offers a hover card only for lines the host has content for', () => {
+      const { container } = render(<SdlViewer sdl={sdl} format />)
+      const dom = find(container, '.cm-editor')
+      const view = dom instanceof HTMLElement && EditorView.findFromDOM(dom)
+      if (!view) throw new Error('no view')
+      let card: HoverCard | null = null
+      const source = hoverCardSource(
+        coordinate => (coordinate === 'User.id' ? 'card' : null),
+        update => (card = update(card))
+      )
+      const lineOf = (text: string) => {
+        for (let n = 1; n <= view.state.doc.lines; n++) {
+          const line = view.state.doc.line(n)
+          if (line.text.trim().startsWith(text)) return line
+        }
+        throw new Error(`no line ${text}`)
+      }
+
+      const id = lineOf('id:')
+      const tooltip = source(view, id.to - 1, 1)
+      if (!tooltip || tooltip instanceof Promise || !('create' in tooltip)) {
+        throw new Error('no card')
+      }
+      // Anchored at the text's start, held open along the whole line.
+      expect(tooltip.pos).toBe(id.from + 2)
+      expect(tooltip.end).toBe(id.to)
+
+      const shown = tooltip.create(view)
+      expect(card).toEqual({ dom: shown.dom, coordinate: 'User.id' })
+      shown.destroy?.()
+      expect(card).toBeNull()
+
+      // No content, and no coordinate, mean no card.
+      expect(source(view, lineOf('user:').from + 3, 1)).toBeNull()
+      expect(source(view, lineOf('}').from, 1)).toBeNull()
     })
   })
 })

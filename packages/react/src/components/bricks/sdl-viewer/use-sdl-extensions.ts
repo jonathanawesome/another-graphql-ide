@@ -1,9 +1,10 @@
 import { Compartment, type Extension } from '@codemirror/state'
 import { EditorView, ViewPlugin } from '@codemirror/view'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react'
 
 import { annotationGutter } from './codemirror/annotation-gutter'
 import { FindStore, findExtensions } from './codemirror/find'
+import { hoverCard, type HoverCard } from './codemirror/hover-card'
 import {
   coordinateAtLine,
   initialLineState,
@@ -29,18 +30,29 @@ export type UseSdlExtensionsParams = LineData & {
   onSelect?: (coordinate: Coordinate | undefined) => void
   reveal?: { coordinate: Coordinate; nonce: number }
   typeHref?: TypeHref
+  renderHover?: RenderHover
+  /** Hides the annotation column while true. */
+  columnCollapsed?: boolean
 }
 
-const hasColumn = ({ annotations, tags }: LineData) =>
-  annotations !== undefined || tags !== undefined
+export type RenderHover = (coordinate: Coordinate) => ReactNode
+
+const showsColumn = ({
+  annotations,
+  tags,
+  columnCollapsed,
+}: UseSdlExtensionsParams) =>
+  (annotations !== undefined || tags !== undefined) && !columnCollapsed
 
 /** Latest callback and the live view, held outside React's render data. */
 class Handlers {
   view: EditorView | null = null
   onSelect?: (coordinate: Coordinate | undefined) => void
+  renderHover?: RenderHover
 
-  update(onSelect: UseSdlExtensionsParams['onSelect']) {
+  update({ onSelect, renderHover }: UseSdlExtensionsParams) {
     this.onSelect = onSelect
+    this.renderHover = renderHover
   }
 }
 
@@ -49,10 +61,11 @@ export type FindPanel = { view: EditorView; dom: HTMLElement; store: FindStore }
 
 const createHandlers = (
   params: UseSdlExtensionsParams,
-  setPanel: (panel: FindPanel | null) => void
+  setPanel: (panel: FindPanel | null) => void,
+  setCard: (update: (card: HoverCard | null) => HoverCard | null) => void
 ) => {
   const handlers = new Handlers()
-  handlers.update(params.onSelect)
+  handlers.update(params)
   const column = new Compartment()
   const store = new FindStore()
   const { annotations, tags, dimmed, selected } = params
@@ -64,10 +77,11 @@ const createHandlers = (
     ),
     linePointer,
     typeLinks(params.typeHref),
-    column.of(hasColumn(params) ? annotationGutter : []),
+    column.of(showsColumn(params) ? annotationGutter : []),
     findExtensions(store, panel =>
       setPanel(panel ? { ...panel, store } : null)
     ),
+    hoverCard(coordinate => handlers.renderHover?.(coordinate), setCard),
     // Only user selections are reported; host ones arrive as syncSelected.
     EditorView.updateListener.of(update => {
       for (const tr of update.transactions) {
@@ -93,22 +107,26 @@ const createHandlers = (
 
 /**
  * The SDL viewer's extensions: colors, folding, go-to-definition, row states,
- * the annotation column and search, kept in step with the host's props. The
+ * the annotation column, search and the hover card, kept in step with the host's props. The
  * extensions are stable across renders; `findPanel` is set once the panel opens.
  */
 export const useSdlExtensions = (
   params: UseSdlExtensionsParams
-): { extensions: Extension; findPanel: FindPanel | null } => {
+): {
+  extensions: Extension
+  findPanel: FindPanel | null
+  card: HoverCard | null
+} => {
   const [findPanel, setFindPanel] = useState<FindPanel | null>(null)
+  const [card, setCard] = useState<HoverCard | null>(null)
   const [{ handlers, column, extensions }] = useState(() =>
-    createHandlers(params, setFindPanel)
+    createHandlers(params, setFindPanel, setCard)
   )
-  const { annotations, tags, dimmed, selected, onSelect, reveal, typeHref } =
-    params
-  const withColumn = hasColumn(params)
+  const { annotations, tags, dimmed, selected, reveal, typeHref } = params
+  const withColumn = showsColumn(params)
 
   useEffect(() => {
-    handlers.update(onSelect)
+    handlers.update(params)
   })
 
   // These run after Editor's own effects, so the document is already current.
@@ -126,7 +144,8 @@ export const useSdlExtensions = (
     view.dispatch({ effects: setLineData.of({ annotations, tags, dimmed }) })
   }, [handlers, annotations, tags, dimmed])
 
-  useEffect(() => {
+  // A layout effect, so the find bar's passive effects see the new column.
+  useLayoutEffect(() => {
     const view = handlers.view
     if (!view || (column.get(view.state) === annotationGutter) === withColumn) {
       return
@@ -168,5 +187,5 @@ export const useSdlExtensions = (
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the whole object would re-apply the same reveal
   }, [handlers, reveal?.nonce])
 
-  return { extensions, findPanel }
+  return { extensions, findPanel, card }
 }

@@ -11,7 +11,7 @@ import { FindBar } from './find-bar'
 import { formatSdl } from './format-sdl'
 import { LoadingShell } from './loading-shell'
 import { sdlViewerStyles as styles } from './sdl-viewer.css'
-import { useSdlExtensions } from './use-sdl-extensions'
+import { useSdlExtensions, type RenderHover } from './use-sdl-extensions'
 
 export type SdlViewerProps = {
   /** The whole schema as SDL text. */
@@ -49,6 +49,19 @@ export type SdlViewerProps = {
    * context menu open the link.
    */
   typeHref?: TypeHref
+  /**
+   * Content for a card under a line after a short hover, keyed by the line's
+   * coordinate. Return nothing for no card. Called on each hover to decide,
+   * so keep it cheap.
+   */
+  renderHover?: RenderHover
+  /**
+   * Hides the annotation column, leaving a toggle in the find bar. Leave
+   * unset for the viewer to keep this itself.
+   */
+  columnCollapsed?: boolean
+  /** Called when the find bar's toggle is pressed. */
+  onColumnCollapsedChange?: (collapsed: boolean) => void
   /**
    * Footer text, with a Copy SDL button beside it. Omit to hide the footer
    * (it still shows while loading).
@@ -101,7 +114,7 @@ const CopyButton = ({
 
 /**
  * A read-only view of a schema as SDL, with colors, folding, a find bar,
- * modifier-click go-to-definition, row selection, type links and a per-line
+ * modifier-click go-to-definition, row selection, type links, hover cards and a per-line
  * annotation column keyed by schema coordinate. Prop-driven; needs no
  * AGIProvider.
  */
@@ -118,6 +131,9 @@ export const SdlViewer = ({
   onSelect,
   reveal,
   typeHref,
+  renderHover,
+  columnCollapsed,
+  onColumnCollapsedChange,
   status,
   theme,
   frame,
@@ -127,7 +143,13 @@ export const SdlViewer = ({
   const pretty = format ?? withColumn
   const text = useMemo(() => (pretty ? formatSdl(sdl) : sdl), [pretty, sdl])
   const isEmpty = !loading && sdl.trim() === ''
-  const { extensions, findPanel } = useSdlExtensions({
+  const [ownCollapsed, setOwnCollapsed] = useState(false)
+  const collapsed = columnCollapsed ?? ownCollapsed
+  const toggleColumn = () => {
+    setOwnCollapsed(!collapsed)
+    onColumnCollapsedChange?.(!collapsed)
+  }
+  const { extensions, findPanel, card } = useSdlExtensions({
     annotations,
     tags,
     dimmed,
@@ -135,6 +157,8 @@ export const SdlViewer = ({
     onSelect,
     reveal,
     typeHref,
+    renderHover,
+    columnCollapsed: collapsed,
   })
 
   return (
@@ -151,8 +175,10 @@ export const SdlViewer = ({
         {loading && (
           <div className={styles.overlay}>
             <LoadingShell
-              label={annotationLabel}
-              withColumn={withColumn || annotationLabel !== undefined}
+              label={collapsed ? undefined : annotationLabel}
+              withColumn={
+                (withColumn || annotationLabel !== undefined) && !collapsed
+              }
             />
           </div>
         )}
@@ -177,9 +203,14 @@ export const SdlViewer = ({
             store={findPanel.store}
             label={annotationLabel}
             withColumn={withColumn}
+            collapsed={collapsed}
+            onToggleColumn={toggleColumn}
           />,
           findPanel.dom
         )}
+      {card &&
+        renderHover &&
+        createPortal(renderHover(card.coordinate), card.dom, card.coordinate)}
     </div>
   )
 }

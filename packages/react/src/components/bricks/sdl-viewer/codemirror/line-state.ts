@@ -17,8 +17,13 @@ import {
 import { sdlField } from './sdl-field'
 import type { Coordinate } from './sdl-index'
 
-/** A per-line value, and an optional 0..1 ratio for its bar. */
-export type SdlAnnotation = { value: string; ratio?: number }
+/** A per-line value, an optional 0..1 ratio for its bar, and an error note. */
+export type SdlAnnotation = {
+  value: string
+  ratio?: number
+  /** A short problem note, e.g. an error rate, shown with a red dot. */
+  error?: string
+}
 /** A short label shown before the annotation. */
 export type SdlTag = { label: string }
 
