@@ -202,6 +202,31 @@ describe('SdlViewer', () => {
       expect(rowText(container, '.cm-sdl-selected')).toEqual(['  name: String'])
     })
 
+    it('tints no row until one is selected', () => {
+      const { container } = render(<SdlViewer sdl={sdl} format />)
+      const active = find(container, '.cm-activeLine')
+      if (!active) throw new Error('no active line')
+      const background = () => getComputedStyle(active).backgroundColor
+
+      // The Editor's own active line color must not show through.
+      expect(['transparent', 'rgba(0, 0, 0, 0)']).toContain(background())
+    })
+
+    it('shows a tag icon, and no bar without an annotation', async () => {
+      const { container } = render(
+        <SdlViewer
+          sdl={sdl}
+          tags={new Map([['User.id', { label: 'not in API', icon: 'EyeOff' }]])}
+        />
+      )
+
+      await vi.waitFor(() =>
+        expect(shown(container, '.cm-sdl-tag svg')).toHaveLength(1)
+      )
+      expect(shown(container, '.cm-sdl-tag')[0]?.textContent).toBe('not in API')
+      expect(shown(container, '.cm-sdl-bar')).toHaveLength(0)
+    })
+
     it('collapses the column from the find bar', async () => {
       const onChange = vi.fn()
       const annotations = new Map([['User.id', { value: '486.0K' }]])

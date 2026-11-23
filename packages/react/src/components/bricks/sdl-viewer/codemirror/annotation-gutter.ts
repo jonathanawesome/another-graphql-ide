@@ -1,5 +1,8 @@
 import { GutterMarker, gutter, type ViewUpdate } from '@codemirror/view'
+import { createElement } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
 
+import { Icon, type IconNames } from '../../../primitives/icon/icon'
 import { pillClass } from '../../../primitives/pill/pill.css'
 
 import {
@@ -10,6 +13,19 @@ import {
   type SdlTag,
 } from './line-state'
 import { sdlField } from './sdl-field'
+
+// Icons are React components, so each icon in the column is a small root,
+// unmounted with the marker that owns it.
+const iconRoots = new WeakMap<Node, Root>()
+
+const iconElement = (name: IconNames, owner: Node) => {
+  const host = document.createElement('span')
+  host.className = 'cm-sdl-tag-icon'
+  const root = createRoot(host)
+  root.render(createElement(Icon, { name }))
+  iconRoots.set(owner, root)
+  return host
+}
 
 class AnnotationMarker extends GutterMarker {
   readonly annotation: SdlAnnotation | undefined
@@ -24,6 +40,7 @@ class AnnotationMarker extends GutterMarker {
   override eq(other: AnnotationMarker) {
     return (
       other.tag?.label === this.tag?.label &&
+      other.tag?.icon === this.tag?.icon &&
       other.annotation?.value === this.annotation?.value &&
       other.annotation?.ratio === this.annotation?.ratio &&
       other.annotation?.error === this.annotation?.error
@@ -36,7 +53,8 @@ class AnnotationMarker extends GutterMarker {
     if (this.tag) {
       const tag = row.appendChild(document.createElement('span'))
       tag.className = `${pillClass} cm-sdl-tag`
-      tag.textContent = this.tag.label
+      if (this.tag.icon) tag.append(iconElement(this.tag.icon, row))
+      tag.append(this.tag.label)
     }
     if (this.annotation) {
       const { ratio, value, error } = this.annotation
@@ -57,13 +75,24 @@ class AnnotationMarker extends GutterMarker {
     }
     return row
   }
+
+  override destroy(dom: Node) {
+    const root = iconRoots.get(dom)
+    if (!root) return
+    iconRoots.delete(dom)
+    // React may be mid-render when the view goes away.
+    queueMicrotask(() => root.unmount())
+  }
 }
+
+// An icon takes about two characters of a tag's width.
+const tagLength = (tag: SdlTag) => tag.label.length + (tag.icon ? 2 : 0)
 
 // Sized for the widest row, so the column keeps its width while scrolling.
 const spacerFor = ({ annotations, tags }: LineData) => {
   let longest: SdlTag | undefined
   for (const tag of tags?.values() ?? []) {
-    if (!longest || tag.label.length > longest.label.length) longest = tag
+    if (!longest || tagLength(tag) > tagLength(longest)) longest = tag
   }
   let error: string | undefined
   for (const { error: next } of annotations?.values() ?? []) {

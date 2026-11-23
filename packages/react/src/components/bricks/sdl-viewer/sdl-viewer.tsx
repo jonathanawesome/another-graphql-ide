@@ -105,7 +105,7 @@ const CopyButton = ({
     <Button
       text={copied ? 'Copied' : 'Copy SDL'}
       label="Copy SDL"
-      withLeftIcon="Copy"
+      ghost
       state={disabled ? 'disabled' : undefined}
       action={() => void copy()}
     />

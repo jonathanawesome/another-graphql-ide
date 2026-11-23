@@ -37,7 +37,7 @@ const currentMatch = (
 
 /**
  * The match to move to: the next or previous one from the current match,
- * or, off a match, the first one after the selection. Wraps round.
+ * or, off a match, the first one after the selection. Wraps around.
  */
 const stepTo = (
   matches: number[],

@@ -1,6 +1,6 @@
 import { themeContract } from '@another-graphql-ide/style'
 import { foldService } from '@codemirror/language'
-import type { Extension } from '@codemirror/state'
+import { Prec, type Extension } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 
 import { selectLine } from './line-state'
@@ -74,11 +74,11 @@ const folds = foldService.of((state, lineStart) => {
 
 const row = `${SDL_LINE_HEIGHT}px`
 
-// The theme contract has no syntax tokens yet, so these reuse the palette the
-// operation editor highlights with.
 // The contract has no error color yet; same literal red as ConnectionBar.
 const ERROR_COLOR = 'oklch(63% 0.23 25)'
 
+// The theme contract has no syntax tokens yet, so these reuse the palette the
+// operation editor highlights with.
 const sdlTheme = EditorView.theme({
   '.cm-line, .cm-gutterElement': { lineHeight: row },
   '.cm-sdl-keyword, .cm-sdl-directive': { color: themeContract.colors.brand },
@@ -98,7 +98,9 @@ const sdlTheme = EditorView.theme({
   // Rows. The selected row replaces CodeMirror's active line.
   '.cm-activeLine, .cm-activeLineGutter': { backgroundColor: 'transparent' },
   '.cm-sdl-hover': { backgroundColor: themeContract.colors.neutral3 },
-  '.cm-sdl-selected': { backgroundColor: themeContract.colors.neutral4 },
+  '.cm-sdl-selected': {
+    backgroundColor: `color-mix(in oklch, ${themeContract.colors.brand} 12%, transparent)`,
+  },
   '.cm-gutterElement.cm-sdl-selected': { color: themeContract.colors.neutral8 },
   '.cm-sdl-dimmed': { opacity: 0.35 },
   // A click places a selection, which would outline brackets in a read-only view.
@@ -163,7 +165,14 @@ const sdlTheme = EditorView.theme({
     gap: themeContract.px[12],
     height: row,
   },
-  '.cm-sdl-tag': { lineHeight: 'normal' },
+  '.cm-sdl-tag': { lineHeight: 'normal', whiteSpace: 'nowrap' },
+  // Sized up front, as the icon renders just after the row is measured.
+  '.cm-sdl-tag-icon': {
+    flexShrink: 0,
+    width: themeContract.px[12],
+    height: themeContract.px[12],
+    marginInlineEnd: themeContract.px[3],
+  },
   '.cm-sdl-bar': {
     display: 'block',
     width: '90px',
@@ -206,5 +215,6 @@ export const sdlExtensions: Extension = [
   sdlField,
   folds,
   definitionClick,
-  sdlTheme,
+  // The Editor's theme comes first, so without this it wins ties.
+  Prec.high(sdlTheme),
 ]

@@ -14,6 +14,8 @@ import {
   type DecorationSet,
 } from '@codemirror/view'
 
+import type { IconNames } from '../../../primitives/icon/icon'
+
 import { sdlField } from './sdl-field'
 import type { Coordinate } from './sdl-index'
 
@@ -24,8 +26,8 @@ export type SdlAnnotation = {
   /** A short problem note, e.g. an error rate, shown with a red dot. */
   error?: string
 }
-/** A short label shown before the annotation. */
-export type SdlTag = { label: string }
+/** A short label shown before the annotation, with an optional icon. */
+export type SdlTag = { label: string; icon?: IconNames }
 
 /** What the host says about each coordinate. */
 export type LineData = {

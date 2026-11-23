@@ -19,6 +19,12 @@ export const Examples = createPreview(() => (
           withLeftIcon="Play"
         />
       </DemoGridItem>
+      <DemoGridItem>
+        <Button ghost label="Copy SDL" text="Copy SDL" />
+      </DemoGridItem>
+      <DemoGridItem>
+        <Button ghost label="Copy SDL" text="Copy SDL" state="disabled" />
+      </DemoGridItem>
     </DemoGrid>
   </DemoGrid>
 ))

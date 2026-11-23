@@ -31,7 +31,7 @@ export const Popover = ({
       <BasePopover.Positioner sideOffset={5}>
         <BasePopover.Popup className={popoverStyles.content}>
           {/* Close renders straight into the IconButton, so there is one
-              labelled control rather than a labelled span wrapping one. The
+              labeled control rather than a labeled span wrapping one. The
               wrapper carries the positioning IconButton would overwrite. */}
           <div className={popoverStyles.close}>
             <BasePopover.Close

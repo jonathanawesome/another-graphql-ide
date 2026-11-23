@@ -83,8 +83,9 @@ export const makeSupergraph = (types: number, fields = 8) => {
 }
 
 /**
- * Host data for every coordinate in `sdl`: an annotation on each, a tag on
- * every eleventh and every third dimmed. Deterministic, like a real map.
+ * Host data for every coordinate in `sdl`: every thirteenth is tagged as not
+ * in the API; the rest get an annotation, with every eleventh tagged as shared
+ * and every third dimmed. Deterministic, like a real map.
  */
 export const makeLineData = (sdl: string): Required<LineData> => {
   const annotations = new Map<Coordinate, SdlAnnotation>()
@@ -93,6 +94,12 @@ export const makeLineData = (sdl: string): Required<LineData> => {
   let i = 0
   for (const coordinate of indexSdl(sdl).lineOfCoordinate.keys()) {
     const ratio = ((i * 37) % 100) / 100
+    // Not in the API, so it has no usage to show.
+    if (i % 13 === 5) {
+      tags.set(coordinate, { label: 'not in API', icon: 'EyeOff' })
+      i++
+      continue
+    }
     annotations.set(coordinate, {
       value: ratio === 0 ? 'unused' : `${(ratio * 500).toFixed(1)}K`,
       ratio,

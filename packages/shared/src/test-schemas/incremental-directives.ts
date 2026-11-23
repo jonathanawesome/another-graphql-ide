@@ -11,7 +11,7 @@ import {
 /**
  * @defer and @stream, declared by hand because graphql 16 does not export them.
  *
- * The executor honours both without a declaration, but the language service
+ * The executor honors both without a declaration, but the language service
  * validates against the schema, so an editor pointed at one of these fixtures
  * would otherwise underline a query that runs perfectly well. Over HTTP the
  * yoga dev server injects the same directives via useDeferStream.
