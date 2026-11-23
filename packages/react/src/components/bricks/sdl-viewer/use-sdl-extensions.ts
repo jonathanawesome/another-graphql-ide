@@ -1,3 +1,4 @@
+import { themeContract } from '@another-graphql-ide/style'
 import { Compartment, type Extension } from '@codemirror/state'
 import { EditorView, ViewPlugin } from '@codemirror/view'
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react'
@@ -47,12 +48,60 @@ const showsColumn = ({
 /** Latest callback and the live view, held outside React's render data. */
 class Handlers {
   view: EditorView | null = null
+  slide?: Animation
   onSelect?: (coordinate: Coordinate | undefined) => void
   renderHover?: RenderHover
 
   update({ onSelect, renderHover }: UseSdlExtensionsParams) {
     this.onSelect = onSelect
     this.renderHover = renderHover
+  }
+}
+
+const COLUMN_SLIDE_MS = 200
+const EASING_VAR = themeContract.motion.authentic.slice(4, -1)
+
+/** Shows or hides the annotation column, sliding its width. */
+const slideColumn = (
+  view: EditorView,
+  handlers: Handlers,
+  column: Compartment,
+  show: boolean
+) => {
+  const mount = (on: boolean) =>
+    view.dispatch({ effects: column.reconfigure(on ? annotationGutter : []) })
+  const find = () => view.dom.querySelector<HTMLElement>('.cm-gutters-after')
+
+  // A toggle mid-slide continues from the current width.
+  const interrupted = handlers.slide
+    ? find()?.getBoundingClientRect().width
+    : undefined
+  handlers.slide?.cancel()
+  handlers.slide = undefined
+
+  if (show && column.get(view.state) !== annotationGutter) mount(true)
+  const dom = find()
+  const still =
+    typeof matchMedia === 'function' &&
+    matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!dom || typeof dom.animate !== 'function' || still) {
+    if (!show) mount(false)
+    return
+  }
+
+  const full = dom.offsetWidth
+  const from = interrupted ?? (show ? 0 : full)
+  const easing =
+    getComputedStyle(dom).getPropertyValue(EASING_VAR).trim() || 'ease'
+  const slide = dom.animate(
+    { width: [`${from}px`, `${show ? full : 0}px`] },
+    { duration: COLUMN_SLIDE_MS, easing }
+  )
+  handlers.slide = slide
+  slide.onfinish = () => {
+    handlers.slide = undefined
+    if (!show) mount(false)
+    view.requestMeasure()
   }
 }
 
@@ -96,6 +145,7 @@ const createHandlers = (
       handlers.view = view
       return {
         destroy: () => {
+          handlers.slide?.cancel()
           handlers.view = null
         },
       }
@@ -147,12 +197,10 @@ export const useSdlExtensions = (
   // A layout effect, so the find bar's passive effects see the new column.
   useLayoutEffect(() => {
     const view = handlers.view
-    if (!view || (column.get(view.state) === annotationGutter) === withColumn) {
-      return
-    }
-    view.dispatch({
-      effects: column.reconfigure(withColumn ? annotationGutter : []),
-    })
+    if (!view) return
+    const mounted = column.get(view.state) === annotationGutter
+    if (mounted === withColumn && !handlers.slide) return
+    slideColumn(view, handlers, column, withColumn)
   }, [handlers, column, withColumn])
 
   useEffect(() => {

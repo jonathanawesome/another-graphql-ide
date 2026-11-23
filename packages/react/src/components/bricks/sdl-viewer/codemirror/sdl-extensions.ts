@@ -145,7 +145,10 @@ const sdlTheme = EditorView.theme({
   // Annotation column. Long lines scroll under it, so it needs an edge.
   '.cm-gutters.cm-gutters-after': {
     borderInlineStart: `1px solid ${themeContract.border.subtle}`,
+    // Clips the column while its width slides.
+    overflow: 'hidden',
   },
+  '.cm-sdl-annotations': { flexShrink: 0 },
   '.cm-sdl-annotations .cm-gutterElement': {
     paddingInlineStart: themeContract.px[8],
     paddingInlineEnd: themeContract.px[14],
