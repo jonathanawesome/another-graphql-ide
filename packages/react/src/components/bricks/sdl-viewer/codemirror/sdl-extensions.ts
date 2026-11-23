@@ -136,18 +136,18 @@ const sdlTheme = EditorView.theme({
 
   // Find bar panel and its matches.
   '.cm-panels': {
-    color: themeContract.colors.neutral7,
-    backgroundColor: themeContract.colors.neutral2,
+    color: themeContract.text.secondary,
+    backgroundColor: themeContract.bg.surface,
   },
   '.cm-panels.cm-panels-top': {
-    borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+    borderBottom: `1px solid ${themeContract.border.subtle}`,
   },
   '.cm-searchMatch': {
-    backgroundColor: themeContract.colors.neutral4,
+    backgroundColor: themeContract.fill.accentSoftHover,
     outline: 'none',
   },
   '.cm-searchMatch.cm-searchMatch-selected': {
-    backgroundColor: themeContract.colors.neutral5,
+    outline: `1px solid ${themeContract.accent.line}`,
   },
 
   // Annotation column. Long lines scroll under it, so it needs an edge.

@@ -110,7 +110,7 @@ globalStyle('table', {
 // Disabled state
 globalStyle('[disabled]', {
   cursor: 'not-allowed',
-  opacity: 0.5,
+  opacity: 0.35,
 })
 
 // Global scrollbar styles for webkit browsers (Chrome, Safari, Edge)

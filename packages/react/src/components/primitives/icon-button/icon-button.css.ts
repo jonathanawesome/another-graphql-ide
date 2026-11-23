@@ -98,12 +98,12 @@ globalStyle(`${iconButtonClass.classNames.variants.state.active} svg path`, {
 })
 
 globalStyle(`${iconButtonClass.classNames.variants.state.disabled} svg path`, {
-  fill: themeContract.text.disabled,
+  fill: themeContract.text.secondary,
 })
 
 globalStyle(
   `${iconButtonClass.classNames.variants.state.disabled}:hover svg path`,
   {
-    fill: themeContract.text.disabled,
+    fill: themeContract.text.secondary,
   }
 )

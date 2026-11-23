@@ -62,11 +62,7 @@ export const buttonClass = recipe({
     {
       variants: { ghost: true, state: 'disabled' },
       style: {
-        color: themeContract.text.disabled,
-        ':hover': {
-          color: themeContract.text.disabled,
-          textDecoration: 'none',
-        },
+        ':hover': { textDecoration: 'none' },
       },
     },
   ],
