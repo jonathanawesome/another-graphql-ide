@@ -162,6 +162,7 @@ export const themeContract = createGlobalThemeContract(
       24: null,
       32: null,
       40: null,
+      48: null,
       60: null,
       64: null,
     },
