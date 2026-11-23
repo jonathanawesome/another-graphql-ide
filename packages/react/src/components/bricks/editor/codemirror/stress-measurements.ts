@@ -16,6 +16,9 @@ import {
   Position,
 } from 'graphql-language-service'
 
+import { makeSupergraph, subgraphSdl } from '../../sdl-viewer/__fixtures__/sdl'
+import { indexSdl } from '../../sdl-viewer/codemirror/sdl-index'
+
 import { makeLargeDocument } from './__fixtures__/large-doc'
 import {
   getOperationRanges,
@@ -89,6 +92,9 @@ const introspectionOf = (schema: GraphQLSchema): IntrospectionQuery => {
   }
   return cached
 }
+
+// Built once at import, like the large document above.
+const largeSupergraph = makeSupergraph(4000)
 
 export const stressMeasurementGroups: StressGroup[] = [
   {
@@ -174,6 +180,24 @@ export const stressMeasurementGroups: StressGroup[] = [
         buildClientSchema(introspectionOf(c.schema))
       },
     })),
+  },
+  {
+    group: 'sdl index',
+    note: 'SdlViewer: one parse and index per document',
+    cases: [
+      {
+        variant: 'subgraph',
+        run: () => {
+          indexSdl(subgraphSdl)
+        },
+      },
+      {
+        variant: 'supergraph (4,000 types)',
+        run: () => {
+          indexSdl(largeSupergraph)
+        },
+      },
+    ],
   },
 ]
 
