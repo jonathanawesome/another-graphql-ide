@@ -77,31 +77,28 @@ const row = `${SDL_LINE_HEIGHT}px`
 // The contract has no error color yet; same literal red as ConnectionBar.
 const ERROR_COLOR = 'oklch(63% 0.23 25)'
 
-// The theme contract has no syntax tokens yet, so these reuse the palette the
-// operation editor highlights with.
 const sdlTheme = EditorView.theme({
   '.cm-line, .cm-gutterElement': { lineHeight: row },
-  '.cm-sdl-keyword, .cm-sdl-directive': { color: themeContract.colors.brand },
-  '.cm-sdl-type': { color: themeContract.colors.neutral7, fontWeight: 600 },
-  '.cm-sdl-field': { color: themeContract.colors.neutral8 },
-  '.cm-sdl-argument, .cm-sdl-enumValue, .cm-sdl-number, .cm-sdl-string': {
-    color: themeContract.colors.neutral7,
+  // Punctuation is the only text without a token class.
+  '.cm-line': { color: themeContract.syntax.punctuation },
+  '.cm-sdl-keyword': { color: themeContract.syntax.keyword },
+  '.cm-sdl-type': { color: themeContract.syntax.type },
+  '.cm-sdl-field, .cm-sdl-argument, .cm-sdl-enumValue': {
+    color: themeContract.text.primary,
   },
-  '.cm-sdl-comment': {
-    color: themeContract.colors.neutral5,
-    fontStyle: 'italic',
-  },
+  '.cm-sdl-directive': { color: themeContract.syntax.function },
+  '.cm-sdl-string': { color: themeContract.syntax.string },
+  '.cm-sdl-number': { color: themeContract.syntax.number },
+  '.cm-sdl-comment': { color: themeContract.syntax.comment },
 
   // Read-only: text can be selected and copied, but there is no caret.
   '.cm-cursorLayer': { display: 'none' },
 
   // Rows. The selected row replaces CodeMirror's active line.
   '.cm-activeLine, .cm-activeLineGutter': { backgroundColor: 'transparent' },
-  '.cm-sdl-hover': { backgroundColor: themeContract.colors.neutral3 },
-  '.cm-sdl-selected': {
-    backgroundColor: `color-mix(in oklch, ${themeContract.colors.brand} 12%, transparent)`,
-  },
-  '.cm-gutterElement.cm-sdl-selected': { color: themeContract.colors.neutral8 },
+  '.cm-sdl-hover': { backgroundColor: themeContract.bg.hover },
+  '.cm-sdl-selected': { backgroundColor: themeContract.bg.selected },
+  '.cm-gutterElement.cm-sdl-selected': { color: themeContract.text.primary },
   '.cm-sdl-dimmed': { opacity: 0.35 },
   // A click places a selection, which would outline brackets in a read-only view.
   '.cm-matchingBracket, &.cm-focused .cm-matchingBracket': { outline: 'none' },
