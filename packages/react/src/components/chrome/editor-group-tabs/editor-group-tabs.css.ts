@@ -6,8 +6,8 @@ export const editorGroupTabsStyles = style({
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  backgroundColor: themeContract.colors.neutral1,
-  borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+  backgroundColor: themeContract.bg.surface,
+  borderBottom: `1px solid ${themeContract.border.subtle}`,
 
   paddingRight: themeContract.px[12],
   paddingLeft: themeContract.px[8],

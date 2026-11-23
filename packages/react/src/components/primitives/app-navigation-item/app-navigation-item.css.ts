@@ -9,18 +9,18 @@ export const appNavigationItemClass = recipe({
     transition: `all .15s ${themeContract.motion.authentic}`,
 
     ':hover': {
-      color: themeContract.colors.neutral8,
+      color: themeContract.text.primary,
     },
   },
 
   variants: {
     active: {
       false: {
-        color: themeContract.colors.neutral6,
+        color: themeContract.text.secondary,
         fontWeight: 500,
       },
       true: {
-        color: themeContract.colors.neutral8,
+        color: themeContract.text.primary,
         fontWeight: 600,
       },
     },
@@ -43,10 +43,10 @@ export const appNavigationItemClass = recipe({
 globalStyle(
   `${appNavigationItemClass.classNames.variants.active.true} svg path`,
   {
-    fill: themeContract.colors.neutral8,
+    fill: themeContract.text.primary,
   }
 )
 
 globalStyle(`${appNavigationItemClass()}:hover svg path`, {
-  fill: themeContract.colors.neutral8,
+  fill: themeContract.text.primary,
 })

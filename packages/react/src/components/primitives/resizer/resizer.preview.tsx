@@ -17,15 +17,15 @@ const paneBase: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: themeContract.colors.neutral8,
+  color: themeContract.text.primary,
 }
 const firstPane: React.CSSProperties = {
   ...paneBase,
-  backgroundColor: themeContract.colors.neutral4,
+  backgroundColor: themeContract.bg.inset,
 }
 const secondPane: React.CSSProperties = {
   ...paneBase,
-  backgroundColor: themeContract.colors.neutral5,
+  backgroundColor: themeContract.bg.hover,
 }
 
 export const HorizontalResizer = createPreview(() => (

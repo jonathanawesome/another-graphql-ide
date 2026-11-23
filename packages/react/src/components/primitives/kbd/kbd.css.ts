@@ -19,7 +19,7 @@ export const kbdStyles = {
         height: themeContract.px[16],
         paddingLeft: themeContract.px[4],
         paddingRight: themeContract.px[4],
-        borderRadius: themeContract.radii.small,
+        borderRadius: themeContract.px[4],
         // The global reset already gives kbd the mono family; size and leading
         // are set here so a chip keeps its box whatever text sits beside it.
         fontSize: themeContract.px[11],
@@ -29,16 +29,16 @@ export const kbdStyles = {
       variants: {
         tone: {
           default: {
-            color: themeContract.colors.neutral7,
-            backgroundColor: themeContract.colors.neutral3,
-            border: `1px solid ${themeContract.colors.neutral5}`,
+            color: themeContract.text.secondary,
+            backgroundColor: themeContract.fill.neutral,
+            border: `1px solid ${themeContract.border.default}`,
           },
-          // For the tooltip popup, which is neutral1 on neutral8. A default
-          // chip would disappear into it.
+          // For the tooltip popup's inverse surface. A default chip would
+          // disappear into it.
           inverted: {
-            color: themeContract.colors.neutral1,
+            color: themeContract.on.inverse,
             backgroundColor: 'transparent',
-            border: `1px solid ${themeContract.colors.neutral6}`,
+            border: `1px solid color-mix(in srgb, ${themeContract.on.inverse} 40%, transparent)`,
           },
         },
       },

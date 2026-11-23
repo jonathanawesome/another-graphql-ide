@@ -45,7 +45,7 @@ export const resizerStyles = {
         },
 
         '&:hover::after': {
-          backgroundColor: themeContract.colors.neutral8,
+          backgroundColor: themeContract.border.emphasis,
         },
       },
     },

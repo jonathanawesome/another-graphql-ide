@@ -1,4 +1,4 @@
-import { style, themeContract } from '@another-graphql-ide/style'
+import { style, textStyles, themeContract } from '@another-graphql-ide/style'
 
 export const sharedStyles = {
   container: style(
@@ -9,8 +9,8 @@ export const sharedStyles = {
       justifyContent: 'space-between',
       width: '100%',
       height: themeContract.px[40],
-      backgroundColor: themeContract.colors.neutral2,
-      borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+      backgroundColor: themeContract.bg.surface,
+      borderBottom: `1px solid ${themeContract.border.subtle}`,
       paddingLeft: themeContract.px[12],
     },
     'document-response-headers-container'
@@ -24,12 +24,8 @@ export const sharedStyles = {
   ),
 
   title: style({
-    fontWeight: 500,
-    fontSize: themeContract.px[9],
-    letterSpacing: themeContract.px[1],
-    paddingTop: themeContract.px[1],
-    color: themeContract.colors.neutral6,
-    textTransform: 'uppercase',
+    ...textStyles.overline,
+    color: themeContract.text.tertiary,
   }),
 
   right: style(

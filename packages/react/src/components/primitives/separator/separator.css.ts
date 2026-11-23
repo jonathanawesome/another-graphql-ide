@@ -3,7 +3,7 @@ import { recipe, themeContract } from '@another-graphql-ide/style'
 export const separatorClass = recipe({
   base: {
     display: 'block',
-    backgroundColor: themeContract.colors.neutral5,
+    backgroundColor: themeContract.border.default,
   },
 
   variants: {

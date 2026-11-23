@@ -1,4 +1,4 @@
-import { style, themeContract } from '@another-graphql-ide/style'
+import { style, textStyles, themeContract } from '@another-graphql-ide/style'
 
 export const headersEditorStyles = {
   container: style({
@@ -16,9 +16,8 @@ export const headersEditorStyles = {
   }),
 
   title: style({
-    fontSize: themeContract.px[12],
-    fontWeight: 600,
-    color: themeContract.colors.neutral7,
+    ...textStyles.label,
+    color: themeContract.text.secondary,
   }),
 
   rows: style({
@@ -37,8 +36,7 @@ export const headersEditorStyles = {
 
   error: style({
     fontSize: themeContract.px[11],
-    // No danger token in the contract yet; literal red.
-    color: 'oklch(63% 0.23 25)',
+    color: themeContract.status.danger,
   }),
 
   addButton: style({ alignSelf: 'flex-start' }),

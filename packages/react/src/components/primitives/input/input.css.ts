@@ -14,7 +14,7 @@ export const inputStyles = {
         alignItems: 'center',
         height: themeContract.px[40],
         width: '100%',
-        backgroundColor: themeContract.colors.neutral1,
+        backgroundColor: themeContract.bg.inset,
       },
 
       variants: {
@@ -41,19 +41,19 @@ export const inputStyles = {
       height: '100%',
       width: '100%',
       paddingLeft: themeContract.px[8],
-      backgroundColor: themeContract.colors.neutral1,
-      color: themeContract.colors.neutral7,
+      backgroundColor: themeContract.bg.inset,
+      color: themeContract.text.secondary,
 
       selectors: {
         '&::placeholder': {
-          color: themeContract.colors.neutral6,
+          color: themeContract.text.tertiary,
         },
         '&:focus': {
           outline: 'none',
-          color: themeContract.colors.neutral8,
+          color: themeContract.text.primary,
         },
         '&:focus&::placeholder': {
-          color: themeContract.colors.neutral5,
+          color: themeContract.text.disabled,
         },
       },
     },
@@ -88,7 +88,7 @@ export const inputStyles = {
 globalStyle(
   `${inputStyles.container()}:focus-within [data-location="left"] svg path`,
   {
-    fill: themeContract.colors.neutral8,
+    fill: themeContract.text.primary,
   }
 )
 

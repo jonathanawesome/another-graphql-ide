@@ -50,10 +50,9 @@ export const popoverStyles = {
     zIndex: 2,
     width: 260,
     padding: themeContract.px[20],
-    backgroundColor: themeContract.colors.neutral1,
-    border: `1px solid ${themeContract.colors.neutral4}`,
-    borderRadius: themeContract.radii.large,
-    boxShadow: themeContract.shadows.wide,
+    backgroundColor: themeContract.bg.raised,
+    borderRadius: themeContract.radii.lg,
+    boxShadow: themeContract.shadows.popover,
     animationDuration: '400ms',
     animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
     willChange: 'transform, opacity',
@@ -82,7 +81,7 @@ export const popoverStyles = {
   }),
 
   arrow: style({
-    fill: themeContract.colors.neutral1,
+    fill: themeContract.bg.raised,
   }),
 
   close: style({

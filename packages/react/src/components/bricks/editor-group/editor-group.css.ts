@@ -5,8 +5,8 @@ export const editorGroupStyles = {
     {
       display: 'flex',
       flexDirection: 'column',
-      border: `1px solid ${themeContract.colors.neutral4}`,
-      borderRadius: themeContract.radii.medium,
+      border: `1px solid ${themeContract.border.subtle}`,
+      borderRadius: themeContract.radii.md,
       overflow: 'hidden',
       height: '100%',
       padding: themeContract.px[12],

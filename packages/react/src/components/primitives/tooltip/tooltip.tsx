@@ -12,7 +12,7 @@ export type TooltipProps = {
    * content={<>Toggle return types <Kbd shortcut={id} tone="inverted" /></>}
    * ```
    *
-   * The popup is a dark surface, hence the inverted tone.
+   * The popup is an inverse surface, hence the inverted tone.
    */
   content: React.ReactNode
   side?: 'top' | 'right' | 'bottom' | 'left'

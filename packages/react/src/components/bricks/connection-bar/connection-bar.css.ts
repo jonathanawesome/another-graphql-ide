@@ -1,9 +1,5 @@
 import { recipe, style, themeContract } from '@another-graphql-ide/style'
 
-// The palette has no semantic status colors yet, so connected reuses `brand` and
-// error uses a literal red. Swap these for tokens once the contract grows them.
-const ERROR_COLOR = 'oklch(63% 0.23 25)'
-
 export const connectionBarStyles = {
   container: style(
     {
@@ -13,9 +9,9 @@ export const connectionBarStyles = {
       gap: themeContract.px[8],
       width: '100%',
       padding: themeContract.px[8],
-      backgroundColor: themeContract.colors.neutral2,
-      border: `1px solid ${themeContract.colors.neutral4}`,
-      borderRadius: themeContract.radii.medium,
+      backgroundColor: themeContract.bg.surface,
+      border: `1px solid ${themeContract.border.subtle}`,
+      borderRadius: themeContract.radii.md,
     },
     'connection-bar-container'
   ),
@@ -39,7 +35,7 @@ export const connectionBarStyles = {
       alignItems: 'center',
       gap: themeContract.px[6],
       fontSize: themeContract.px[12],
-      color: themeContract.colors.neutral6,
+      color: themeContract.text.tertiary,
       whiteSpace: 'nowrap',
     },
     'connection-bar-status'
@@ -52,15 +48,15 @@ export const connectionBarStyles = {
         height: 8,
         borderRadius: '50%',
         flexShrink: 0,
-        backgroundColor: themeContract.colors.neutral5,
+        backgroundColor: themeContract.border.strong,
         transition: `background-color 0.15s ${themeContract.motion.authentic}`,
       },
       variants: {
         tone: {
           idle: {},
-          connecting: { backgroundColor: themeContract.colors.neutral6 },
-          connected: { backgroundColor: themeContract.colors.brand },
-          error: { backgroundColor: ERROR_COLOR },
+          connecting: { backgroundColor: themeContract.text.tertiary },
+          connected: { backgroundColor: themeContract.status.success },
+          error: { backgroundColor: themeContract.status.danger },
         },
       },
     },

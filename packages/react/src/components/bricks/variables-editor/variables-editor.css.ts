@@ -1,4 +1,4 @@
-import { style, themeContract } from '@another-graphql-ide/style'
+import { style, textStyles, themeContract } from '@another-graphql-ide/style'
 
 export const variablesEditorStyles = {
   container: style({
@@ -9,15 +9,12 @@ export const variablesEditorStyles = {
   }),
 
   label: style({
-    fontSize: themeContract.px[10],
-    fontWeight: 600,
-    textTransform: 'uppercase',
-    letterSpacing: themeContract.px[1],
-    color: themeContract.colors.neutral6,
+    ...textStyles.overline,
+    color: themeContract.text.tertiary,
   }),
 
   error: style({
-    color: themeContract.colors.brand,
+    color: themeContract.status.danger,
     fontSize: themeContract.px[10],
   }),
 }
