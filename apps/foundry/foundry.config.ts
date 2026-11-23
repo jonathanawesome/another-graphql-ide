@@ -22,6 +22,9 @@ export default defineConfig({
         { label: 'IDE in a Drawer' },
         { label: 'Schema Reference' },
         { label: 'Custom Brick' },
+        { label: 'Custom Result View' },
+        { label: 'Narrow' },
+        { label: 'Host Theming' },
       ],
     },
     {
