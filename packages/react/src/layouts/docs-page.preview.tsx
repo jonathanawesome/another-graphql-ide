@@ -1,13 +1,10 @@
 import { graphiqlTestSchema } from '@another-graphql-ide/shared'
-import { LOCAL_ENDPOINT } from '@another-graphql-ide/state'
 import { createPreview, type NavPath } from 'react-foundry'
 
-import { AGIProvider } from '../state'
+import { DocsEditor, RunButton } from '../recipes'
+import { AGIProvider, LOCAL_ENDPOINT } from '../state'
 
-import { DocsEditor } from './docs-editor/docs-editor'
-import { RunButton } from './run-button/run-button'
-
-export const nav: NavPath = 'Recipes/Docs Page'
+export const nav: NavPath = 'Layouts/Docs Page'
 
 const starterQuery = `query ExampleQuery {
   isTest

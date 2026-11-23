@@ -10,13 +10,26 @@ export default defineConfig({
   title: 'another-graphql-ide',
   nav: [
     {
-      label: 'Recipes',
+      label: 'Layouts',
       children: [
-        { label: 'Docs Editor' },
-        { label: 'Run Button' },
-        { label: 'Multiple Instances' },
+        { label: 'Full IDE' },
+        { label: 'Explorer + Editor' },
+        { label: 'Embedded Playground' },
         { label: 'Docs Page' },
+        { label: 'Split Instance' },
+        { label: 'Side by Side' },
+        { label: 'Tutorial Steps' },
+        { label: 'IDE in a Drawer' },
+        { label: 'Schema Reference' },
+        { label: 'Custom Brick' },
+        { label: 'Custom Result View' },
+        { label: 'Narrow' },
+        { label: 'Host Theming' },
       ],
+    },
+    {
+      label: 'Recipes',
+      children: [{ label: 'Docs Editor' }, { label: 'Run Button' }],
     },
     {
       label: 'Bricks',
@@ -27,7 +40,6 @@ export default defineConfig({
         { label: 'Headers Editor' },
         { label: 'Schema Tree' },
         { label: 'Schema Tree Settings' },
-        { label: 'Schema Tree + Editor' },
         { label: 'Variables Editor' },
       ],
     },

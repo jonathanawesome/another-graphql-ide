@@ -1,6 +1,7 @@
 import { parseVariables } from '@another-graphql-ide/state'
 
 import { useAppStore } from '../../../state'
+import { useInstanceAttr } from '../../../state/instance-id'
 import { Editor } from '../editor/editor'
 
 import { variablesEditorStyles } from './variables-editor.css'
@@ -29,8 +30,10 @@ export const VariablesEditor = ({
   // json5 and the mistake is easier to fix while looking at it.
   const parsed = parseVariables(variables)
 
+  const instanceAttr = useInstanceAttr()
+
   return (
-    <div className={variablesEditorStyles.container}>
+    <div {...instanceAttr} className={variablesEditorStyles.container}>
       {label && <div className={variablesEditorStyles.label}>{label}</div>}
 
       <Editor

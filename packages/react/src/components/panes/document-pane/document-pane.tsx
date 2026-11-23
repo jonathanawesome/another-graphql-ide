@@ -1,4 +1,5 @@
 import { useAppStore } from '../../../state'
+import { useInstanceAttr } from '../../../state/instance-id'
 import { Editor } from '../../bricks/editor/editor'
 import { copyText } from '../copy-text'
 import { DocumentHeader } from '../document-response-headers/document-header'
@@ -18,8 +19,10 @@ export const DocumentPane = () => {
   const status = useAppStore.use.status()
   const error = useAppStore.use.error()
 
+  const instanceAttr = useInstanceAttr()
+
   return (
-    <div className={documentPaneStyles.container}>
+    <div {...instanceAttr} className={documentPaneStyles.container}>
       <DocumentHeader
         operationName={operationName}
         onExecute={() => void execute()}

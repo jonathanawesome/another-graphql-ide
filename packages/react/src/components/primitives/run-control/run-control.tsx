@@ -1,11 +1,15 @@
-import type { ExecutionStatus } from '@another-graphql-ide/state'
-
 import { Button } from '../button/button'
 
 import { runControlStyles } from './run-control.css'
 
+/**
+ * Mirrors the store's ExecutionStatus without importing it, so primitives stay
+ * store-free. Callers pass the store's value, so a drift fails there.
+ */
+export type RunStatus = 'idle' | 'fetching' | 'streaming' | 'error'
+
 export type RunControlProps = React.HTMLAttributes<HTMLDivElement> & {
-  status: ExecutionStatus
+  status: RunStatus
   onRun: () => void
   onCancel?: () => void
   /** Button text when idle. */

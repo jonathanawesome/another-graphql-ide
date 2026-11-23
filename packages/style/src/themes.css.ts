@@ -1,4 +1,4 @@
-import { createTheme } from '@vanilla-extract/css'
+import { createGlobalTheme, createTheme } from '@vanilla-extract/css'
 
 import { themeContract } from './theme-contract.css'
 import { transformColors } from './utils'
@@ -100,7 +100,7 @@ const sharedTokens = {
   },
 }
 
-export const darkTheme = createTheme(themeContract, {
+const darkTokens = {
   colors: transformColors(colors.dark),
 
   ...sharedTokens,
@@ -109,9 +109,9 @@ export const darkTheme = createTheme(themeContract, {
     tight: `oklch(${colors.dark.neutral5} / 0.45) 0px 1px 5px 1px`,
     wide: `oklch(${colors.dark.neutral5} / 0.35) 0px 10px 38px -10px, oklch(${colors.dark.neutral5} / 0.2) 0px 10px 20px -15px`,
   },
-})
+}
 
-export const lightTheme = createTheme(themeContract, {
+const lightTokens = {
   colors: transformColors(colors.light),
 
   ...sharedTokens,
@@ -120,4 +120,12 @@ export const lightTheme = createTheme(themeContract, {
     tight: `oklch(${colors.light.neutral5} / 0.75) 0px 1px 5px 1px`,
     wide: `oklch(${colors.light.neutral7} / 0.35) 0px 10px 38px -10px, oklch(${colors.light.neutral7} / 0.2) 0px 10px 20px -15px`,
   },
-})
+}
+
+export const darkTheme = createTheme(themeContract, darkTokens)
+export const lightTheme = createTheme(themeContract, lightTokens)
+
+// Defaults so tokens resolve even when no theme class is applied, e.g. a host
+// rendering AGIProvider with theme={false}. :where keeps specificity at zero,
+// so either theme class, or a host override, always wins.
+createGlobalTheme(':where(:root)', themeContract, lightTokens)

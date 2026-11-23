@@ -10,7 +10,8 @@ import { ListItem } from './list-item'
 
 type TreeContainerProps = {
   rows: FlatRow[]
-  onToggle: (target: ToggleFieldTarget) => void
+  /** Omitted when the tree is browse-only. */
+  onToggle?: (target: ToggleFieldTarget) => void
   onToggleExpand: (id: string) => void
   /** Read once by the tree rather than subscribed to by every row. */
   showTypes: boolean
@@ -132,7 +133,7 @@ export const TreeContainer = ({
         break
       case 'Enter':
       case ' ': {
-        const target = toggleTargetFor(row.node)
+        const target = onToggle && toggleTargetFor(row.node)
         if (target) onToggle(target)
         else if (row.hasChildren) onToggleExpand(row.node.id)
         break
@@ -173,7 +174,8 @@ export const TreeContainer = ({
         >
           <div
             aria-label="Schema tree view"
-            aria-multiselectable="true"
+            // Selection means "in the document", so a browse-only tree has none.
+            aria-multiselectable={onToggle ? true : undefined}
             className={schemaTreeStyles.treeList}
             role="tree"
           >

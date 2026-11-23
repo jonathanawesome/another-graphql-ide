@@ -19,8 +19,8 @@ const pressToggle = (init: KeyboardEventInit = {}) => {
 }
 
 const cleanups: (() => void)[] = []
-const register = (handler: () => void) => {
-  const off = registerShortcut(ID, handler)
+const register = (handler: () => void, instance = 'a') => {
+  const off = registerShortcut(instance, ID, handler)
   cleanups.push(off)
   return off
 }
@@ -56,7 +56,7 @@ describe('shortcut bus', () => {
    * trees on one page would each toggle the shared store, so an even number of
    * them does nothing at all and looks like a dead shortcut.
    */
-  it('fires once when several instances are mounted', () => {
+  it('fires once when several bricks share an instance', () => {
     const first = vi.fn()
     const second = vi.fn()
     register(first)
@@ -103,18 +103,89 @@ describe('shortcut bus', () => {
     expect(handler).not.toHaveBeenCalled()
   })
 
-  it('attaches one listener and removes it with the last handler', () => {
+  it('attaches listeners once and removes them with the last handler', () => {
     const add = vi.spyOn(document, 'addEventListener')
     const remove = vi.spyOn(document, 'removeEventListener')
+    const types = (spy: typeof add) => spy.mock.calls.map(([type]) => type)
+    const all = ['keydown', 'focusin', 'pointerdown']
 
-    const offFirst = registerShortcut(ID, vi.fn())
-    const offSecond = registerShortcut(ID, vi.fn())
-    expect(add).toHaveBeenCalledOnce()
+    const offFirst = registerShortcut('a', ID, vi.fn())
+    const offSecond = registerShortcut('b', ID, vi.fn())
+    expect(types(add)).toEqual(all)
 
     offFirst()
     expect(remove).not.toHaveBeenCalled()
 
     offSecond()
-    expect(remove).toHaveBeenCalledOnce()
+    expect(types(remove)).toEqual(all)
+  })
+})
+
+describe('instance routing', () => {
+  const mount = (instance: string) => {
+    const el = document.createElement('button')
+    el.setAttribute('data-agi-instance', instance)
+    document.body.append(el)
+    cleanups.push(() => el.remove())
+    return el
+  }
+
+  const pressOn = (target: Element) => {
+    target.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        ...toggleKeys,
+        bubbles: true,
+        cancelable: true,
+      })
+    )
+  }
+
+  it('routes to the instance containing the target', () => {
+    const a = vi.fn()
+    const b = vi.fn()
+    register(a, 'a')
+    register(b, 'b')
+
+    pressOn(mount('a'))
+
+    expect(a).toHaveBeenCalledOnce()
+    expect(b).not.toHaveBeenCalled()
+  })
+
+  it('falls back to the instance last interacted with', () => {
+    const a = vi.fn()
+    const b = vi.fn()
+    register(a, 'a')
+    register(b, 'b')
+
+    mount('a').dispatchEvent(new Event('pointerdown', { bubbles: true }))
+    pressToggle()
+
+    expect(a).toHaveBeenCalledOnce()
+    expect(b).not.toHaveBeenCalled()
+  })
+
+  it('ignores a last-active element that has since unmounted', () => {
+    const a = vi.fn()
+    const b = vi.fn()
+    register(a, 'a')
+    register(b, 'b')
+
+    const el = mount('a')
+    el.dispatchEvent(new Event('pointerdown', { bubbles: true }))
+    el.remove()
+    pressToggle()
+
+    expect(b).toHaveBeenCalledOnce()
+    expect(a).not.toHaveBeenCalled()
+  })
+
+  it('never reaches another instance when the resolved one has no handler', () => {
+    const b = vi.fn()
+    register(b, 'b')
+
+    pressOn(mount('a'))
+
+    expect(b).not.toHaveBeenCalled()
   })
 })

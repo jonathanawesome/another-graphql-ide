@@ -1,18 +1,32 @@
+import { INSTANCE_ATTR } from '../state/instance-id'
+
 import { hasModifier, matchesCombo } from './match'
 import { SHORTCUTS, type ShortcutId } from './shortcuts'
 
 /**
  * One listener for the whole page, however many bricks are mounted.
  *
- * This library has no app shell to hang a global listener on, so each brick
- * opts in with `useShortcut`. Registrations stack per shortcut and only the
- * newest fires, which is what a modal or overlay will want later.
- *
- * The bus is page-global while stores are now per-provider, so with two
- * providers on a page a shortcut reaches whichever brick mounted last. Scoping
- * registrations to a provider is a follow-up.
+ * Registrations are scoped to an instance (one per store). A keypress goes to
+ * the instance containing the event target, else the one last focused or
+ * clicked, else the newest. Within an instance the newest registration wins,
+ * which is what a modal or overlay will want later. If the chosen instance has
+ * no handler, nothing fires: a key pressed in one IDE never reaches another.
  */
-const handlers = new Map<ShortcutId, (() => void)[]>()
+type Registration = { instance: string; id: ShortcutId; handler: () => void }
+
+const registrations: Registration[] = []
+let lastActive: Element | null = null
+
+const instanceOf = (node: EventTarget | null): string | null =>
+  node instanceof Element
+    ? (node.closest(`[${INSTANCE_ATTR}]`)?.getAttribute(INSTANCE_ATTR) ?? null)
+    : null
+
+const resolveInstance = (event: KeyboardEvent): string | undefined =>
+  instanceOf(event.target) ??
+  // A detached element means its brick unmounted, so it no longer counts.
+  (lastActive?.isConnected ? instanceOf(lastActive) : null) ??
+  registrations.at(-1)?.instance
 
 const isTextEntryTarget = (target: EventTarget | null): boolean => {
   if (!(target instanceof HTMLElement)) return false
@@ -25,9 +39,12 @@ const dispatch = (event: KeyboardEvent) => {
   // this keeps the bus out of their way without either side knowing the other.
   if (event.defaultPrevented || event.repeat) return
 
-  for (const [id, stack] of handlers) {
-    const handler = stack.at(-1)
-    if (!handler) continue
+  const instance = resolveInstance(event)
+  if (!instance) return
+
+  // Newest first.
+  for (const { instance: owner, id, handler } of [...registrations].reverse()) {
+    if (owner !== instance) continue
 
     const { combo } = SHORTCUTS[id]
     if (!matchesCombo(event, combo)) continue
@@ -42,32 +59,48 @@ const dispatch = (event: KeyboardEvent) => {
   }
 }
 
-const listening = () => handlers.size > 0
+const track = (event: Event) => {
+  if (instanceOf(event.target)) lastActive = event.target as Element
+}
+
+// Bubble phase for keydown, like the resizer's drag listeners. Capture would
+// run ahead of CodeMirror and steal keys it has every right to handle first.
+// Tracking uses capture so a brick that stops propagation still counts.
+const attach = () => {
+  document.addEventListener('keydown', dispatch)
+  document.addEventListener('focusin', track, true)
+  document.addEventListener('pointerdown', track, true)
+}
+
+const detach = () => {
+  document.removeEventListener('keydown', dispatch)
+  document.removeEventListener('focusin', track, true)
+  document.removeEventListener('pointerdown', track, true)
+  lastActive = null
+}
 
 /**
- * Adds a handler and returns its removal. The listener is attached with the
- * first registration and dropped with the last, so an unmounted brick leaves
- * nothing behind.
+ * Adds a handler for one instance and returns its removal. Listeners attach
+ * with the first registration and drop with the last, so an unmounted brick
+ * leaves nothing behind.
  */
-export const registerShortcut = (id: ShortcutId, handler: () => void) => {
+export const registerShortcut = (
+  instance: string,
+  id: ShortcutId,
+  handler: () => void
+) => {
   if (typeof document === 'undefined') return () => undefined
 
-  // Bubble phase, like the resizer's drag listeners. Capture would run ahead of
-  // CodeMirror and steal keys it has every right to handle first.
-  if (!listening()) document.addEventListener('keydown', dispatch)
+  if (registrations.length === 0) attach()
 
-  const stack = handlers.get(id) ?? []
-  stack.push(handler)
-  handlers.set(id, stack)
+  const entry: Registration = { instance, id, handler }
+  registrations.push(entry)
 
   return () => {
-    const current = handlers.get(id)
-    if (!current) return
+    const at = registrations.indexOf(entry)
+    if (at === -1) return
 
-    const at = current.lastIndexOf(handler)
-    if (at !== -1) current.splice(at, 1)
-    if (current.length === 0) handlers.delete(id)
-
-    if (!listening()) document.removeEventListener('keydown', dispatch)
+    registrations.splice(at, 1)
+    if (registrations.length === 0) detach()
   }
 }

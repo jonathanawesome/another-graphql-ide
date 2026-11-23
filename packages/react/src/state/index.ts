@@ -2,6 +2,8 @@ export { AGIProvider } from './agi-provider'
 export type { AGIProviderProps } from './agi-provider'
 export { AGIStoreContext, useAGIStore } from './agi-store-context'
 export { useAppStore } from './use-app-store'
+// Spread onto a custom brick's root so shortcuts route to its instance.
+export { useInstanceAttr } from './instance-id'
 export { useOperation } from './use-operation'
 export type { UseOperationOptions, UseOperationResult } from './use-operation'
 

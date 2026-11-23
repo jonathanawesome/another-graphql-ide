@@ -152,4 +152,34 @@ describe('schema slice', () => {
     expect(store.getState().schema).toBe(testSchema)
     expect(executeMock).not.toHaveBeenCalled()
   })
+
+  it('ignores an older introspection that resolves after a newer one', async () => {
+    const stale = buildSchema(`type Query { stale: String }`)
+    let release: () => void = () => undefined
+    const gate = new Promise<void>(resolve => {
+      release = resolve
+    })
+
+    executeMock
+      .mockReturnValueOnce(
+        (async function* () {
+          await gate
+          yield { data: introspectionFromSchema(stale) }
+        })()
+      )
+      .mockReturnValueOnce(
+        iterableOf({ data: introspectionFromSchema(testSchema) })
+      )
+
+    const store = createAGIStore()
+    const first = store.getState().connect()
+    await store.getState().connect()
+    release()
+    await first
+
+    expect(store.getState().schema?.getQueryType()?.getFields()).toHaveProperty(
+      'hello'
+    )
+    expect(store.getState().schemaStatus).toBe('connected')
+  })
 })
