@@ -1,3 +1,4 @@
+import type { Extension } from '@codemirror/state'
 import type { GraphQLSchema } from 'graphql'
 
 /**
@@ -17,21 +18,16 @@ export type CreateEditorOptions = {
   parent: HTMLElement
   /** Initial document text. */
   doc: string
-  /** Which language extension to load. */
-  language: EditorLanguage
+  /** Which language extension to load; none for plain text. */
+  language?: EditorLanguage
   /** Optional GraphQL schema — enables schema-aware completion/lint/hover. */
   schema?: GraphQLSchema
   /** When true, the document cannot be edited. */
   readOnly: boolean
   /** Whether to render the dark variant of the editor theme. */
   dark: boolean
+  /** Caller extensions, reconfigured in place when they change. */
+  extensions?: Extension
   /** Called with the new document text on every user edit. */
   onChange?: (value: string) => void
-  /**
-   * Called with the active operation name (or undefined) whenever the cursor
-   * moves or the document changes. GraphQL only.
-   */
-  onActiveOperationChange?: (name: string | undefined) => void
-  /** Called with the caret offset whenever the cursor moves or the doc changes. */
-  onSelectionChange?: (offset: number) => void
 }

@@ -1,4 +1,5 @@
 import { Editor } from '../../components/bricks/editor/editor'
+import { useOperationExtensions } from '../../components/bricks/editor/hooks/use-operation-extensions'
 import { VariablesEditor } from '../../components/bricks/variables-editor/variables-editor'
 import { RunControl } from '../../components/primitives/run-control/run-control'
 import { useAppStore } from '../../state'
@@ -38,6 +39,10 @@ export const DocsEditor = ({
   const cancel = useAppStore.use.cancel()
 
   const instanceAttr = useInstanceAttr()
+  const extensions = useOperationExtensions({
+    onActiveOperationChange: setOperationName,
+    onSelectionChange: setCursor,
+  })
 
   return (
     <div
@@ -61,8 +66,7 @@ export const DocsEditor = ({
             schema={schema}
             value={query}
             onChange={setQuery}
-            onActiveOperationChange={setOperationName}
-            onSelectionChange={setCursor}
+            extensions={extensions}
             readOnly={readOnly}
           />
         </div>

@@ -1,6 +1,7 @@
 import { useAppStore } from '../../../state'
 import { useInstanceAttr } from '../../../state/instance-id'
 import { Editor } from '../../bricks/editor/editor'
+import { useOperationExtensions } from '../../bricks/editor/hooks/use-operation-extensions'
 import { copyText } from '../copy-text'
 import { DocumentHeader } from '../document-response-headers/document-header'
 
@@ -20,6 +21,11 @@ export const DocumentPane = () => {
   const error = useAppStore.use.error()
 
   const instanceAttr = useInstanceAttr()
+  const extensions = useOperationExtensions({
+    onActiveOperationChange: setOperationName,
+    onSelectionChange: setCursor,
+    pendingSelection,
+  })
 
   return (
     <div {...instanceAttr} className={documentPaneStyles.container}>
@@ -37,9 +43,7 @@ export const DocumentPane = () => {
           schema={schema}
           value={query}
           onChange={setQuery}
-          onActiveOperationChange={setOperationName}
-          onSelectionChange={setCursor}
-          pendingSelection={pendingSelection}
+          extensions={extensions}
         />
       </div>
     </div>

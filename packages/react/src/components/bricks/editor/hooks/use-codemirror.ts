@@ -1,9 +1,11 @@
+import type { Extension } from '@codemirror/state'
 import type { EditorView } from '@codemirror/view'
 import type { GraphQLSchema } from 'graphql'
-import { useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 
-import { useTheme } from '../../../../style'
+import { ThemeContext } from '../../../../style'
 import {
+  reconfigureExtensions,
   reconfigureLanguage,
   reconfigureReadOnly,
   reconfigureTheme,
@@ -17,18 +19,14 @@ export type UseCodemirrorParams = {
   value?: string
   /** Initial document value for uncontrolled usage. */
   defaultValue?: string
-  language: EditorLanguage
+  language?: EditorLanguage
   schema?: GraphQLSchema
   readOnly?: boolean
+  /** Overrides the surrounding ThemeProvider. Light when neither is set. */
+  theme?: 'light' | 'dark'
+  /** Caller extensions. Keep the value stable; a new one reconfigures. */
+  extensions?: Extension
   onChange?: (value: string) => void
-  onActiveOperationChange?: (name: string | undefined) => void
-  onSelectionChange?: (offset: number) => void
-  /**
-   * A one-shot request to move the caret or select a range, applied once per
-   * `nonce`. Used by state-driven edits (e.g. schema tree inserts) to place the
-   * cursor or select a placeholder to type over.
-   */
-  pendingSelection?: { anchor: number; head: number; nonce: number }
 }
 
 /**
@@ -42,14 +40,15 @@ export const useCodemirror = ({
   language,
   schema,
   readOnly = false,
+  theme,
+  extensions,
   onChange,
-  onActiveOperationChange,
-  onSelectionChange,
-  pendingSelection,
 }: UseCodemirrorParams) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
-  const { resolvedTheme } = useTheme()
+  // Read directly, not through useTheme, so Editor works without a provider.
+  const themeContext = useContext(ThemeContext)
+  const resolvedTheme = theme ?? themeContext?.resolvedTheme ?? 'light'
 
   // Keep the latest callbacks without recreating the view; guard programmatic
   // value syncs from re-firing them.
@@ -58,13 +57,9 @@ export const useCodemirror = ({
   // away cannot leave its callbacks behind. CodeMirror only invokes these from
   // its update listener, which is always after effects have flushed.
   const onChangeRef = useRef(onChange)
-  const onActiveOperationChangeRef = useRef(onActiveOperationChange)
-  const onSelectionChangeRef = useRef(onSelectionChange)
 
   useEffect(() => {
     onChangeRef.current = onChange
-    onActiveOperationChangeRef.current = onActiveOperationChange
-    onSelectionChangeRef.current = onSelectionChange
   })
 
   const isSyncingRef = useRef(false)
@@ -84,13 +79,10 @@ export const useCodemirror = ({
       schema,
       readOnly,
       dark: resolvedTheme === 'dark',
+      extensions,
       onChange: next => {
         if (!isSyncingRef.current) onChangeRef.current?.(next)
       },
-      onActiveOperationChange: (name: string | undefined) =>
-        onActiveOperationChangeRef.current?.(name),
-      onSelectionChange: (offset: number) =>
-        onSelectionChangeRef.current?.(offset),
     })
     viewRef.current = view
 
@@ -120,6 +112,15 @@ export const useCodemirror = ({
     const view = viewRef.current
     if (view) reconfigureTheme(view, resolvedTheme === 'dark')
   }, [resolvedTheme])
+
+  // Caller extensions. Skips the mount pass, which already installed them.
+  const mountedExtensionsRef = useRef(extensions)
+  useEffect(() => {
+    const view = viewRef.current
+    if (!view || mountedExtensionsRef.current === extensions) return
+    mountedExtensionsRef.current = extensions
+    reconfigureExtensions(view, extensions)
+  }, [extensions])
 
   // Read-only changes.
   useEffect(() => {
@@ -157,21 +158,6 @@ export const useCodemirror = ({
     })
     isSyncingRef.current = false
   }, [value])
-
-  // One-shot caret move requested by state (declared after the value sync so
-  // the document is already updated when this runs). A selection-only dispatch
-  // changes no text, so it never re-fires onChange.
-  useEffect(() => {
-    const view = viewRef.current
-    if (!view || !pendingSelection) return
-    const max = view.state.doc.length
-    const anchor = Math.min(pendingSelection.anchor, max)
-    const head = Math.min(pendingSelection.head, max)
-    view.dispatch({ selection: { anchor, head } })
-    view.focus()
-    // Keyed on nonce so each toggle applies once, even to a repeated range.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- the whole object as a dep would re-apply the same selection
-  }, [pendingSelection?.nonce])
 
   return containerRef
 }
