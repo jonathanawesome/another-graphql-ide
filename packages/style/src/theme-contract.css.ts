@@ -9,26 +9,6 @@ export const themeContract = createGlobalThemeContract(
       panel: null,
       lift: null,
       popover: null,
-
-      // deprecated aliases
-      tight: null,
-      wide: null,
-    },
-
-    // deprecated aliases
-    colors: {
-      // neutral scale
-      neutral1: null,
-      neutral2: null,
-      neutral3: null,
-      neutral4: null,
-      neutral5: null,
-      neutral6: null,
-      neutral7: null,
-      neutral8: null,
-
-      // brand
-      brand: null,
     },
 
     // semantic colors
@@ -173,11 +153,6 @@ export const themeContract = createGlobalThemeContract(
       lg: null,
       xl: null,
       full: null,
-
-      // deprecated aliases
-      small: null,
-      medium: null,
-      large: null,
     },
 
     fonts: {

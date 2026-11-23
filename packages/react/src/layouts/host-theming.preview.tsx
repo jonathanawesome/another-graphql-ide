@@ -16,8 +16,6 @@ const accent = (color: string, ink: string) =>
     on: { primary: ink },
     accent: { line: color },
     focus: { ring: color },
-    // until every brick is off the legacy tokens
-    colors: { brand: color },
   })
 
 const accentOnly = accent('oklch(60% 0.18 250)', 'white')

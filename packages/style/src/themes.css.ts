@@ -304,19 +304,6 @@ const semanticColors = {
   },
 }
 
-// Deprecated aliases, removed once every brick has migrated
-const legacyColors = {
-  neutral1: themeContract.bg.raised,
-  neutral2: themeContract.bg.surface,
-  neutral3: themeContract.bg.hover,
-  neutral4: themeContract.border.subtle,
-  neutral5: themeContract.border.default,
-  neutral6: themeContract.text.tertiary,
-  neutral7: themeContract.text.secondary,
-  neutral8: themeContract.text.primary,
-  brand: themeContract.accent.line,
-}
-
 // Shared tokens that don't change between themes
 const sharedTokens = {
   px: {
@@ -354,10 +341,6 @@ const sharedTokens = {
     lg: '0.75rem',
     xl: '1rem',
     full: '9999px',
-
-    small: themeContract.radii.sm,
-    medium: themeContract.radii.md,
-    large: themeContract.radii.lg,
   },
 
   fonts: {
@@ -371,7 +354,6 @@ const sharedTokens = {
 }
 
 const darkTokens = {
-  colors: legacyColors,
   ...semanticColors.dark,
 
   ...sharedTokens,
@@ -381,14 +363,10 @@ const darkTokens = {
     panel: `0 1px 2px 0 #00000080, 0 4px 12px -2px #00000047, 0 0 0 1px ${themeContract.border.subtle}, inset 0 1px 0 0 #fff7e50f`,
     lift: '0 1px 2px 0 #00000080, 0 6px 16px -2px #00000047, inset 0 1px 0 0 #fff7e50f',
     popover: `0 12px 32px 0 #00000080, 0 0 0 1px ${palette.wax[700]}`,
-
-    tight: themeContract.shadows.lift,
-    wide: themeContract.shadows.popover,
   },
 }
 
 const lightTokens = {
-  colors: legacyColors,
   ...semanticColors.light,
 
   ...sharedTokens,
@@ -399,9 +377,6 @@ const lightTokens = {
       '0 1px 2px 0 #1f1e1b0f, 0 4px 12px -2px #1f1e1b14, 0 0 0 1px #1f1e1b0a',
     lift: '0 1px 2px 0 #1f1e1b12, 0 3px 8px -2px #1f1e1b0d',
     popover: '0 12px 32px 0 #1f1e1b1f, 0 0 0 1px #1f1e1b0f',
-
-    tight: themeContract.shadows.lift,
-    wide: themeContract.shadows.popover,
   },
 }
 
