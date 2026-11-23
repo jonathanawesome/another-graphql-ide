@@ -348,9 +348,15 @@ const sharedTokens = {
   },
 
   radii: {
-    small: '0.125rem',
-    medium: '0.25rem',
-    large: '0.375rem',
+    sm: '0.375rem',
+    md: '0.5rem',
+    lg: '0.75rem',
+    xl: '1rem',
+    full: '9999px',
+
+    small: themeContract.radii.sm,
+    medium: themeContract.radii.md,
+    large: themeContract.radii.lg,
   },
 
   fonts: {
@@ -370,8 +376,13 @@ const darkTokens = {
   ...sharedTokens,
 
   shadows: {
-    tight: `oklch(30.1% 0 0 / 0.45) 0px 1px 5px 1px`,
-    wide: `oklch(30.1% 0 0 / 0.35) 0px 10px 38px -10px, oklch(30.1% 0 0 / 0.2) 0px 10px 20px -15px`,
+    card: `0 1px 2px 0 #00000080, 0 6px 16px -2px #00000047, 0 0 0 1px ${themeContract.border.subtle}, inset 0 1px 0 0 #fff7e50f`,
+    panel: `0 1px 2px 0 #00000080, 0 4px 12px -2px #00000047, 0 0 0 1px ${themeContract.border.subtle}, inset 0 1px 0 0 #fff7e50f`,
+    lift: '0 1px 2px 0 #00000080, 0 6px 16px -2px #00000047, inset 0 1px 0 0 #fff7e50f',
+    popover: `0 12px 32px 0 #00000080, 0 0 0 1px ${palette.wax[700]}`,
+
+    tight: themeContract.shadows.lift,
+    wide: themeContract.shadows.popover,
   },
 }
 
@@ -382,8 +393,14 @@ const lightTokens = {
   ...sharedTokens,
 
   shadows: {
-    tight: `oklch(86.5% 0 0 / 0.75) 0px 1px 5px 1px`,
-    wide: `oklch(34.1% 0 0 / 0.35) 0px 10px 38px -10px, oklch(34.1% 0 0 / 0.2) 0px 10px 20px -15px`,
+    card: '0 1px 2px 0 #1f1e1b0d, 0 0 0 1px #1f1e1b0d',
+    panel:
+      '0 1px 2px 0 #1f1e1b0f, 0 4px 12px -2px #1f1e1b14, 0 0 0 1px #1f1e1b0a',
+    lift: '0 1px 2px 0 #1f1e1b12, 0 3px 8px -2px #1f1e1b0d',
+    popover: '0 12px 32px 0 #1f1e1b1f, 0 0 0 1px #1f1e1b0f',
+
+    tight: themeContract.shadows.lift,
+    wide: themeContract.shadows.popover,
   },
 }
 

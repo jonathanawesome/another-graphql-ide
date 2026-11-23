@@ -5,6 +5,12 @@ import { arrayToKebabString } from './utils'
 export const themeContract = createGlobalThemeContract(
   {
     shadows: {
+      card: null,
+      panel: null,
+      lift: null,
+      popover: null,
+
+      // deprecated aliases
       tight: null,
       wide: null,
     },
@@ -161,6 +167,13 @@ export const themeContract = createGlobalThemeContract(
     },
 
     radii: {
+      sm: null,
+      md: null,
+      lg: null,
+      xl: null,
+      full: null,
+
+      // deprecated aliases
       small: null,
       medium: null,
       large: null,
