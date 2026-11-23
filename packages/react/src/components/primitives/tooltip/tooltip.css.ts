@@ -52,10 +52,10 @@ export const tooltipStyles = {
     paddingLeft: themeContract.px[8],
     paddingRight: themeContract.px[8],
     fontSize: themeContract.px[12],
-    color: themeContract.colors.neutral1,
-    backgroundColor: themeContract.colors.neutral8,
-    borderRadius: themeContract.radii.medium,
-    boxShadow: themeContract.shadows.tight,
+    color: themeContract.on.inverse,
+    backgroundColor: themeContract.fill.inverse,
+    borderRadius: themeContract.radii.sm,
+    boxShadow: themeContract.shadows.lift,
     animationDuration: '400ms',
     animationTimingFunction: themeContract.motion.authentic,
     willChange: 'transform, opacity',
@@ -77,6 +77,6 @@ export const tooltipStyles = {
   }),
 
   arrow: style({
-    fill: themeContract.colors.neutral8,
+    fill: themeContract.fill.inverse,
   }),
 }

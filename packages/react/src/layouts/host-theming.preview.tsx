@@ -9,20 +9,28 @@ import { SCHEMAS, endpointFor } from './fixtures'
 
 export const nav: NavPath = 'Layouts/Host Theming'
 
-/** Overrides one token. Everything else follows the page theme. */
-const brandOnly = themeVars({ colors: { brand: 'oklch(60% 0.18 250)' } })
+/** The accent has no single token: a fill, its ink, a line and the focus ring. */
+const accent = (color: string, ink: string) =>
+  themeVars({
+    fill: { primary: color },
+    on: { primary: ink },
+    accent: { line: color },
+    focus: { ring: color },
+  })
+
+const accentOnly = accent('oklch(60% 0.18 250)', 'white')
 
 /**
  * The darkTheme class scopes the whole dark theme to the wrapper, and themeVars
- * still layers a brand override on top. tokens keeps the host's own background
- * and text on the same scale.
+ * still layers an accent override on top. tokens keeps the host's own
+ * background and text on the same scale.
  */
 const scopedDark = {
   className: darkTheme,
   style: {
-    ...themeVars({ colors: { brand: 'oklch(72% 0.17 150)' } }),
-    background: tokens.colors.neutral1,
-    color: tokens.colors.neutral8,
+    ...accent('oklch(72% 0.17 150)', 'black'),
+    background: tokens.bg.canvas,
+    color: tokens.text.primary,
     padding: 12,
     borderRadius: 8,
   },
@@ -57,8 +65,8 @@ export const ScopedTokens = createPreview({
     <div style={{ display: 'flex', gap: 16, width: '100%' }}>
       <Instance
         name="graphiql"
-        style={brandOnly}
-        caption="Brand color only. Neutrals follow the page theme."
+        style={accentOnly}
+        caption="Accent only. Neutrals follow the page theme."
       />
       <Instance
         name="veterinary"

@@ -70,9 +70,14 @@ type ColumnSize = { width: number; scrollbar: number }
  * Width of the annotation column plus the scrollbar beside it, so the
  * heading sits over the column and its label over the values.
  */
-const useColumnSize = (view: EditorView, shown: boolean) => {
+const useColumnSize = (
+  view: EditorView,
+  shown: boolean,
+  collapsed: boolean
+) => {
   const [size, setSize] = useState<ColumnSize>()
   useEffect(() => {
+    // CodeMirror adds the element with the first column, then keeps it.
     const column = shown
       ? view.dom.querySelector<HTMLElement>('.cm-gutters-after')
       : null
@@ -82,12 +87,16 @@ const useColumnSize = (view: EditorView, shown: boolean) => {
     // box shrinks when a scrollbar appears.
     const observer = new ResizeObserver(() => {
       const scrollbar = scroller.offsetWidth - scroller.clientWidth
-      setSize({ width: column.offsetWidth + scrollbar, scrollbar })
+      setSize(
+        column.clientWidth > 0
+          ? { width: column.offsetWidth + scrollbar, scrollbar }
+          : undefined
+      )
     })
     observer.observe(column)
     observer.observe(scroller)
     return () => observer.disconnect()
-  }, [view, shown])
+  }, [view, shown, collapsed])
   return shown ? size : undefined
 }
 
@@ -125,7 +134,7 @@ export const FindBar = ({
     matches: number[]
   }>()
   const jumpedFor = useRef('')
-  const columnSize = useColumnSize(view, withColumn && !collapsed)
+  const columnSize = useColumnSize(view, withColumn, collapsed)
 
   useEffect(() => {
     if (!query) {
@@ -252,8 +261,8 @@ export const FindBar = ({
           className={styles.heading}
           style={
             columnSize && {
-              width: columnSize.width,
-              paddingInlineEnd: 8 + columnSize.scrollbar,
+              minWidth: columnSize.width,
+              paddingInlineEnd: 14 + columnSize.scrollbar,
             }
           }
         >

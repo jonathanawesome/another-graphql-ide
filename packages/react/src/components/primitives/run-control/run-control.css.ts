@@ -14,7 +14,7 @@ export const runControlStyles = {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
-    color: themeContract.colors.brand,
+    color: themeContract.status.danger,
     fontSize: themeContract.px[10],
   }),
 }

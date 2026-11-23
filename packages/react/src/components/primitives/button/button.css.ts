@@ -1,4 +1,9 @@
-import { themeContract, recipe, globalStyle } from '@another-graphql-ide/style'
+import {
+  globalStyle,
+  recipe,
+  textStyles,
+  themeContract,
+} from '@another-graphql-ide/style'
 
 export const buttonClass = recipe({
   base: [
@@ -11,19 +16,18 @@ export const buttonClass = recipe({
       paddingLeft: themeContract.px[8],
       paddingRight: themeContract.px[8],
 
-      fontSize: themeContract.px[12],
-      fontWeight: 500,
-      color: themeContract.colors.neutral6,
-      backgroundColor: themeContract.colors.neutral3,
+      ...textStyles.label,
+      color: themeContract.text.secondary,
+      backgroundColor: themeContract.bg.surface,
 
-      border: `1px solid ${themeContract.colors.neutral4}`,
-      borderRadius: themeContract.radii.small,
+      border: `1px solid ${themeContract.border.default}`,
+      borderRadius: themeContract.radii.md,
       transition: `all .15s ${themeContract.motion.authentic}`,
 
       ':hover': {
-        backgroundColor: themeContract.colors.neutral4,
-        border: `1px solid ${themeContract.colors.neutral5}`,
-        color: themeContract.colors.neutral8,
+        backgroundColor: themeContract.bg.hover,
+        border: `1px solid ${themeContract.border.strong}`,
+        color: themeContract.text.primary,
       },
     },
   ],
@@ -34,7 +38,7 @@ export const buttonClass = recipe({
       true: {
         paddingLeft: 0,
         paddingRight: 0,
-        color: themeContract.colors.neutral8,
+        color: themeContract.text.primary,
         backgroundColor: 'transparent',
         border: '1px solid transparent',
 
@@ -58,16 +62,12 @@ export const buttonClass = recipe({
     {
       variants: { ghost: true, state: 'disabled' },
       style: {
-        color: themeContract.colors.neutral5,
-        ':hover': {
-          color: themeContract.colors.neutral5,
-          textDecoration: 'none',
-        },
+        ':hover': { textDecoration: 'none' },
       },
     },
   ],
 })
 
 globalStyle(`${buttonClass()}:hover svg path`, {
-  fill: themeContract.colors.neutral8,
+  fill: themeContract.text.primary,
 })

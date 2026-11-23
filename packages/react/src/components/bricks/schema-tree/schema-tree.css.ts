@@ -1,9 +1,14 @@
-import { recipe, style, themeContract } from '@another-graphql-ide/style'
+import {
+  recipe,
+  style,
+  textStyles,
+  themeContract,
+} from '@another-graphql-ide/style'
 
 // The emphasized look shared by the hover state and the active (in-document)
 // state, so a selected field reads the same as a hovered one.
 const emphasizedName = {
-  color: themeContract.colors.neutral8,
+  color: themeContract.text.primary,
   fontVariationSettings: `"wght" 600`,
 }
 
@@ -23,12 +28,11 @@ export const schemaTreeStyles = {
     {
       display: 'flex',
       flexDirection: 'column',
-      backgroundColor: themeContract.colors.neutral2,
-      border: `1px solid ${themeContract.colors.neutral4}`,
-      borderRadius: themeContract.radii.medium,
+      backgroundColor: themeContract.bg.surface,
+      border: `1px solid ${themeContract.border.subtle}`,
+      borderRadius: themeContract.radii.md,
       overflow: 'hidden',
       height: '100%',
-      // boxShadow: themeContract.shadows.tight,
     },
     'schema-tree-container'
   ),
@@ -50,7 +54,7 @@ export const schemaTreeStyles = {
           left: 0,
           height: 1,
           width: '100%',
-          backgroundColor: themeContract.colors.neutral4,
+          backgroundColor: themeContract.border.subtle,
           zIndex: 2,
         },
       },
@@ -67,9 +71,8 @@ export const schemaTreeStyles = {
       width: themeContract.px[40],
       height: themeContract.px[40],
       flexShrink: 0,
-      backgroundColor: themeContract.colors.neutral1,
-      borderBottom: `1px solid ${themeContract.colors.neutral4}`,
-      borderLeft: `1px solid ${themeContract.colors.neutral4}`,
+      borderBottom: `1px solid ${themeContract.border.subtle}`,
+      borderLeft: `1px solid ${themeContract.border.subtle}`,
     },
     'schema-tree-header-action-container'
   ),
@@ -89,9 +92,8 @@ export const schemaTreeStyles = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: themeContract.px[32],
-    color: themeContract.colors.neutral6,
-    fontSize: themeContract.px[14],
-    fontStyle: 'italic',
+    ...textStyles.bodyDense,
+    color: themeContract.text.secondary,
     textAlign: 'center',
   }),
 
@@ -110,11 +112,11 @@ export const schemaTreeStyles = {
       // The row is the tree's focus target, so keyboard focus has to be visible
       // on it and not only on the controls inside it.
       outline: 'none',
-      borderRadius: themeContract.radii.small,
+      borderRadius: themeContract.radii.sm,
 
       selectors: {
         '&:focus-visible': {
-          outline: `2px solid ${themeContract.colors.neutral7}`,
+          outline: `2px solid ${themeContract.focus.ring}`,
           outlineOffset: -1,
         },
       },
@@ -132,7 +134,7 @@ export const schemaTreeStyles = {
         position: 'absolute',
         top: 0,
         width: 1,
-        backgroundColor: themeContract.colors.neutral5,
+        backgroundColor: themeContract.border.default,
       },
 
       variants: {
@@ -166,7 +168,7 @@ export const schemaTreeStyles = {
               left: -8,
               height: 1,
               width: 12,
-              backgroundColor: themeContract.colors.neutral5,
+              backgroundColor: themeContract.border.default,
             },
           },
         },
@@ -191,7 +193,7 @@ export const schemaTreeStyles = {
   listItemName: recipe(
     {
       base: {
-        color: themeContract.colors.neutral7,
+        color: themeContract.text.secondary,
         cursor: 'pointer',
         fontVariationSettings: `"wght" 400`,
         transition: `all 0.1s ${themeContract.motion.authentic}`,
@@ -236,7 +238,7 @@ export const schemaTreeStyles = {
     {
       fontFamily: themeContract.fonts.mono,
       fontSize: themeContract.px[11],
-      color: themeContract.colors.neutral6,
+      color: themeContract.text.tertiary,
       whiteSpace: 'nowrap',
       // Sits outside the name button, so it is never part of the click target.
       pointerEvents: 'none',
@@ -246,7 +248,7 @@ export const schemaTreeStyles = {
 
   listItemArgumentsLabel: style(
     {
-      color: themeContract.colors.neutral6,
+      color: themeContract.text.tertiary,
       fontSize: themeContract.px[9],
       fontWeight: 600,
       textTransform: 'uppercase',

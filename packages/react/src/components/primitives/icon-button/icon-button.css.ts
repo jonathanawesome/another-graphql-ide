@@ -9,31 +9,27 @@ export const iconButtonClass = recipe({
       alignItems: 'center',
       justifyContent: 'center',
       flexShrink: 0,
-      borderRadius: themeContract.radii.small,
+      borderRadius: themeContract.radii.md,
       border: `1px solid transparent`,
       transform: 'rotate(0deg)',
       transition: `all .15s ${themeContract.motion.authentic}`,
-
-      ':focus': {
-        border: `1px dashed ${themeContract.colors.neutral5}`,
-      },
     },
   ],
 
   variants: {
     ghost: {
       false: {
-        border: `1px solid ${themeContract.colors.neutral4}`,
-        backgroundColor: themeContract.colors.neutral1,
+        border: `1px solid ${themeContract.border.default}`,
+        backgroundColor: themeContract.bg.surface,
 
         ':hover': {
-          border: `1px solid ${themeContract.colors.neutral5}`,
-          backgroundColor: themeContract.colors.neutral4,
+          border: `1px solid ${themeContract.border.strong}`,
+          backgroundColor: themeContract.bg.hover,
         },
       },
       true: {
         ':hover': {
-          backgroundColor: themeContract.colors.neutral3,
+          backgroundColor: themeContract.fill.neutral,
         },
       },
     },
@@ -60,12 +56,10 @@ export const iconButtonClass = recipe({
       medium: {
         height: themeContract.px[40],
         width: themeContract.px[40],
-        borderRadius: themeContract.radii.medium,
       },
       large: {
         height: themeContract.px[40],
         width: themeContract.px[40],
-        borderRadius: themeContract.radii.medium,
       },
     },
     state: {
@@ -79,7 +73,7 @@ export const iconButtonClass = recipe({
 })
 
 globalStyle(`${iconButtonClass()}:hover svg path`, {
-  fill: themeContract.colors.neutral8,
+  fill: themeContract.text.primary,
 })
 
 // hover over icon-button scales the underlying icon
@@ -96,20 +90,20 @@ globalStyle(
 )
 
 globalStyle(`${iconButtonClass.classNames.variants.state.highlight} svg path`, {
-  fill: themeContract.colors.brand,
+  fill: themeContract.accent.line,
 })
 
 globalStyle(`${iconButtonClass.classNames.variants.state.active} svg path`, {
-  fill: themeContract.colors.neutral8,
+  fill: themeContract.text.primary,
 })
 
 globalStyle(`${iconButtonClass.classNames.variants.state.disabled} svg path`, {
-  fill: themeContract.colors.neutral6,
+  fill: themeContract.text.secondary,
 })
 
 globalStyle(
   `${iconButtonClass.classNames.variants.state.disabled}:hover svg path`,
   {
-    fill: themeContract.colors.neutral6,
+    fill: themeContract.text.secondary,
   }
 )

@@ -8,7 +8,7 @@ export type ThemeTokens = {
   [Group in keyof Contract]?: { [Token in keyof Contract[Group]]?: string }
 }
 
-/** `var(--agi-colors-brand)` -> `--agi-colors-brand` */
+/** `var(--agi-accent-line)` -> `--agi-accent-line` */
 const propertyName = (ref: string) => ref.slice(4, -1)
 
 /**
@@ -16,7 +16,7 @@ const propertyName = (ref: string) => ref.slice(4, -1)
  * any wrapper to restyle the instances inside without touching the rest of the
  * page:
  *
- *   <div style={themeVars({ colors: { brand: 'oklch(60% 0.18 250)' } })}>
+ *   <div style={themeVars({ accent: { line: 'oklch(60% 0.18 250)' } })}>
  */
 type Groups = Record<string, Record<string, string | undefined> | undefined>
 

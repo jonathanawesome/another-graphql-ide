@@ -42,7 +42,7 @@ export const LoadingShell = ({
   <>
     <div
       className={findBarStyles.bar}
-      style={{ borderBottom: `1px solid ${themeContract.colors.neutral4}` }}
+      style={{ borderBottom: `1px solid ${themeContract.border.subtle}` }}
     >
       <div className={findBarStyles.field}>
         <Icon name="Search" size="small" />

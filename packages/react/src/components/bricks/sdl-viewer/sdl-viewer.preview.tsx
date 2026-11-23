@@ -1,4 +1,4 @@
-import { themeContract } from '@another-graphql-ide/style'
+import { textStyles, themeContract } from '@another-graphql-ide/style'
 import { useState } from 'react'
 import { createPreview, type NavPath } from 'react-foundry'
 
@@ -32,13 +32,8 @@ const typeHref = (name: string) =>
     : undefined
 
 // Host content, loosely after the design: the brick only supplies the card.
-const muted = { color: themeContract.colors.neutral6 }
-const eyebrow = {
-  ...muted,
-  fontSize: 11,
-  letterSpacing: '0.06em',
-  textTransform: 'uppercase',
-} as const
+const muted = { color: themeContract.text.tertiary }
+const eyebrow = { ...textStyles.overline, ...muted }
 const mono = { fontFamily: themeContract.fonts.mono }
 
 const HoverContent = ({

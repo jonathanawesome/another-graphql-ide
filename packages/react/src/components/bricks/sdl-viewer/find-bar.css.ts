@@ -1,14 +1,14 @@
-import { style, themeContract } from '@another-graphql-ide/style'
+import { style, textStyles, themeContract } from '@another-graphql-ide/style'
 
 export const findBarStyles = {
   bar: style({
     display: 'flex',
     alignItems: 'center',
-    gap: themeContract.px[4],
+    gap: themeContract.px[8],
     height: '44px',
-    paddingInlineStart: themeContract.px[8],
+    paddingInlineStart: themeContract.px[6],
     fontFamily: themeContract.fonts.sans,
-    color: themeContract.colors.neutral7,
+    color: themeContract.text.secondary,
   }),
 
   field: style({
@@ -18,12 +18,12 @@ export const findBarStyles = {
     alignItems: 'center',
     gap: themeContract.px[8],
     height: themeContract.px[32],
-    paddingInline: themeContract.px[8],
-    borderRadius: themeContract.radii.medium,
-    backgroundColor: themeContract.colors.neutral1,
+    paddingInline: themeContract.px[10],
+    borderRadius: themeContract.radii.md,
+    backgroundColor: themeContract.bg.inset,
     border: '1px solid transparent',
     selectors: {
-      '&:focus-within': { borderColor: themeContract.colors.neutral5 },
+      '&:focus-within': { borderColor: themeContract.border.control },
     },
   }),
 
@@ -34,18 +34,18 @@ export const findBarStyles = {
     border: 'none',
     outline: 'none',
     backgroundColor: 'transparent',
-    color: themeContract.colors.neutral8,
-    fontSize: themeContract.px[13],
+    ...textStyles.body,
+    color: themeContract.text.primary,
+    caretColor: themeContract.text.primary,
     selectors: {
-      '&::placeholder': { color: themeContract.colors.neutral6 },
+      '&::placeholder': { color: themeContract.text.tertiary },
     },
   }),
 
   count: style({
     flexShrink: 0,
-    fontFamily: themeContract.fonts.mono,
-    fontSize: themeContract.px[12],
-    color: themeContract.colors.neutral6,
+    ...textStyles.codeSmall,
+    color: themeContract.text.tertiary,
   }),
 
   heading: style({
@@ -55,12 +55,9 @@ export const findBarStyles = {
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: themeContract.px[8],
-    paddingInlineEnd: themeContract.px[8],
-    fontSize: themeContract.px[11],
-    fontWeight: 600,
-    letterSpacing: themeContract.px[1],
-    textTransform: 'uppercase',
-    color: themeContract.colors.neutral6,
+    paddingInlineEnd: themeContract.px[14],
+    ...textStyles.overline,
+    color: themeContract.text.tertiary,
   }),
 
   label: style({ marginInlineStart: 'auto' }),
@@ -68,6 +65,6 @@ export const findBarStyles = {
   divider: style({
     width: '1px',
     height: themeContract.px[16],
-    backgroundColor: themeContract.colors.neutral4,
+    backgroundColor: themeContract.border.default,
   }),
 }

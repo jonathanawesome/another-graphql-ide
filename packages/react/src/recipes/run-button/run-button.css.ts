@@ -9,13 +9,13 @@ export const runButtonStyles = {
     maxWidth: 480,
     overflow: 'auto',
     fontSize: themeContract.px[11],
-    color: themeContract.colors.neutral7,
+    color: themeContract.text.secondary,
   }),
 
   error: style({
     margin: 0,
     maxWidth: 480,
-    color: themeContract.colors.brand,
+    color: themeContract.status.danger,
     fontSize: themeContract.px[11],
   }),
 }

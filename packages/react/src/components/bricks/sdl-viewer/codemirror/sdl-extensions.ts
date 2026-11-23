@@ -1,4 +1,4 @@
-import { themeContract } from '@another-graphql-ide/style'
+import { textStyles, themeContract } from '@another-graphql-ide/style'
 import { foldService } from '@codemirror/language'
 import { Prec, type Extension } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
@@ -74,34 +74,28 @@ const folds = foldService.of((state, lineStart) => {
 
 const row = `${SDL_LINE_HEIGHT}px`
 
-// The contract has no error color yet; same literal red as ConnectionBar.
-const ERROR_COLOR = 'oklch(63% 0.23 25)'
-
-// The theme contract has no syntax tokens yet, so these reuse the palette the
-// operation editor highlights with.
 const sdlTheme = EditorView.theme({
   '.cm-line, .cm-gutterElement': { lineHeight: row },
-  '.cm-sdl-keyword, .cm-sdl-directive': { color: themeContract.colors.brand },
-  '.cm-sdl-type': { color: themeContract.colors.neutral7, fontWeight: 600 },
-  '.cm-sdl-field': { color: themeContract.colors.neutral8 },
-  '.cm-sdl-argument, .cm-sdl-enumValue, .cm-sdl-number, .cm-sdl-string': {
-    color: themeContract.colors.neutral7,
+  // Punctuation is the only text without a token class.
+  '.cm-line': { color: themeContract.syntax.punctuation },
+  '.cm-sdl-keyword': { color: themeContract.syntax.keyword },
+  '.cm-sdl-type': { color: themeContract.syntax.type },
+  '.cm-sdl-field, .cm-sdl-argument, .cm-sdl-enumValue': {
+    color: themeContract.text.primary,
   },
-  '.cm-sdl-comment': {
-    color: themeContract.colors.neutral5,
-    fontStyle: 'italic',
-  },
+  '.cm-sdl-directive': { color: themeContract.syntax.function },
+  '.cm-sdl-string': { color: themeContract.syntax.string },
+  '.cm-sdl-number': { color: themeContract.syntax.number },
+  '.cm-sdl-comment': { color: themeContract.syntax.comment },
 
   // Read-only: text can be selected and copied, but there is no caret.
   '.cm-cursorLayer': { display: 'none' },
 
   // Rows. The selected row replaces CodeMirror's active line.
   '.cm-activeLine, .cm-activeLineGutter': { backgroundColor: 'transparent' },
-  '.cm-sdl-hover': { backgroundColor: themeContract.colors.neutral3 },
-  '.cm-sdl-selected': {
-    backgroundColor: `color-mix(in oklch, ${themeContract.colors.brand} 12%, transparent)`,
-  },
-  '.cm-gutterElement.cm-sdl-selected': { color: themeContract.colors.neutral8 },
+  '.cm-sdl-hover': { backgroundColor: themeContract.bg.hover },
+  '.cm-sdl-selected': { backgroundColor: themeContract.bg.selected },
+  '.cm-gutterElement.cm-sdl-selected': { color: themeContract.text.primary },
   '.cm-sdl-dimmed': { opacity: 0.35 },
   // A click places a selection, which would outline brackets in a read-only view.
   '.cm-matchingBracket, &.cm-focused .cm-matchingBracket': { outline: 'none' },
@@ -117,11 +111,7 @@ const sdlTheme = EditorView.theme({
   // Hover card: the popover's surface around the host's content.
   '.cm-tooltip.cm-tooltip-hover': {
     marginTop: themeContract.px[4],
-    color: themeContract.colors.neutral8,
-    backgroundColor: themeContract.colors.neutral1,
-    border: `1px solid ${themeContract.colors.neutral4}`,
-    borderRadius: themeContract.radii.large,
-    boxShadow: themeContract.shadows.wide,
+    borderRadius: themeContract.radii.lg,
     overflow: 'hidden',
   },
   '.cm-sdl-card': {
@@ -129,34 +119,39 @@ const sdlTheme = EditorView.theme({
     maxWidth: 'calc(100vw - 32px)',
     boxSizing: 'border-box',
     padding: themeContract.px[16],
-    fontFamily: themeContract.fonts.sans,
-    fontSize: themeContract.px[13],
-    lineHeight: 1.5,
+    ...textStyles.bodyDense,
+  },
+  '.cm-sdl-card a': {
+    color: themeContract.text.link,
+    textDecorationColor: themeContract.link.underline,
   },
 
   // Find bar panel and its matches.
   '.cm-panels': {
-    color: themeContract.colors.neutral7,
-    backgroundColor: themeContract.colors.neutral2,
+    color: themeContract.text.secondary,
+    backgroundColor: themeContract.bg.surface,
   },
   '.cm-panels.cm-panels-top': {
-    borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+    borderBottom: `1px solid ${themeContract.border.subtle}`,
   },
   '.cm-searchMatch': {
-    backgroundColor: themeContract.colors.neutral4,
+    backgroundColor: themeContract.fill.accentSoftHover,
     outline: 'none',
   },
   '.cm-searchMatch.cm-searchMatch-selected': {
-    backgroundColor: themeContract.colors.neutral5,
+    outline: `1px solid ${themeContract.accent.line}`,
   },
 
   // Annotation column. Long lines scroll under it, so it needs an edge.
   '.cm-gutters.cm-gutters-after': {
-    borderInlineStart: `1px solid ${themeContract.colors.neutral4}`,
+    borderInlineStart: `1px solid ${themeContract.border.subtle}`,
+    // Clips the column while its width slides.
+    overflow: 'hidden',
   },
+  '.cm-sdl-annotations': { flexShrink: 0 },
   '.cm-sdl-annotations .cm-gutterElement': {
     paddingInlineStart: themeContract.px[8],
-    paddingInlineEnd: themeContract.px[8],
+    paddingInlineEnd: themeContract.px[14],
   },
   '.cm-sdl-annotation': {
     display: 'flex',
@@ -165,26 +160,25 @@ const sdlTheme = EditorView.theme({
     gap: themeContract.px[12],
     height: row,
   },
-  '.cm-sdl-tag': { lineHeight: 'normal', whiteSpace: 'nowrap' },
   // Sized up front, as the icon renders just after the row is measured.
   '.cm-sdl-tag-icon': {
     flexShrink: 0,
     width: themeContract.px[12],
     height: themeContract.px[12],
-    marginInlineEnd: themeContract.px[3],
   },
   '.cm-sdl-bar': {
     display: 'block',
     width: '90px',
     height: themeContract.px[4],
     borderRadius: themeContract.px[2],
-    backgroundColor: themeContract.colors.neutral4,
+    backgroundColor: themeContract.bg.track,
     overflow: 'hidden',
   },
   '.cm-sdl-bar > span': {
     display: 'block',
     height: '100%',
-    backgroundColor: themeContract.colors.brand,
+    borderRadius: themeContract.px[2],
+    backgroundColor: themeContract.accent.line,
   },
   '.cm-sdl-error': {
     display: 'flex',
@@ -192,7 +186,7 @@ const sdlTheme = EditorView.theme({
     gap: themeContract.px[8],
     fontFamily: themeContract.fonts.sans,
     fontSize: themeContract.px[12],
-    color: themeContract.colors.neutral7,
+    color: themeContract.text.secondary,
     whiteSpace: 'nowrap',
   },
   '.cm-sdl-error::before': {
@@ -200,13 +194,13 @@ const sdlTheme = EditorView.theme({
     width: themeContract.px[6],
     height: themeContract.px[6],
     borderRadius: '50%',
-    backgroundColor: ERROR_COLOR,
+    backgroundColor: themeContract.status.danger,
   },
   '.cm-sdl-value': {
     minWidth: '56px',
     textAlign: 'end',
-    fontSize: themeContract.px[12],
-    color: themeContract.colors.neutral6,
+    ...textStyles.codeSmall,
+    color: themeContract.text.primary,
   },
 })
 

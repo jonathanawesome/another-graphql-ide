@@ -19,7 +19,7 @@ export const tabsStyles = {
       paddingLeft: themeContract.px[8],
       paddingRight: themeContract.px[8],
 
-      borderBottom: `1px solid ${themeContract.colors.neutral4}`,
+      borderBottom: `1px solid ${themeContract.border.subtle}`,
     },
     'list'
   ),
@@ -46,19 +46,15 @@ export const tabsStyles = {
 
         position: 'relative',
 
-        ':focus': {
-          border: `1px dashed ${themeContract.colors.neutral5}`,
-        },
-
         selectors: {
           '&:not([data-active])': {
-            color: themeContract.colors.neutral6,
+            color: themeContract.text.secondary,
           },
           '&:not([data-active]):hover': {
-            color: themeContract.colors.neutral8,
+            color: themeContract.text.primary,
           },
           '&[data-active]': {
-            color: themeContract.colors.neutral8,
+            color: themeContract.text.primary,
           },
           '&[data-active]::after': {
             content: '',
@@ -67,7 +63,7 @@ export const tabsStyles = {
             left: 0,
             width: '100%',
             height: themeContract.px[2],
-            backgroundColor: themeContract.colors.brand,
+            backgroundColor: themeContract.accent.line,
           },
         },
       },
