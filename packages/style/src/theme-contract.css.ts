@@ -9,6 +9,7 @@ export const themeContract = createGlobalThemeContract(
       wide: null,
     },
 
+    // deprecated aliases
     colors: {
       // neutral scale
       neutral1: null,
@@ -24,8 +25,7 @@ export const themeContract = createGlobalThemeContract(
       brand: null,
     },
 
-    // Console 2026 semantic colors, grouped by role. Each pairs with a
-    // `--agi-<group>-<token>` variable.
+    // semantic colors
     bg: {
       canvas: null,
       surface: null,

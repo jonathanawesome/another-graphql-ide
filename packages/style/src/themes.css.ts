@@ -1,58 +1,6 @@
 import { createGlobalTheme, createTheme } from '@vanilla-extract/css'
 
 import { themeContract } from './theme-contract.css'
-import { transformColors } from './utils'
-
-const colorTokens = {
-  dark: {
-    neutral1: '14.6% 0 0',
-    neutral2: '17.4% 0 0',
-    neutral3: '21.6% 0 0',
-    neutral4: '23.8% 0 0',
-    neutral5: '30.1% 0 0',
-    neutral6: '62.5% 0 0',
-    neutral7: '90% 0.002575 15.9',
-    neutral8: '97.7% 0 0',
-    brand: '62.1% 0.289482 350.9',
-  },
-  light: {
-    neutral1: '98.5% 0 0',
-    neutral2: '97% 0 0',
-    neutral3: '94.7% 0 0',
-    neutral4: '91.6% 0 0',
-    neutral5: '86.5% 0 0',
-    neutral6: '52.8% 0 0',
-    neutral7: '34.1% 0 0',
-    neutral8: '11.6% 0 0',
-    brand: '62.1% 0.289482 350.9',
-  },
-}
-
-const colors = {
-  dark: {
-    neutral1: colorTokens.dark.neutral1,
-    neutral2: colorTokens.dark.neutral2,
-    neutral3: colorTokens.dark.neutral3,
-    neutral4: colorTokens.dark.neutral4,
-    neutral5: colorTokens.dark.neutral5,
-    neutral6: colorTokens.dark.neutral6,
-    neutral7: colorTokens.dark.neutral7,
-    neutral8: colorTokens.dark.neutral8,
-
-    brand: colorTokens.dark.brand,
-  },
-  light: {
-    neutral1: colorTokens.light.neutral1,
-    neutral2: colorTokens.light.neutral2,
-    neutral3: colorTokens.light.neutral3,
-    neutral4: colorTokens.light.neutral4,
-    neutral5: colorTokens.light.neutral5,
-    neutral6: colorTokens.light.neutral6,
-    neutral7: colorTokens.light.neutral7,
-    neutral8: colorTokens.light.neutral8,
-    brand: colorTokens.light.brand,
-  },
-}
 
 // Console 2026 palette
 const palette = {
@@ -161,8 +109,6 @@ const palette = {
   },
 }
 
-// Each token aliases a palette step per mode. Status and syntax alias meadow
-// tokens through the contract, so overriding a hue carries through.
 const semanticColors = {
   light: {
     bg: {
@@ -358,6 +304,19 @@ const semanticColors = {
   },
 }
 
+// Deprecated aliases, removed once every brick has migrated
+const legacyColors = {
+  neutral1: themeContract.bg.raised,
+  neutral2: themeContract.bg.surface,
+  neutral3: themeContract.bg.hover,
+  neutral4: themeContract.border.subtle,
+  neutral5: themeContract.border.default,
+  neutral6: themeContract.text.tertiary,
+  neutral7: themeContract.text.secondary,
+  neutral8: themeContract.text.primary,
+  brand: themeContract.accent.line,
+}
+
 // Shared tokens that don't change between themes
 const sharedTokens = {
   px: {
@@ -405,26 +364,26 @@ const sharedTokens = {
 }
 
 const darkTokens = {
-  colors: transformColors(colors.dark),
+  colors: legacyColors,
   ...semanticColors.dark,
 
   ...sharedTokens,
 
   shadows: {
-    tight: `oklch(${colors.dark.neutral5} / 0.45) 0px 1px 5px 1px`,
-    wide: `oklch(${colors.dark.neutral5} / 0.35) 0px 10px 38px -10px, oklch(${colors.dark.neutral5} / 0.2) 0px 10px 20px -15px`,
+    tight: `oklch(30.1% 0 0 / 0.45) 0px 1px 5px 1px`,
+    wide: `oklch(30.1% 0 0 / 0.35) 0px 10px 38px -10px, oklch(30.1% 0 0 / 0.2) 0px 10px 20px -15px`,
   },
 }
 
 const lightTokens = {
-  colors: transformColors(colors.light),
+  colors: legacyColors,
   ...semanticColors.light,
 
   ...sharedTokens,
 
   shadows: {
-    tight: `oklch(${colors.light.neutral5} / 0.75) 0px 1px 5px 1px`,
-    wide: `oklch(${colors.light.neutral7} / 0.35) 0px 10px 38px -10px, oklch(${colors.light.neutral7} / 0.2) 0px 10px 20px -15px`,
+    tight: `oklch(86.5% 0 0 / 0.75) 0px 1px 5px 1px`,
+    wide: `oklch(34.1% 0 0 / 0.35) 0px 10px 38px -10px, oklch(34.1% 0 0 / 0.2) 0px 10px 20px -15px`,
   },
 }
 
