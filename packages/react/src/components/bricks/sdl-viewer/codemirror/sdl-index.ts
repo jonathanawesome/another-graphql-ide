@@ -43,7 +43,7 @@ export type SdlIndex = {
   lineOfCoordinate: Map<Coordinate, number>
 }
 
-// Name roles, stored one byte per offset. 0 means no role was recorded.
+// Roles from the AST, stored one byte per offset. 0 means none was recorded.
 const ROLES: SdlTokenKind[] = [
   'keyword',
   'type',
@@ -51,6 +51,7 @@ const ROLES: SdlTokenKind[] = [
   'argument',
   'enumValue',
   'directive',
+  'comment',
 ]
 const ROLE = Object.fromEntries(
   ROLES.map((kind, i) => [kind, i + 1])
@@ -154,7 +155,12 @@ const NAME_TOKEN: string = TokenKind.NAME
 const AT_TOKEN: string = TokenKind.AT
 const COMMENT_TOKEN: string = TokenKind.COMMENT
 
-type Walkable = { kind?: string; loc?: Location; name?: NameNode }
+type Walkable = {
+  kind?: string
+  loc?: Location
+  name?: NameNode
+  description?: { loc?: Location }
+}
 
 /**
  * Name offset to role, from the node each name belongs to. A plain walk rather
@@ -174,6 +180,8 @@ const classifyNames = (ast: DocumentNode, roles: Uint8Array) => {
     if (nameRole && node.name?.loc) roles[node.name.loc.start] = ROLE[nameRole]
     const valueRole = VALUE_ROLE[kind]
     if (valueRole && node.loc) roles[node.loc.start] = ROLE[valueRole]
+    // Descriptions read as comments, not strings.
+    if (node.description?.loc) roles[node.description.loc.start] = ROLE.comment
 
     for (const key in node) {
       if (key !== 'loc' && key !== 'kind') walk(node[key])
@@ -317,7 +325,9 @@ const tokenKind = (
   parsed: boolean
 ): SdlTokenKind | undefined => {
   const kind: string = token.kind
-  if (kind !== NAME_TOKEN) return TOKEN_ROLE[kind]
+  if (kind !== NAME_TOKEN) {
+    return roles[token.start] === ROLE.comment ? 'comment' : TOKEN_ROLE[kind]
+  }
   if (parsed) return ROLES[(roles[token.start] ?? 1) - 1] ?? 'keyword'
   if ((previous?.kind as string | undefined) === AT_TOKEN) return 'directive'
   return KEYWORDS.has(token.value) ? 'keyword' : undefined

@@ -122,6 +122,8 @@ describe('indexSdl', () => {
       ['key', 'directive'],
       ['@', 'directive'],
       ['"{ id }"', 'string'],
+      ['"""\nA person.\n"""', 'comment'],
+      ['"Display name"', 'comment'],
       ['# the id', 'comment'],
       ['id: ID!', 'field'],
       ['format', 'argument'],
