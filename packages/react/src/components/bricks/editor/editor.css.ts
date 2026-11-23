@@ -13,8 +13,8 @@ export const editorStyles = {
         frame: {
           none: {},
           bordered: {
-            border: `1px solid ${themeContract.colors.neutral4}`,
-            borderRadius: themeContract.radii.small,
+            border: `1px solid ${themeContract.border.subtle}`,
+            borderRadius: themeContract.radii.md,
             overflow: 'hidden',
           },
         },
