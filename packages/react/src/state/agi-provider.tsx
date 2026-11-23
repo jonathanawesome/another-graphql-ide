@@ -18,6 +18,8 @@ type ProviderConfig = {
   endpoint?: string
   headers?: Record<string, string>
   schema?: GraphQLSchema
+  /** Introspect the endpoint on mount and when it changes. Skipped when a schema prop is given. */
+  autoConnect?: boolean
   /** Seeded once. Later changes are ignored so edits are never clobbered. */
   defaultQuery?: string
   defaultVariables?: string
@@ -66,6 +68,7 @@ export const AGIProvider = ({
   endpoint,
   headers,
   schema,
+  autoConnect,
   defaultQuery,
   defaultVariables,
   defaultTheme,
@@ -122,6 +125,13 @@ export const AGIProvider = ({
       store.setState({ schemaStatus: 'connected' })
     }
   }, [store, providedStore, endpoint, headers, schema])
+
+  // Declared after the sync above, so the store already holds a new endpoint.
+  // The props type rules out autoConnect alongside a provided store.
+  useEffect(() => {
+    if (!autoConnect || schema) return
+    void store.getState().connect()
+  }, [autoConnect, schema, store, endpoint])
 
   return (
     <AGIStoreContext.Provider value={store}>

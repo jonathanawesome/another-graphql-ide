@@ -8,7 +8,7 @@ import { COUNTRIES_ENDPOINT } from './fixtures'
 
 export const nav: NavPath = 'Layouts/Embedded Playground'
 
-const starterQuery = `# Press Connect to introspect the endpoint above, then run this.
+const starterQuery = `# The schema loads on mount, so completion and linting work right away.
 query Countries {
   countries {
     code
@@ -19,15 +19,15 @@ query Countries {
 `
 
 /**
- * A compact embed where the reader owns the endpoint. Connect introspects it
- * and the schema reaches the editor for completion and execution, because both
- * read the same provider.
+ * A compact embed where the reader owns the endpoint. autoConnect introspects
+ * it on mount; Connect does it again after the reader changes the endpoint.
  */
 export const Playground = createPreview({
   label: 'Endpoint + docs editor in a card',
   render: () => (
     <AGIProvider
       endpoint={COUNTRIES_ENDPOINT}
+      autoConnect
       defaultQuery={starterQuery}
       theme={false}
     >
