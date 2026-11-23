@@ -284,4 +284,95 @@ describe('SdlViewer', () => {
       expect(screen.queryByText(/of 3/)).toBeNull()
     })
   })
+
+  describe('shell and navigation', () => {
+    const sdl = 'type Query { user: User } type User { id: ID! }'
+
+    it('shows placeholder lines while loading', () => {
+      const { container } = render(<SdlViewer sdl="" loading status="ready" />)
+
+      screen.getByText('Loading schema…')
+      expect(
+        screen.getByRole('textbox', { name: 'Search this schema' })
+      ).toHaveProperty('disabled', true)
+      expect(find(container, '[aria-busy="true"]')).not.toBeNull()
+      expect(screen.getByRole('button', { name: 'Copy SDL' })).toHaveProperty(
+        'disabled',
+        true
+      )
+      expect(screen.queryByText('No composed schema yet')).toBeNull()
+    })
+
+    it('shows the empty state for blank SDL', () => {
+      const { rerender } = render(<SdlViewer sdl="  " />)
+      screen.getByText('No composed schema yet')
+
+      rerender(<SdlViewer sdl="" empty="Nothing published" />)
+      screen.getByText('Nothing published')
+
+      rerender(<SdlViewer sdl={sdl} empty="Nothing published" />)
+      expect(screen.queryByText('Nothing published')).toBeNull()
+    })
+
+    it('shows the footer only with a status', () => {
+      const { rerender } = render(<SdlViewer sdl={sdl} />)
+      expect(screen.queryByRole('button', { name: 'Copy SDL' })).toBeNull()
+
+      rerender(<SdlViewer sdl={sdl} status="2 types" />)
+      screen.getByText('2 types')
+    })
+
+    it('copies the SDL as shown', async () => {
+      const writeText = vi.fn(() => Promise.resolve())
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText },
+        configurable: true,
+      })
+      render(<SdlViewer sdl="type Query{a:Int}" format status="" />)
+
+      fireEvent.click(screen.getByRole('button', { name: 'Copy SDL' }))
+      await screen.findByText('Copied')
+      expect(writeText).toHaveBeenCalledWith('type Query {\n  a: Int\n}')
+    })
+
+    it('links type names without following them on a plain click', () => {
+      const { rerender } = render(
+        <SdlViewer sdl={sdl} typeHref={name => `/types/${name}`} />
+      )
+      const [link] = screen.getAllByRole('link', { name: 'User' })
+      if (!link) throw new Error('no link')
+      expect(link.getAttribute('href')).toBe('/types/User')
+
+      // fireEvent returns false when the default was prevented.
+      expect(fireEvent.click(link)).toBe(false)
+      expect(fireEvent.click(link, { metaKey: true })).toBe(false)
+      expect(fireEvent.click(link, { metaKey: true, shiftKey: true })).toBe(
+        true
+      )
+
+      rerender(<SdlViewer sdl={sdl} />)
+      expect(screen.queryByRole('link')).toBeNull()
+    })
+
+    it('reveals a coordinate once per nonce', () => {
+      const scroll = vi.spyOn(EditorView, 'scrollIntoView')
+      const { rerender } = render(
+        <SdlViewer sdl={sdl} format reveal={{ coordinate: 'User', nonce: 1 }} />
+      )
+      // Printed: line 5 is "type User {", at offset 29.
+      expect(scroll).toHaveBeenCalledTimes(1)
+      expect(scroll.mock.calls[0]?.[0]).toBe(29)
+
+      rerender(
+        <SdlViewer sdl={sdl} format reveal={{ coordinate: 'User', nonce: 1 }} />
+      )
+      expect(scroll).toHaveBeenCalledTimes(1)
+
+      rerender(
+        <SdlViewer sdl={sdl} format reveal={{ coordinate: 'User', nonce: 2 }} />
+      )
+      expect(scroll).toHaveBeenCalledTimes(2)
+      scroll.mockRestore()
+    })
+  })
 })

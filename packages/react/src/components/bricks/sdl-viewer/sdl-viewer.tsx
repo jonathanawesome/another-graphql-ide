@@ -1,12 +1,16 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
+import { Button } from '../../primitives/button/button'
 import { Editor } from '../editor/editor'
 
 import type { SdlAnnotation, SdlTag } from './codemirror/line-state'
 import type { Coordinate } from './codemirror/sdl-index'
+import type { TypeHref } from './codemirror/type-links'
 import { FindBar } from './find-bar'
 import { formatSdl } from './format-sdl'
+import { LoadingShell } from './loading-shell'
+import { sdlViewerStyles as styles } from './sdl-viewer.css'
 import { useSdlExtensions } from './use-sdl-extensions'
 
 export type SdlViewerProps = {
@@ -18,6 +22,10 @@ export type SdlViewerProps = {
    * coordinate per line.
    */
   format?: boolean
+  /** Placeholder lines, and "Loading schema…" in the footer. */
+  loading?: boolean
+  /** Shown instead of the code when `sdl` is blank. */
+  empty?: ReactNode
   /** Per-line annotation: a value, and an optional 0..1 ratio for the bar. */
   annotations?: ReadonlyMap<Coordinate, SdlAnnotation>
   /** Heading over the annotation column, shown in the find bar. */
@@ -30,6 +38,22 @@ export type SdlViewerProps = {
   selected?: Coordinate
   /** Called when the user selects a row, with its coordinate if it has one. */
   onSelect?: (coordinate: Coordinate | undefined) => void
+  /**
+   * Scrolls a definition to the top, once per `nonce`, e.g. arriving from a
+   * reference page.
+   */
+  reveal?: { coordinate: Coordinate; nonce: number }
+  /**
+   * Type names become links to the host's page for each type. A plain click
+   * still selects the row; Shift-Cmd/Ctrl-click, middle-click and the
+   * context menu open the link.
+   */
+  typeHref?: TypeHref
+  /**
+   * Footer text, with a Copy SDL button beside it. Omit to hide the footer
+   * (it still shows while loading).
+   */
+  status?: string
   /** Overrides the surrounding ThemeProvider. Light when neither is set. */
   theme?: 'light' | 'dark'
   /** Optional visual frame around the viewer. */
@@ -38,54 +62,124 @@ export type SdlViewerProps = {
   height?: number | string
 }
 
+const COPIED_FOR = 1500
+
+const CopyButton = ({
+  text,
+  disabled,
+}: {
+  text: string
+  disabled: boolean
+}) => {
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (!copied) return
+    const timer = setTimeout(() => setCopied(false), COPIED_FOR)
+    return () => clearTimeout(timer)
+  }, [copied])
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+    } catch {
+      // No clipboard outside secure contexts, or permission was refused.
+    }
+  }
+
+  return (
+    <Button
+      text={copied ? 'Copied' : 'Copy SDL'}
+      label="Copy SDL"
+      withLeftIcon="Copy"
+      state={disabled ? 'disabled' : undefined}
+      action={() => void copy()}
+    />
+  )
+}
+
 /**
  * A read-only view of a schema as SDL, with colors, folding, a find bar,
- * modifier-click go-to-definition, row selection and a per-line annotation
- * column keyed by schema coordinate. Prop-driven; needs no AGIProvider.
+ * modifier-click go-to-definition, row selection, type links and a per-line
+ * annotation column keyed by schema coordinate. Prop-driven; needs no
+ * AGIProvider.
  */
 export const SdlViewer = ({
   sdl,
   format,
+  loading = false,
+  empty = 'No composed schema yet',
   annotations,
   annotationLabel,
   tags,
   dimmed,
   selected,
   onSelect,
+  reveal,
+  typeHref,
+  status,
   theme,
   frame,
   height,
 }: SdlViewerProps) => {
-  const pretty = format ?? (annotations !== undefined || tags !== undefined)
+  const withColumn = annotations !== undefined || tags !== undefined
+  const pretty = format ?? withColumn
   const text = useMemo(() => (pretty ? formatSdl(sdl) : sdl), [pretty, sdl])
+  const isEmpty = !loading && sdl.trim() === ''
   const { extensions, findPanel } = useSdlExtensions({
     annotations,
     tags,
     dimmed,
     selected,
     onSelect,
+    reveal,
+    typeHref,
   })
 
   return (
-    <>
-      <Editor
-        value={text}
-        readOnly
-        theme={theme}
-        extensions={extensions}
-        frame={frame}
-        height={height}
-      />
+    <div
+      className={styles.root({ frame })}
+      style={height !== undefined ? { height } : undefined}
+      aria-busy={loading || undefined}
+    >
+      <div className={styles.body}>
+        {/* Stays mounted under the overlays, so its state never goes stale. */}
+        <div inert={loading || isEmpty} className={styles.editor}>
+          <Editor value={text} readOnly theme={theme} extensions={extensions} />
+        </div>
+        {loading && (
+          <div className={styles.overlay}>
+            <LoadingShell
+              label={annotationLabel}
+              withColumn={withColumn || annotationLabel !== undefined}
+            />
+          </div>
+        )}
+        {isEmpty && (
+          <div className={styles.overlay}>
+            <div className={styles.empty}>{empty}</div>
+          </div>
+        )}
+      </div>
+      {(status !== undefined || loading) && (
+        <div className={styles.footer}>
+          <span className={styles.status} aria-live="polite">
+            {loading ? 'Loading schema…' : status}
+          </span>
+          <CopyButton text={text} disabled={loading || isEmpty} />
+        </div>
+      )}
       {findPanel &&
         createPortal(
           <FindBar
             view={findPanel.view}
             store={findPanel.store}
             label={annotationLabel}
-            withColumn={annotations !== undefined || tags !== undefined}
+            withColumn={withColumn}
           />,
           findPanel.dom
         )}
-    </>
+    </div>
   )
 }

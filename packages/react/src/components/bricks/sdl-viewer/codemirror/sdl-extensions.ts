@@ -89,6 +89,9 @@ const sdlTheme = EditorView.theme({
     fontStyle: 'italic',
   },
 
+  // Read-only: text can be selected and copied, but there is no caret.
+  '.cm-cursorLayer': { display: 'none' },
+
   // Rows. The selected row replaces CodeMirror's active line.
   '.cm-activeLine, .cm-activeLineGutter': { backgroundColor: 'transparent' },
   '.cm-sdl-hover': { backgroundColor: themeContract.colors.neutral3 },
@@ -101,6 +104,10 @@ const sdlTheme = EditorView.theme({
   // Fold markers show on the hovered row, and always once folded.
   '.cm-foldGutter .cm-gutterElement:not(.cm-sdl-hover) span[title="Fold line"]':
     { visibility: 'hidden' },
+
+  // Type links keep the type's color and underline on hover.
+  '.cm-sdl-link': { color: 'inherit', textDecoration: 'none' },
+  '.cm-sdl-link:hover': { textDecoration: 'underline' },
 
   // Find bar panel and its matches.
   '.cm-panels': {

@@ -14,12 +14,21 @@ import {
   syncSelected,
   type LineData,
 } from './codemirror/line-state'
-import { sdlExtensions } from './codemirror/sdl-extensions'
+import { SDL_LINE_HEIGHT, sdlExtensions } from './codemirror/sdl-extensions'
+import { sdlField } from './codemirror/sdl-field'
 import type { Coordinate } from './codemirror/sdl-index'
+import {
+  setTypeHref,
+  typeHrefField,
+  typeLinks,
+  type TypeHref,
+} from './codemirror/type-links'
 
 export type UseSdlExtensionsParams = LineData & {
   selected?: Coordinate
   onSelect?: (coordinate: Coordinate | undefined) => void
+  reveal?: { coordinate: Coordinate; nonce: number }
+  typeHref?: TypeHref
 }
 
 const hasColumn = ({ annotations, tags }: LineData) =>
@@ -54,6 +63,7 @@ const createHandlers = (
       initialLineState(state, { annotations, tags, dimmed }, selected)
     ),
     linePointer,
+    typeLinks(params.typeHref),
     column.of(hasColumn(params) ? annotationGutter : []),
     findExtensions(store, panel =>
       setPanel(panel ? { ...panel, store } : null)
@@ -93,7 +103,8 @@ export const useSdlExtensions = (
   const [{ handlers, column, extensions }] = useState(() =>
     createHandlers(params, setFindPanel)
   )
-  const { annotations, tags, dimmed, selected, onSelect } = params
+  const { annotations, tags, dimmed, selected, onSelect, reveal, typeHref } =
+    params
   const withColumn = hasColumn(params)
 
   useEffect(() => {
@@ -132,6 +143,30 @@ export const useSdlExtensions = (
     if (coordinateAtLine(view.state, line) === selected) return
     view.dispatch({ effects: syncSelected.of(selected) })
   }, [handlers, selected])
+
+  useEffect(() => {
+    const view = handlers.view
+    if (!view || view.state.field(typeHrefField) === typeHref) return
+    view.dispatch({ effects: setTypeHref.of(typeHref) })
+  }, [handlers, typeHref])
+
+  // Editor's effects run first, so the document already holds the line.
+  useEffect(() => {
+    const view = handlers.view
+    if (!view || !reveal) return
+    const line = view.state
+      .field(sdlField)
+      .index.lineOfCoordinate.get(reveal.coordinate)
+    if (line === undefined) return
+    view.dispatch({
+      effects: EditorView.scrollIntoView(view.state.doc.line(line).from, {
+        y: 'start',
+        yMargin: SDL_LINE_HEIGHT * 2,
+      }),
+    })
+    // Keyed on nonce so each request applies once, even to the same coordinate.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the whole object would re-apply the same reveal
+  }, [handlers, reveal?.nonce])
 
   return { extensions, findPanel }
 }
