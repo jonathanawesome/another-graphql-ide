@@ -11,3 +11,4 @@ import './fonts.css'
 // Theme contract and implementations
 export { themeContract } from './theme-contract.css'
 export { lightTheme, darkTheme } from './themes.css'
+export { textStyles } from './text-styles'
