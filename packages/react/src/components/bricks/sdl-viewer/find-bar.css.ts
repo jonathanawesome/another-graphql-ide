@@ -55,7 +55,7 @@ export const findBarStyles = {
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: themeContract.px[8],
-    paddingInlineEnd: themeContract.px[8],
+    paddingInlineEnd: themeContract.px[14],
     ...textStyles.overline,
     color: themeContract.text.tertiary,
   }),

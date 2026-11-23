@@ -253,7 +253,7 @@ export const FindBar = ({
           style={
             columnSize && {
               width: columnSize.width,
-              paddingInlineEnd: 8 + columnSize.scrollbar,
+              paddingInlineEnd: 14 + columnSize.scrollbar,
             }
           }
         >

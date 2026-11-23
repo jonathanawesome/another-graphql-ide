@@ -1,4 +1,4 @@
-import { themeContract } from '@another-graphql-ide/style'
+import { textStyles, themeContract } from '@another-graphql-ide/style'
 import { foldService } from '@codemirror/language'
 import { Prec, type Extension } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
@@ -74,9 +74,6 @@ const folds = foldService.of((state, lineStart) => {
 
 const row = `${SDL_LINE_HEIGHT}px`
 
-// The contract has no error color yet; same literal red as ConnectionBar.
-const ERROR_COLOR = 'oklch(63% 0.23 25)'
-
 const sdlTheme = EditorView.theme({
   '.cm-line, .cm-gutterElement': { lineHeight: row },
   // Punctuation is the only text without a token class.
@@ -114,11 +111,7 @@ const sdlTheme = EditorView.theme({
   // Hover card: the popover's surface around the host's content.
   '.cm-tooltip.cm-tooltip-hover': {
     marginTop: themeContract.px[4],
-    color: themeContract.colors.neutral8,
-    backgroundColor: themeContract.colors.neutral1,
-    border: `1px solid ${themeContract.colors.neutral4}`,
-    borderRadius: themeContract.radii.large,
-    boxShadow: themeContract.shadows.wide,
+    borderRadius: themeContract.radii.lg,
     overflow: 'hidden',
   },
   '.cm-sdl-card': {
@@ -126,9 +119,11 @@ const sdlTheme = EditorView.theme({
     maxWidth: 'calc(100vw - 32px)',
     boxSizing: 'border-box',
     padding: themeContract.px[16],
-    fontFamily: themeContract.fonts.sans,
-    fontSize: themeContract.px[13],
-    lineHeight: 1.5,
+    ...textStyles.bodyDense,
+  },
+  '.cm-sdl-card a': {
+    color: themeContract.text.link,
+    textDecorationColor: themeContract.link.underline,
   },
 
   // Find bar panel and its matches.
@@ -149,11 +144,11 @@ const sdlTheme = EditorView.theme({
 
   // Annotation column. Long lines scroll under it, so it needs an edge.
   '.cm-gutters.cm-gutters-after': {
-    borderInlineStart: `1px solid ${themeContract.colors.neutral4}`,
+    borderInlineStart: `1px solid ${themeContract.border.subtle}`,
   },
   '.cm-sdl-annotations .cm-gutterElement': {
     paddingInlineStart: themeContract.px[8],
-    paddingInlineEnd: themeContract.px[8],
+    paddingInlineEnd: themeContract.px[14],
   },
   '.cm-sdl-annotation': {
     display: 'flex',
@@ -162,26 +157,25 @@ const sdlTheme = EditorView.theme({
     gap: themeContract.px[12],
     height: row,
   },
-  '.cm-sdl-tag': { lineHeight: 'normal', whiteSpace: 'nowrap' },
   // Sized up front, as the icon renders just after the row is measured.
   '.cm-sdl-tag-icon': {
     flexShrink: 0,
     width: themeContract.px[12],
     height: themeContract.px[12],
-    marginInlineEnd: themeContract.px[3],
   },
   '.cm-sdl-bar': {
     display: 'block',
     width: '90px',
     height: themeContract.px[4],
     borderRadius: themeContract.px[2],
-    backgroundColor: themeContract.colors.neutral4,
+    backgroundColor: themeContract.bg.track,
     overflow: 'hidden',
   },
   '.cm-sdl-bar > span': {
     display: 'block',
     height: '100%',
-    backgroundColor: themeContract.colors.brand,
+    borderRadius: themeContract.px[2],
+    backgroundColor: themeContract.accent.line,
   },
   '.cm-sdl-error': {
     display: 'flex',
@@ -189,7 +183,7 @@ const sdlTheme = EditorView.theme({
     gap: themeContract.px[8],
     fontFamily: themeContract.fonts.sans,
     fontSize: themeContract.px[12],
-    color: themeContract.colors.neutral7,
+    color: themeContract.text.secondary,
     whiteSpace: 'nowrap',
   },
   '.cm-sdl-error::before': {
@@ -197,13 +191,13 @@ const sdlTheme = EditorView.theme({
     width: themeContract.px[6],
     height: themeContract.px[6],
     borderRadius: '50%',
-    backgroundColor: ERROR_COLOR,
+    backgroundColor: themeContract.status.danger,
   },
   '.cm-sdl-value': {
     minWidth: '56px',
     textAlign: 'end',
-    fontSize: themeContract.px[12],
-    color: themeContract.colors.neutral6,
+    ...textStyles.codeSmall,
+    color: themeContract.text.primary,
   },
 })
 
