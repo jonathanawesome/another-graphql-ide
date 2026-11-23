@@ -44,6 +44,7 @@ export const Button = ({ tooltipOptions, ...restProps }: ButtonProps) => {
 
 const Component = ({
   action,
+  ghost,
   label,
   ref,
   state,
@@ -55,6 +56,7 @@ const Component = ({
     <button
       {...props}
       className={buttonClass({
+        ghost,
         state,
       })}
       aria-label={label}

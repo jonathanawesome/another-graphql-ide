@@ -29,6 +29,22 @@ export const buttonClass = recipe({
   ],
 
   variants: {
+    // Text only, for a quiet action beside other text.
+    ghost: {
+      true: {
+        paddingLeft: 0,
+        paddingRight: 0,
+        color: themeContract.colors.neutral8,
+        backgroundColor: 'transparent',
+        border: '1px solid transparent',
+
+        ':hover': {
+          backgroundColor: 'transparent',
+          border: '1px solid transparent',
+          textDecoration: 'underline',
+        },
+      },
+    },
     state: {
       active: {},
       highlight: {},
@@ -37,6 +53,19 @@ export const buttonClass = recipe({
       },
     },
   },
+
+  compoundVariants: [
+    {
+      variants: { ghost: true, state: 'disabled' },
+      style: {
+        color: themeContract.colors.neutral5,
+        ':hover': {
+          color: themeContract.colors.neutral5,
+          textDecoration: 'none',
+        },
+      },
+    },
+  ],
 })
 
 globalStyle(`${buttonClass()}:hover svg path`, {

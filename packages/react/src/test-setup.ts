@@ -13,3 +13,9 @@ vi.stubGlobal('matchMedia', (query: string) => ({
   addEventListener: () => undefined,
   removeEventListener: () => undefined,
 }))
+
+// jsdom has no layout, so Range lacks the rect methods CodeMirror measures
+// with when it scrolls a position into view.
+const emptyRect = () => new DOMRect()
+Range.prototype.getBoundingClientRect = emptyRect
+Range.prototype.getClientRects = () => Object.assign([], { item: () => null })

@@ -30,9 +30,9 @@ const LANGUAGES: Record<EditorLanguage, (schema?: GraphQLSchema) => Extension> =
 
 /**
  * Resolve the CodeMirror language extension for the given language, passing the
- * schema through to GraphQL when present.
+ * schema through to GraphQL when present. No language means plain text.
  */
 export const languageExtension = (
-  language: EditorLanguage,
+  language: EditorLanguage | undefined,
   schema?: GraphQLSchema
-): Extension => LANGUAGES[language](schema)
+): Extension => (language ? LANGUAGES[language](schema) : [])

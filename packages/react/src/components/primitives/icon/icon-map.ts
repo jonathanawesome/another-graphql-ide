@@ -10,6 +10,7 @@ import { Code } from './icons/code'
 import { Combine } from './icons/combine'
 import { Compass } from './icons/compass'
 import { Copy } from './icons/copy'
+import { EyeOff } from './icons/eye-off'
 import { Gear } from './icons/gear'
 import { GraphQL } from './icons/graphql'
 import { InsertCode } from './icons/insert-code'
@@ -42,6 +43,7 @@ export const IconMap = {
   Combine,
   Compass,
   Copy,
+  EyeOff,
   Gear,
   GraphQL,
   InsertCode,

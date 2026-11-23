@@ -1,6 +1,18 @@
 // The editing surface, fully prop-driven and usable on its own.
 export { Editor } from './bricks/editor/editor'
 export type { EditorProps } from './bricks/editor/editor'
+// What DocumentPane adds to Editor, for hosts building their own operation editor.
+export { useOperationExtensions } from './bricks/editor/hooks/use-operation-extensions'
+export type { UseOperationExtensionsParams } from './bricks/editor/hooks/use-operation-extensions'
+
+// A read-only schema viewer, prop-driven like Editor.
+export { SdlViewer } from './bricks/sdl-viewer/sdl-viewer'
+export type { SdlViewerProps } from './bricks/sdl-viewer/sdl-viewer'
+export type {
+  SdlAnnotation,
+  SdlTag,
+} from './bricks/sdl-viewer/codemirror/line-state'
+export type { Coordinate as SdlCoordinate } from './bricks/sdl-viewer/codemirror/sdl-index'
 
 // Bricks. Each reads its configuration from the surrounding AGIProvider.
 export { ConnectionBar } from './bricks/connection-bar/connection-bar'

@@ -21,7 +21,9 @@ describe('public exports', () => {
       'ResponsePane',
       'RunControl',
       'SchemaTree',
+      'SdlViewer',
       'VariablesEditor',
+      'useOperationExtensions',
     ])
   })
 

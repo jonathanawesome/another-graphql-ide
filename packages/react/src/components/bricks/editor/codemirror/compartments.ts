@@ -1,4 +1,4 @@
-import { Compartment, EditorState } from '@codemirror/state'
+import { Compartment, EditorState, type Extension } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 import type { GraphQLSchema } from 'graphql'
 
@@ -8,7 +8,7 @@ import type { EditorLanguage } from './types'
 
 /**
  * Compartments let us reconfigure parts of the editor (language, theme,
- * read-only) on a live EditorView without rebuilding it. Each has a paired
+ * read-only, caller extensions) on a live EditorView without rebuilding it. Each has a paired
  * `initial*` builder (used by the setup factory) and `reconfigure*` helper
  * (used by the React binding), so every reconfigure transaction is defined in
  * exactly one place.
@@ -16,6 +16,7 @@ import type { EditorLanguage } from './types'
 export const languageCompartment = new Compartment()
 export const themeCompartment = new Compartment()
 export const readOnlyCompartment = new Compartment()
+export const extensionsCompartment = new Compartment()
 
 /** Combined read-only + non-editable extension for a given flag. */
 const readOnlyExtension = (readOnly: boolean) => [
@@ -24,7 +25,7 @@ const readOnlyExtension = (readOnly: boolean) => [
 ]
 
 export const initialLanguage = (
-  language: EditorLanguage,
+  language: EditorLanguage | undefined,
   schema?: GraphQLSchema
 ) => languageCompartment.of(languageExtension(language, schema))
 
@@ -34,9 +35,12 @@ export const initialTheme = (dark: boolean) =>
 export const initialReadOnly = (readOnly: boolean) =>
   readOnlyCompartment.of(readOnlyExtension(readOnly))
 
+export const initialExtensions = (extensions: Extension = []) =>
+  extensionsCompartment.of(extensions)
+
 export const reconfigureLanguage = (
   view: EditorView,
-  language: EditorLanguage,
+  language: EditorLanguage | undefined,
   schema?: GraphQLSchema
 ) => {
   view.dispatch({
@@ -54,4 +58,11 @@ export const reconfigureReadOnly = (view: EditorView, readOnly: boolean) => {
   view.dispatch({
     effects: readOnlyCompartment.reconfigure(readOnlyExtension(readOnly)),
   })
+}
+
+export const reconfigureExtensions = (
+  view: EditorView,
+  extensions: Extension = []
+) => {
+  view.dispatch({ effects: extensionsCompartment.reconfigure(extensions) })
 }

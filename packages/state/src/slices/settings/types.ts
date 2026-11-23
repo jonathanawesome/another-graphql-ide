@@ -7,7 +7,7 @@
 export type ObjectFieldInsertionMode = 'typename' | 'bare'
 
 /**
- * Colour scheme preference. `system` follows the OS, which is resolved where
+ * color scheme preference. `system` follows the OS, which is resolved where
  * the DOM is: this package stays free of `matchMedia`.
  */
 export type Theme = 'light' | 'dark' | 'system'
