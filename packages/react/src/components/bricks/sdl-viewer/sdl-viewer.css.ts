@@ -1,4 +1,9 @@
-import { recipe, style, themeContract } from '@another-graphql-ide/style'
+import {
+  recipe,
+  style,
+  textStyles,
+  themeContract,
+} from '@another-graphql-ide/style'
 
 export const sdlViewerStyles = {
   root: recipe(
@@ -9,14 +14,14 @@ export const sdlViewerStyles = {
         height: '100%',
         width: '100%',
         minWidth: 0,
-        backgroundColor: themeContract.colors.neutral2,
+        backgroundColor: themeContract.bg.surface,
       },
       variants: {
         frame: {
           none: {},
           bordered: {
-            border: `1px solid ${themeContract.colors.neutral4}`,
-            borderRadius: themeContract.radii.small,
+            border: `1px solid ${themeContract.border.subtle}`,
+            borderRadius: themeContract.radii.md,
             overflow: 'hidden',
           },
         },
@@ -44,7 +49,7 @@ export const sdlViewerStyles = {
     inset: 0,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: themeContract.colors.neutral2,
+    backgroundColor: themeContract.bg.surface,
   }),
 
   empty: style({
@@ -52,10 +57,9 @@ export const sdlViewerStyles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: themeContract.px[24],
-    fontFamily: themeContract.fonts.sans,
-    fontSize: themeContract.px[13],
-    color: themeContract.colors.neutral6,
+    padding: themeContract.px[40],
+    ...textStyles.bodyDense,
+    color: themeContract.text.secondary,
     textAlign: 'center',
   }),
 
@@ -65,11 +69,10 @@ export const sdlViewerStyles = {
     justifyContent: 'space-between',
     gap: themeContract.px[16],
     minHeight: themeContract.px[40],
-    paddingInline: themeContract.px[16],
-    borderTop: `1px solid ${themeContract.colors.neutral4}`,
-    fontFamily: themeContract.fonts.sans,
-    fontSize: themeContract.px[12],
-    color: themeContract.colors.neutral6,
+    paddingInline: themeContract.px[14],
+    borderTop: `1px solid ${themeContract.border.subtle}`,
+    ...textStyles.bodyDense,
+    color: themeContract.text.tertiary,
   }),
 
   status: style({
@@ -84,7 +87,7 @@ const bar = {
   display: 'block',
   height: themeContract.px[8],
   borderRadius: themeContract.px[4],
-  backgroundColor: themeContract.colors.neutral3,
+  backgroundColor: themeContract.bg.track,
 } as const
 
 export const skeletonStyles = {
