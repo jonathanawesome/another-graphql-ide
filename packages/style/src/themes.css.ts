@@ -362,7 +362,7 @@ const sharedTokens = {
 
   fonts: {
     sans: '"InstrumentSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    mono: '"SF Mono", Monaco, "JetBrains Mono", Consolas, monospace',
+    mono: '"JetBrainsMono", "JetBrains Mono", "SF Mono", Monaco, Consolas, monospace',
   },
 
   motion: {
