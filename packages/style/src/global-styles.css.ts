@@ -18,7 +18,7 @@ globalStyle('body', {
   margin: 0,
   fontFamily: themeContract.fonts.sans,
   fontSize: themeContract.px[14],
-  color: themeContract.colors.neutral7,
+  color: themeContract.text.primary,
   WebkitFontSmoothing: 'antialiased',
   MozOsxFontSmoothing: 'grayscale',
 })
@@ -67,7 +67,7 @@ globalStyle(
 
 // Focus styles
 globalStyle('*:focus-visible', {
-  // outline: `2px solid ${themeContract.colors.borderFocus}`,
+  outline: `2px solid ${themeContract.focus.ring}`,
   outlineOffset: '2px',
 })
 
@@ -121,17 +121,17 @@ globalStyle('::-webkit-scrollbar', {
 
 globalStyle('::-webkit-scrollbar-track', {
   background: 'transparent', // Track background
-  borderRadius: themeContract.px[6],
+  borderRadius: themeContract.radii.full,
 })
 
 globalStyle('::-webkit-scrollbar-thumb', {
-  background: themeContract.colors.neutral5, // Scrollbar handle
-  borderRadius: themeContract.px[6],
+  background: themeContract.border.strong, // Scrollbar handle
+  borderRadius: themeContract.radii.full,
   transition: 'background 0.3s ease',
 })
 
 globalStyle('::-webkit-scrollbar-thumb:hover', {
-  background: themeContract.colors.neutral6, // Darker on hover
+  background: themeContract.border.emphasis, // Darker on hover
 })
 
 globalStyle('::-webkit-scrollbar-corner', {
@@ -141,5 +141,5 @@ globalStyle('::-webkit-scrollbar-corner', {
 // For Firefox (uses different syntax)
 globalStyle('html', {
   scrollbarWidth: 'thin',
-  scrollbarColor: `${themeContract.colors.neutral5} transparent`, // thumb track
+  scrollbarColor: `${themeContract.border.strong} transparent`, // thumb track
 })
