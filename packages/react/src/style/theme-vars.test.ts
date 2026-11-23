@@ -6,17 +6,17 @@ describe('themeVars', () => {
   it('maps tokens to their CSS custom properties', () => {
     expect(
       themeVars({
-        colors: { brand: 'red', neutral1: 'black' },
-        radii: { small: '0' },
+        fill: { primary: 'red', accentSoftHover: 'pink' },
+        radii: { sm: '0' },
       })
     ).toEqual({
-      '--agi-colors-brand': 'red',
-      '--agi-colors-neutral1': 'black',
-      '--agi-radii-small': '0',
+      '--agi-fill-primary': 'red',
+      '--agi-fill-accent-soft-hover': 'pink',
+      '--agi-radii-sm': '0',
     })
   })
 
   it('skips tokens left undefined', () => {
-    expect(themeVars({ colors: { brand: undefined } })).toEqual({})
+    expect(themeVars({ fill: { primary: undefined } })).toEqual({})
   })
 })
