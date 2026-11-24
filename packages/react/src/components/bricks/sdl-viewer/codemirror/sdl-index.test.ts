@@ -20,6 +20,8 @@ enum Role {
 
 input UserFilter {
   role: Role = ADMIN
+  active: Boolean = true
+  after: ID = null
 }
 
 directive @key(fields: String!) repeatable on OBJECT
@@ -130,6 +132,8 @@ describe('indexSdl', () => {
       ['"full"', 'string'],
       ['ADMIN', 'enumValue'],
       ['ADMIN', 'enumValue', 1],
+      ['true', 'number'],
+      ['null', 'number'],
       ['repeatable', 'keyword'],
     ]
 
