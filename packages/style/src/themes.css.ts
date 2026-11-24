@@ -229,15 +229,15 @@ const semanticColors = {
       secondary: palette.wax[300],
       tertiary: palette.wax[400],
       disabled: palette.wax[600],
-      link: palette.pollen[300],
+      link: palette.pollen[200],
     },
     link: {
-      underline: palette.pollen[300],
+      underline: palette.pollen[200],
     },
     fill: {
-      primary: palette.pollen[300],
+      primary: palette.pollen[200],
       primaryHover: palette.pollen[200],
-      primaryEdge: palette.pollen[300],
+      primaryEdge: palette.pollen[200],
       accentSoft: palette.pollen[900],
       accentSoftHover: palette.pollen[850],
       inverse: palette.wax[50],
@@ -245,18 +245,18 @@ const semanticColors = {
     },
     on: {
       primary: palette.wax[850],
-      accentSoft: palette.pollen[300],
+      accentSoft: palette.pollen[200],
       inverse: palette.wax[850],
     },
     accent: {
       softEdge: palette.pollen[850],
       selectedEdge: palette.pollen[700],
-      line: palette.pollen[300],
-      area: palette.pollen[300],
-      text: palette.pollen[300],
+      line: palette.pollen[200],
+      area: palette.pollen[200],
+      text: palette.pollen[200],
     },
     focus: {
-      ring: palette.pollen[300],
+      ring: palette.pollen[200],
     },
     meadow: {
       borage: palette.borage[300],

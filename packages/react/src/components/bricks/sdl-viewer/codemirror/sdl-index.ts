@@ -52,6 +52,7 @@ const ROLES: SdlTokenKind[] = [
   'enumValue',
   'directive',
   'comment',
+  'number',
 ]
 const ROLE = Object.fromEntries(
   ROLES.map((kind, i) => [kind, i + 1])
@@ -139,8 +140,8 @@ const NAME_ROLE: Partial<Record<string, SdlTokenKind>> = {
 // Values colored as a whole rather than through a name.
 const VALUE_ROLE: Partial<Record<string, SdlTokenKind>> = {
   [Kind.ENUM]: 'enumValue',
-  [Kind.BOOLEAN]: 'enumValue',
-  [Kind.NULL]: 'enumValue',
+  [Kind.BOOLEAN]: 'number',
+  [Kind.NULL]: 'number',
 }
 
 const TOKEN_ROLE: Partial<Record<string, SdlTokenKind>> = {
