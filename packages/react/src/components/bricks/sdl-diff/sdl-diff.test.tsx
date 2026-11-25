@@ -175,6 +175,70 @@ describe('SdlDiff', () => {
     expect(editorOf(container).state.sliceDoc(from, to)).toBe('f2:')
   })
 
+  describe('full view', () => {
+    it('shows all of the new document, with nothing marked or folded', () => {
+      const { container } = setup({
+        before: `${long}\nscalar Gone`,
+        after: longEdited,
+        view: 'full',
+      })
+
+      expect(lines(container)).toEqual(longEdited.split('\n'))
+      expect(
+        lines(container, '.cm-sdl-added, .cm-line.cm-sdl-removed')
+      ).toEqual([])
+      expect(findAll(container, '.cm-sdl-folded')).toEqual([])
+      expect(gutter(container)).toEqual(
+        Array.from({ length: 32 }, (_, i) => String(i + 1))
+      )
+    })
+
+    it('switches back without comparing again', () => {
+      const onResult = vi.fn()
+      const props = { before, after, onResult }
+      const { container, rerender } = setup(props)
+      rerender(<SdlDiff {...props} view="full" />)
+      settle()
+      expect(lines(container)).toEqual(after.split('\n'))
+
+      rerender(<SdlDiff {...props} view="diff" />)
+      expect(lines(container)).toHaveLength(4)
+      rerender(<SdlDiff {...props} view="full" />)
+      expect(lines(container)).toHaveLength(3)
+      expect(
+        findAll(container, '.cm-sdl-type').map(type => type.textContent)
+      ).toEqual(['Query', 'ID'])
+      expect(onResult).toHaveBeenCalledOnce()
+    })
+
+    it('still reports what changed, and rows as the new side', () => {
+      const onResult = vi.fn()
+      const onSelect = vi.fn()
+      const { container } = setup({ view: 'full', onResult, onSelect })
+      expect(onResult).toHaveBeenLastCalledWith({
+        kind: 'diff',
+        added: 1,
+        removed: 1,
+      })
+
+      act(() => {
+        editorOf(container).dispatch({ effects: selectLine.of(2) })
+      })
+      expect(onSelect).toHaveBeenLastCalledWith({
+        side: 'after',
+        coordinate: 'Query.a',
+      })
+    })
+
+    it('follows a new document', () => {
+      const { container, rerender } = setup({ view: 'full' })
+      rerender(<SdlDiff before={before} after="scalar B" view="full" />)
+      settle()
+
+      expect(lines(container)).toEqual(['scalar B'])
+    })
+  })
+
   describe('rows', () => {
     const older = [
       'type Query {',

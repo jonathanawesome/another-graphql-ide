@@ -43,6 +43,7 @@ const subgraphAfter = subgraphSdl
 export const Subgraph = createPreview({
   label: 'Subgraph SDL',
   controls: {
+    full: { type: 'boolean', default: false },
     context: { type: 'number', default: 3 },
     loading: { type: 'boolean', default: false },
   },
@@ -50,6 +51,7 @@ export const Subgraph = createPreview({
     <Framed
       before={subgraphSdl}
       after={subgraphAfter}
+      view={values.full ? 'full' : 'diff'}
       context={values.context}
       loading={values.loading}
     />
@@ -113,7 +115,14 @@ const supergraphAfter = editFields(supergraph, 3000).sdl
 
 export const LargeSupergraph = createPreview({
   label: 'Large supergraph',
-  render: () => <Framed before={supergraph} after={supergraphAfter} />,
+  controls: { full: { type: 'boolean', default: false } },
+  render: values => (
+    <Framed
+      before={supergraph}
+      after={supergraphAfter}
+      view={values.full ? 'full' : 'diff'}
+    />
+  ),
 })
 
 export const LargeSupergraphLinks = createPreview({

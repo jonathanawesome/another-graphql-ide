@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 import type { RenderHover } from '../sdl-shared/hover-card'
 import { LoadingShell } from '../sdl-shared/loading-shell'
@@ -25,6 +25,8 @@ export type SdlDiffProps = {
   before: string
   /** The new schema as SDL text. */
   after: string
+  /** What changed, or `after` in full with nothing marked or folded. */
+  view?: 'diff' | 'full'
   /** Unchanged lines kept around each change before a run folds. */
   context?: number
   /** Placeholder lines, e.g. while the host fetches either document. */
@@ -40,7 +42,7 @@ export type SdlDiffProps = {
    * card. Called on each hover to decide, so keep it cheap.
    */
   renderHover?: RenderHover
-  /** Called with what each comparison found. */
+  /** Called with what each comparison found, in either view. */
   onResult?: (result: SdlDiffResult) => void
   /** Overrides the surrounding ThemeProvider. Light when neither is set. */
   theme?: 'light' | 'dark'
@@ -55,12 +57,13 @@ export type SdlDiffProps = {
  * and unchanged lines in one column, long unchanged runs folded, with colors,
  * a find bar, row selection, type links and hover cards. Documents with no
  * changes show `after` in full. Compares line by line in a worker, so pass both
- * documents sorted to ignore order.
+ * documents sorted to ignore order. `view` switches to all of `after`.
  * Prop-driven; needs no AGIProvider.
  */
 export const SdlDiff = ({
   before,
   after,
+  view = 'diff',
   context = 3,
   loading = false,
   tooLarge = 'This diff is too large to show.',
@@ -72,24 +75,31 @@ export const SdlDiff = ({
   frame,
   height,
 }: SdlDiffProps) => {
-  const { id, result, details } = useSdlComparison(
-    { before, after, context },
-    !loading
+  // Each is kept once made, so switching back and forth is instant. A document
+  // compared with itself is shown in full, with the diff's own gutter.
+  const [fullSeen, setFullSeen] = useState(false)
+  if (view === 'full' && !fullSeen) setFullSeen(true)
+  const diff = useSdlComparison({ before, after, context }, !loading)
+  const full = useSdlComparison(
+    { before: after, after, context },
+    !loading && fullSeen
   )
+  const { id, result, details } = view === 'full' ? full : diff
 
   const onResultRef = useRef(onResult)
   useEffect(() => {
     onResultRef.current = onResult
   })
+  const compared = diff.result
   useEffect(() => {
-    if (!result) return
-    const { kind } = result
+    if (!compared) return
+    const { kind } = compared
     onResultRef.current?.(
       kind === 'too-large'
         ? { kind, added: 0, removed: 0 }
-        : { kind, added: result.added, removed: result.removed }
+        : { kind, added: compared.added, removed: compared.removed }
     )
-  }, [result])
+  }, [compared])
 
   return (
     <div
@@ -109,7 +119,7 @@ export const SdlDiff = ({
         {result && result.kind !== 'too-large' && (
           <div className={frameStyles.editor}>
             <DiffEditor
-              key={id}
+              key={`${view} ${id}`}
               diff={result}
               details={details}
               onSelect={onSelect}
