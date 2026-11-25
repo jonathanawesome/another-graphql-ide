@@ -2,6 +2,8 @@ import { textStyles, themeContract } from '@another-graphql-ide/style'
 import { Prec, type Extension } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 
+import { MESSAGE_ROW_HEIGHT, MESSAGE_WIDTH_VAR } from './message-rows'
+
 /** Fixed row height, so the annotation column lines up with the code. */
 export const SDL_LINE_HEIGHT = 26
 
@@ -41,6 +43,50 @@ const theme = EditorView.theme({
   // Type links keep the type's color and underline on hover.
   '.cm-sdl-link': { color: 'inherit', textDecoration: 'none' },
   '.cm-sdl-link:hover': { textDecoration: 'underline' },
+
+  // Message rows, tinted through the gutters.
+  '.cm-sdl-message-warning': {
+    backgroundColor: themeContract.status.warningBg,
+  },
+  '.cm-sdl-message-danger': { backgroundColor: themeContract.status.dangerBg },
+  '.cm-sdl-message': {
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: themeContract.px[7],
+    minHeight: `${MESSAGE_ROW_HEIGHT}px`,
+    boxSizing: 'border-box',
+    paddingBlock: themeContract.px[6],
+    // Lines up with the code.
+    paddingInlineStart: themeContract.px[6],
+    // Wraps in view, rather than at the end of the longest line.
+    paddingInlineEnd: `calc(${themeContract.px[16]} + max(0px, 100% - var(${MESSAGE_WIDTH_VAR}, 100%)))`,
+    // Long text must not widen the code.
+    contain: 'inline-size',
+    whiteSpace: 'normal',
+    ...textStyles.bodyDense,
+    color: themeContract.text.primary,
+  },
+  '.cm-sdl-message-dot': {
+    flexShrink: 0,
+    width: themeContract.px[7],
+    height: themeContract.px[7],
+    borderRadius: '50%',
+    // An empty box's baseline is its bottom edge.
+    transform: 'translateY(-1px)',
+  },
+  '.cm-sdl-message-warning .cm-sdl-message-dot': {
+    backgroundColor: themeContract.status.warning,
+  },
+  '.cm-sdl-message-danger .cm-sdl-message-dot': {
+    backgroundColor: themeContract.status.danger,
+  },
+  '.cm-sdl-message-code': {
+    // A name that does not fit moves to the next line whole.
+    display: 'inline-block',
+    marginInlineStart: themeContract.px[10],
+    ...textStyles.codeSmall,
+    color: themeContract.text.secondary,
+  },
 
   // Hover card: the popover's surface around the host's content.
   '.cm-tooltip.cm-tooltip-hover': {

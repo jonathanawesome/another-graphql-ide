@@ -6,6 +6,7 @@ import { Editor } from '../editor/editor'
 import { FindBar } from '../sdl-shared/find-bar'
 import type { SdlAnnotation, SdlTag } from '../sdl-shared/line-state'
 import { LoadingShell } from '../sdl-shared/loading-shell'
+import type { SdlMessages } from '../sdl-shared/message-rows'
 import { sdlFrameStyles as frameStyles } from '../sdl-shared/sdl-frame.css'
 import type { Coordinate } from '../sdl-shared/sdl-index'
 import type { TypeHref } from '../sdl-shared/type-links'
@@ -21,7 +22,7 @@ export type SdlViewerProps = {
   /**
    * Pretty-print before showing. Text that does not parse is shown as is.
    * On by default when annotations or tags are given, since they need one
-   * coordinate per line.
+   * coordinate per line, but not with messages, since those are by line.
    */
   format?: boolean
   /** Placeholder lines, and "Loading schema…" in the footer. */
@@ -36,6 +37,8 @@ export type SdlViewerProps = {
   tags?: ReadonlyMap<Coordinate, SdlTag>
   /** Lines to render dimmed, e.g. filtered out by the host. */
   dimmed?: ReadonlySet<Coordinate>
+  /** Rows under lines, by line of `sdl`, e.g. lint results. */
+  messages?: SdlMessages
   /** Moves the selected row to this coordinate when it changes. */
   selected?: Coordinate
   /** Called when the user selects a row, with its coordinate if it has one. */
@@ -116,9 +119,9 @@ const CopyButton = ({
 
 /**
  * A read-only view of a schema as SDL, with colors, folding, a find bar,
- * modifier-click go-to-definition, row selection, type links, hover cards and a per-line
- * annotation column keyed by schema coordinate. Prop-driven; needs no
- * AGIProvider.
+ * modifier-click go-to-definition, row selection, type links, hover cards,
+ * messages under lines and a per-line annotation column keyed by schema
+ * coordinate. Prop-driven; needs no AGIProvider.
  */
 export const SdlViewer = ({
   sdl,
@@ -129,6 +132,7 @@ export const SdlViewer = ({
   annotationLabel,
   tags,
   dimmed,
+  messages,
   selected,
   onSelect,
   reveal,
@@ -142,7 +146,7 @@ export const SdlViewer = ({
   height,
 }: SdlViewerProps) => {
   const withColumn = annotations !== undefined || tags !== undefined
-  const pretty = format ?? withColumn
+  const pretty = format ?? (withColumn && messages === undefined)
   const text = useMemo(() => (pretty ? formatSdl(sdl) : sdl), [pretty, sdl])
   const isEmpty = !loading && sdl.trim() === ''
   const [ownCollapsed, setOwnCollapsed] = useState(false)
@@ -153,6 +157,7 @@ export const SdlViewer = ({
   }
   const { extensions, findPanel, card } = useSdlExtensions(sdlExtensions, {
     data: { annotations, tags, dimmed },
+    messages,
     selected:
       selected === undefined
         ? undefined

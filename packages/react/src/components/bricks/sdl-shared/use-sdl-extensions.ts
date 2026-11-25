@@ -16,6 +16,13 @@ import {
   type LineData,
   type SdlLocation,
 } from './line-state'
+import {
+  NO_MESSAGES,
+  initMessageRows,
+  messageRows,
+  setMessages,
+  type SdlMessages,
+} from './message-rows'
 import { rowAtLine, sdlRows, type SdlRow } from './sdl-rows'
 import { SDL_LINE_HEIGHT } from './sdl-theme'
 import {
@@ -28,6 +35,8 @@ import {
 export type UseSdlExtensionsParams = {
   /** Dimming, and the annotation column. Without any there is no column. */
   data?: LineData
+  /** Rows under lines. */
+  messages?: SdlMessages
   selected?: SdlLocation
   onSelect?: (row: SdlRow) => void
   reveal?: SdlLocation & { nonce: number }
@@ -121,6 +130,7 @@ const createHandlers = (
   const extensions: Extension = [
     base,
     lineStateField.init(state => initialLineState(state, data, selected)),
+    initMessageRows(params.messages),
     linePointer,
     typeLinks(params.typeHref),
     column.of(showsColumn(params) ? annotationGutter : []),
@@ -174,7 +184,7 @@ export const useSdlExtensions = (
   const [{ handlers, column, extensions }] = useState(() =>
     createHandlers(base, params, setFindPanel, setCard)
   )
-  const { data = NO_DATA, reveal, typeHref } = params
+  const { data = NO_DATA, messages = NO_MESSAGES, reveal, typeHref } = params
   const { side, coordinate } = params.selected ?? {}
   const withColumn = showsColumn(params)
 
@@ -196,6 +206,12 @@ export const useSdlExtensions = (
     }
     view.dispatch({ effects: setLineData.of(data) })
   })
+
+  useEffect(() => {
+    const view = handlers.view
+    if (!view || view.state.field(messageRows).messages === messages) return
+    view.dispatch({ effects: setMessages.of(messages) })
+  }, [handlers, messages])
 
   // A layout effect, so the find bar's passive effects see the new column.
   useLayoutEffect(() => {

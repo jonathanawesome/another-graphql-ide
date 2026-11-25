@@ -215,8 +215,8 @@ export const linePointer = ViewPlugin.define(view => {
   const lineAt = (event: MouseEvent) => {
     const y = event.clientY - view.documentTop
     if (y < 0 || y >= view.contentHeight) return null
-    const block = view.lineBlockAtHeight(y)
-    // A widget in place of lines, such as a folded run, is not a row.
+    const block = view.elementAtHeight(y)
+    // A widget, such as a folded run or a message, is not a row.
     if (block.type !== BlockType.Text) return null
     return view.state.doc.lineAt(block.from).number
   }

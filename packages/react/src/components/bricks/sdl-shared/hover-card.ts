@@ -2,7 +2,7 @@ import type { Extension } from '@codemirror/state'
 import { hoverTooltip, type HoverTooltipSource } from '@codemirror/view'
 import type { ReactNode } from 'react'
 
-import type { SdlLocation } from './line-state'
+import { lineStateField, type SdlLocation } from './line-state'
 import type { Coordinate } from './sdl-index'
 import { rowAtLine, type SdlSide } from './sdl-rows'
 
@@ -52,5 +52,14 @@ export const hoverCardSource =
  * along the line or into the card. The card is an empty element; the host's
  * content is portaled into it.
  */
-export const hoverCard = (render: RenderHover, setCard: SetCard): Extension =>
-  hoverTooltip(hoverCardSource(render, setCard), { hideOnChange: true })
+export const hoverCard = (render: RenderHover, setCard: SetCard): Extension => {
+  const source = hoverCardSource(render, setCard)
+  return hoverTooltip(
+    // CodeMirror reports a widget's line too, but only a row has a card.
+    (view, pos, side) =>
+      view.state.field(lineStateField).hover === null
+        ? null
+        : source(view, pos, side),
+    { hideOnChange: true }
+  )
+}

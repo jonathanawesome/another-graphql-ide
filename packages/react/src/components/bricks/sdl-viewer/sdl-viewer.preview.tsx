@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { createPreview, type NavPath } from 'react-foundry'
 
 import { Button } from '../../primitives/button/button'
+import type { SdlMessage } from '../sdl-shared/message-rows'
 
 import { makeLineData, makeSupergraph, subgraphSdl } from './__fixtures__/sdl'
 import { SdlViewer } from './sdl-viewer'
@@ -131,6 +132,54 @@ export const Annotations = createPreview({
   ),
 })
 
+const subgraphAnnotations = makeLineData(subgraphSdl).annotations
+
+// On the lines that open and close a fold, and two on one line.
+const messages: SdlMessage[] = [
+  {
+    line: 4,
+    tone: 'warning',
+    text: 'User has no owner',
+    code: 'require-owner',
+  },
+  {
+    line: 5,
+    tone: 'warning',
+    text: 'User.id needs a description',
+    code: 'require-description',
+  },
+  {
+    line: 8,
+    tone: 'danger',
+    text: 'User.email is deprecated without a removal date',
+    code: 'require-deprecation-date',
+  },
+  {
+    line: 8,
+    tone: 'warning',
+    text: 'User.email needs a description. Say what the address is for, whether it has been verified, who may read it, and what a client should show when it is missing, so nobody has to ask the team that owns it.',
+    code: 'require-description',
+  },
+  { line: 11, tone: 'warning', text: 'User has no updatedAt field' },
+]
+
+export const Messages = createPreview({
+  label: 'Messages',
+  controls: { annotated: { type: 'boolean', default: false } },
+  render: values => (
+    <Frame>
+      <SdlViewer
+        sdl={subgraphSdl}
+        messages={messages}
+        annotations={values.annotated ? subgraphAnnotations : undefined}
+        annotationLabel={values.annotated ? 'Requests' : undefined}
+        renderHover={coordinate => coordinate}
+        frame="bordered"
+      />
+    </Frame>
+  ),
+})
+
 // About 4,000 types: tens of thousands of lines with long @join__field lines.
 const supergraph = makeSupergraph(4000)
 
@@ -150,8 +199,6 @@ export const LargeSupergraphAnnotated = createPreview({
     <Annotated sdl={supergraph} dim={values.dim} revealTo="Type2000" />
   ),
 })
-
-const subgraphAnnotations = makeLineData(subgraphSdl).annotations
 
 export const Loading = createPreview({
   label: 'Loading',
