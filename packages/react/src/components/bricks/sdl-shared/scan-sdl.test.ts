@@ -115,10 +115,10 @@ describe('scanSdl', () => {
     ['type A {\n  a: Int @x(y: ', 'value'],
     ['input A {\n  a: ', 'input'],
     ['directive @a(b: ', 'input'],
-    ['union A = ', 'output'],
-    ['union A = B | ', 'output'],
-    ['type A implements ', 'output'],
-    ['type A implements B & ', 'output'],
+    ['union A = ', 'object'],
+    ['union A = B | ', 'object'],
+    ['type A implements ', 'interface'],
+    ['type A implements B & ', 'interface'],
   ])('after %j expects %s', (sdl, expected) => {
     expect(scanSdl(sdl).expects).toBe(expected)
   })

@@ -31,6 +31,7 @@ declare module "react-foundry" {
       | "Bricks/Schema Tree"
       | "Bricks/Schema Tree Settings"
       | "Bricks/SDL Diff"
+      | "Bricks/SDL Editor"
       | "Bricks/SDL Viewer"
       | "Bricks/Variables Editor"
       | "Panes"

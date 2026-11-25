@@ -4,7 +4,14 @@ import type { SdlToken, SdlTokenKind } from './sdl-index'
 
 /** What a name at a position would be. */
 export type SdlExpectation =
-  'keyword' | 'name' | 'output' | 'input' | 'directive' | 'value'
+  | 'keyword'
+  | 'name'
+  | 'output'
+  | 'input'
+  | 'interface'
+  | 'object'
+  | 'directive'
+  | 'value'
 
 export type SdlScan = {
   tokens: SdlToken[]
@@ -50,31 +57,27 @@ const BRACKET_R: string = TokenKind.BRACKET_R
 // Lexing restarts from a fresh slice, so text full of errors is cut short.
 const MAX_RESTARTS = 50
 
+type Lexed = { token: Token; start: number; end: number; line: number }
+
 /** Lexes past the errors graphql-js stops at, with offsets into the whole text. */
-function* lexTolerant(
-  sdl: string
-): Generator<{ token: Token; start: number; end: number; line: number }> {
+export function* lexTolerant(sdl: string): Generator<Lexed> {
   let base = 0
   let baseLine = 0
   for (let restart = 0; restart <= MAX_RESTARTS; restart++) {
     const lexer = new Lexer(new Source(base ? sdl.slice(base) : sdl))
     let last = lexer.token
     let stopped: GraphQLError | undefined
-    try {
-      while (lexer.advance().kind !== TokenKind.EOF) {
-        // Comments are linked in but never returned, so yield what was linked.
-        while (last.next && last !== lexer.token) {
-          last = last.next
-          yield {
-            token: last,
-            start: base + last.start,
-            end: base + last.end,
-            line: baseLine + last.line,
-          }
-        }
+    let more = true
+    while (more) {
+      try {
+        more = lexer.advance().kind !== TokenKind.EOF
+      } catch (error) {
+        if (!(error instanceof GraphQLError)) throw error
+        stopped = error
+        more = false
       }
-      // Comments after the last token.
-      while (last.next && (last.next.kind as string) === COMMENT) {
+      // Comments are linked in but never returned, so this reads the links.
+      while (last.next && last.next.kind !== TokenKind.EOF) {
         last = last.next
         yield {
           token: last,
@@ -83,14 +86,10 @@ function* lexTolerant(
           line: baseLine + last.line,
         }
       }
-      return
-    } catch (error) {
-      if (!(error instanceof GraphQLError)) throw error
-      stopped = error
     }
 
-    const at = stopped.positions?.[0]
-    const line = stopped.locations?.[0]?.line
+    const at = stopped?.positions?.[0]
+    const line = stopped?.locations?.[0]?.line
     if (at === undefined || line === undefined) return
     // An unterminated string stops at its newline, anything else at a character.
     base += Math.max(sdl[base + at] === '\n' ? at : at + 1, 1)
@@ -170,7 +169,7 @@ export const scanSdl = (sdl: string): SdlScan => {
         }
         return 'type'
       }
-      if (expects === 'output' && value !== 'on') {
+      if (expects === 'interface' || expects === 'object') {
         expects = 'keyword'
         return 'type'
       }
@@ -180,7 +179,7 @@ export const scanSdl = (sdl: string): SdlScan => {
         expects = naming ? 'name' : 'keyword'
         return 'keyword'
       }
-      if (value === 'implements') expects = 'output'
+      if (value === 'implements') expects = 'interface'
       return 'keyword'
     }
 
@@ -293,13 +292,13 @@ export const scanSdl = (sdl: string): SdlScan => {
         break
       case EQUALS:
         // `union A = B` lists types. Anywhere else a value follows.
-        expects = stack.length ? 'value' : 'output'
+        expects = stack.length ? 'value' : 'object'
         break
       case PIPE:
-        if (!stack.length && definition === 'union') expects = 'output'
+        if (!stack.length && definition === 'union') expects = 'object'
         break
       case AMP:
-        if (!stack.length) expects = 'output'
+        if (!stack.length) expects = 'interface'
         break
       case BRACE_L:
         open(BRACE_R, line, end)

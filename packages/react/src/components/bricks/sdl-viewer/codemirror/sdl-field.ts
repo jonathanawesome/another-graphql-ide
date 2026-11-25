@@ -1,38 +1,19 @@
-import { RangeSetBuilder, StateField } from '@codemirror/state'
-import { Decoration, EditorView, type DecorationSet } from '@codemirror/view'
+import { StateField } from '@codemirror/state'
+import { EditorView, type DecorationSet } from '@codemirror/view'
 
 import {
   indexSdl,
   type SdlIndex,
   type SdlToken,
 } from '../../sdl-shared/sdl-index'
+import { sdlMarks } from '../../sdl-shared/sdl-marks'
 import { sdlRows, type SdlRows } from '../../sdl-shared/sdl-rows'
 
 type SdlState = { index: SdlIndex; marks: DecorationSet; rows: SdlRows }
 
-const markFor = Object.fromEntries(
-  (
-    [
-      'keyword',
-      'type',
-      'field',
-      'argument',
-      'enumValue',
-      'directive',
-      'string',
-      'number',
-      'comment',
-    ] as const
-  ).map(kind => [kind, Decoration.mark({ class: `cm-sdl-${kind}` })])
-) as Record<SdlToken['kind'], Decoration>
-
 const build = (doc: string): SdlState => {
   const index = indexSdl(doc)
-  const builder = new RangeSetBuilder<Decoration>()
-  for (const token of index.tokens) {
-    builder.add(token.from, token.to, markFor[token.kind])
-  }
-  return { index, marks: builder.finish(), rows: rowsOf(index) }
+  return { index, marks: sdlMarks(index.tokens), rows: rowsOf(index) }
 }
 
 /** Tokens that overlap a range, starting from a binary search. */
