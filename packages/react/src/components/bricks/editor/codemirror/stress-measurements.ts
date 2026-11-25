@@ -22,19 +22,19 @@ import {
   reorderDefinitions,
 } from '../../sdl-diff/__fixtures__/edits'
 import { runComparison } from '../../sdl-diff/compare/run-comparison'
-import { indexSdl } from '../../sdl-shared/sdl-index'
-import {
-  makeLineData,
-  makeSupergraph,
-  subgraphSdl,
-} from '../../sdl-viewer/__fixtures__/sdl'
 import {
   initialLineState,
   lineStateField,
   setHoverLine,
   setLineData,
   type LineData,
-} from '../../sdl-viewer/codemirror/line-state'
+} from '../../sdl-shared/line-state'
+import { indexSdl } from '../../sdl-shared/sdl-index'
+import {
+  makeLineData,
+  makeSupergraph,
+  subgraphSdl,
+} from '../../sdl-viewer/__fixtures__/sdl'
 import { sdlField } from '../../sdl-viewer/codemirror/sdl-field'
 
 import { makeLargeDocument } from './__fixtures__/large-doc'

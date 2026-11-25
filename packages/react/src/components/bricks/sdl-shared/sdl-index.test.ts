@@ -82,23 +82,16 @@ describe('indexSdl', () => {
     expect(index.coordinateAtLine.get(3)).toBe('Query.user(id:)')
   })
 
-  it('resolves types and directives to their definitions', () => {
-    const { definitions } = indexSdl(sdl)
-
-    expect(definitions.get('User')).toBe(sdl.indexOf('User @key'))
-    expect(definitions.get('@key')).toBe(sdl.indexOf('key(fields: String'))
-  })
-
   it('resolves an extension-only type to the extension', () => {
-    expect(indexSdl(sdl).definitions.get('Query')).toBe(sdl.indexOf('Query {'))
+    expect(indexSdl(sdl).lineOfCoordinate.get('Query')).toBe(
+      lineOf('extend type Query')
+    )
   })
 
   it('prefers a definition over an earlier extension', () => {
     const doc = 'extend type User { b: Int }\ntype User { a: Int }\n'
-    const index = indexSdl(doc)
 
-    expect(index.definitions.get('User')).toBe(doc.lastIndexOf('User'))
-    expect(index.lineOfCoordinate.get('User')).toBe(2)
+    expect(indexSdl(doc).lineOfCoordinate.get('User')).toBe(2)
   })
 
   it('folds multi-line bodies, ignoring braces inside strings', () => {
@@ -153,7 +146,7 @@ describe('indexSdl', () => {
     const index = indexSdl('type User {\n  name: String\n')
 
     expect(index.parsed).toBe(false)
-    expect(index.definitions.size).toBe(0)
+    expect(index.lineOfCoordinate.size).toBe(0)
     expect(index.folds.size).toBe(0)
     expect(index.coordinateAtLine.size).toBe(0)
   })

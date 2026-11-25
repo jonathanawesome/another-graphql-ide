@@ -6,6 +6,7 @@ import {
   type RangeSet,
 } from '@codemirror/state'
 import {
+  BlockType,
   Decoration,
   EditorView,
   GutterMarker,
@@ -14,10 +15,10 @@ import {
   type DecorationSet,
 } from '@codemirror/view'
 
-import type { IconNames } from '../../../primitives/icon/icon'
-import type { Coordinate } from '../../sdl-shared/sdl-index'
+import type { IconNames } from '../../primitives/icon/icon'
 
-import { sdlField } from './sdl-field'
+import type { Coordinate } from './sdl-index'
+import { sdlRows, type SdlSide } from './sdl-rows'
 
 /** A per-line value, an optional 0..1 ratio for its bar, and an error note. */
 export type SdlAnnotation = {
@@ -36,6 +37,9 @@ export type LineData = {
   dimmed?: ReadonlySet<Coordinate>
 }
 
+/** A coordinate, and the document it is in. */
+export type SdlLocation = { side: SdlSide; coordinate: Coordinate }
+
 /** The host's data changed. */
 export const setLineData = StateEffect.define<LineData>()
 /** The pointer is over this line, or over none. */
@@ -43,7 +47,7 @@ export const setHoverLine = StateEffect.define<number | null>()
 /** The user selected this line. The only change reported to the host. */
 export const selectLine = StateEffect.define<number | null>()
 /** The host selected this coordinate. */
-export const syncSelected = StateEffect.define<Coordinate | undefined>()
+export const syncSelected = StateEffect.define<SdlLocation | undefined>()
 
 type RowClass = 'hover' | 'selected' | 'dimmed'
 type Rows = { lines: DecorationSet; gutters: RangeSet<GutterMarker> }
@@ -85,12 +89,16 @@ const rowSets = (
   return { lines: decorations.finish(), gutters: markers.finish() }
 }
 
+const lineOf = (state: EditorState, location: SdlLocation | undefined) =>
+  (location &&
+    state.facet(sdlRows).lineOf(location.side, location.coordinate)) ??
+  null
+
 const dimmedRows = (state: EditorState, dimmed: LineData['dimmed']) => {
   const lines = new Set<number>()
-  const { index } = state.field(sdlField)
   for (const coordinate of dimmed ?? []) {
-    const line = index.lineOfCoordinate.get(coordinate)
-    if (line !== undefined) lines.add(line)
+    const line = lineOf(state, { side: 'after', coordinate })
+    if (line !== null) lines.add(line)
   }
   const rows = [...lines]
     .sort((a, b) => a - b)
@@ -127,12 +135,9 @@ export type LineState = {
 export const initialLineState = (
   state: EditorState,
   data: LineData,
-  selected?: Coordinate
+  selected?: SdlLocation
 ): LineState => {
-  const line =
-    selected === undefined
-      ? null
-      : (state.field(sdlField).index.lineOfCoordinate.get(selected) ?? null)
+  const line = lineOf(state, selected)
   return {
     data,
     hover: null,
@@ -150,18 +155,19 @@ export const lineStateField = StateField.define<LineState>({
   create: state => initialLineState(state, {}),
   update(value, tr) {
     let { data, hover, selected } = value
-    let dimmedChanged = tr.docChanged
+    const rows = tr.state.facet(sdlRows)
+    let dimmedChanged = tr.startState.facet(sdlRows) !== rows
 
     if (tr.docChanged) {
       // Keep the selection on the same coordinate in the new text.
-      const before = tr.startState.field(sdlField).index
-      const after = tr.state.field(sdlField).index
-      const coordinate =
-        selected === null ? undefined : before.coordinateAtLine.get(selected)
+      const { side, coordinate } =
+        selected === null
+          ? { side: 'after' as const, coordinate: undefined }
+          : tr.startState.facet(sdlRows).row(selected)
       selected =
         coordinate === undefined
           ? null
-          : (after.lineOfCoordinate.get(coordinate) ?? null)
+          : (rows.lineOf(side, coordinate) ?? null)
       hover = null
     }
 
@@ -174,11 +180,7 @@ export const lineStateField = StateField.define<LineState>({
       } else if (effect.is(selectLine)) {
         selected = effect.value
       } else if (effect.is(syncSelected)) {
-        const { index } = tr.state.field(sdlField)
-        selected =
-          effect.value === undefined
-            ? null
-            : (index.lineOfCoordinate.get(effect.value) ?? null)
+        selected = lineOf(tr.state, effect.value)
       }
     }
 
@@ -204,12 +206,6 @@ export const lineStateField = StateField.define<LineState>({
   ],
 })
 
-/** The coordinate on a line, if any. */
-export const coordinateAtLine = (state: EditorState, line: number | null) =>
-  line === null
-    ? undefined
-    : state.field(sdlField).index.coordinateAtLine.get(line)
-
 /**
  * Pointer tracking on the whole scroller, gutters included: hover follows the
  * pointer and a plain click selects the row. Modifier-click is left to
@@ -219,7 +215,10 @@ export const linePointer = ViewPlugin.define(view => {
   const lineAt = (event: MouseEvent) => {
     const y = event.clientY - view.documentTop
     if (y < 0 || y >= view.contentHeight) return null
-    return view.state.doc.lineAt(view.lineBlockAtHeight(y).from).number
+    const block = view.lineBlockAtHeight(y)
+    // A widget in place of lines, such as a folded run, is not a row.
+    if (block.type !== BlockType.Text) return null
+    return view.state.doc.lineAt(block.from).number
   }
 
   const hover = (line: number | null) => {

@@ -2,9 +2,10 @@ import { EditorView } from '@codemirror/view'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { hoverCardSource, type HoverCard } from './codemirror/hover-card'
-import { selectLine } from './codemirror/line-state'
-import { goToDefinition } from './codemirror/sdl-extensions'
+import { goToDefinition } from '../sdl-shared/go-to-definition'
+import { hoverCardSource, type HoverCard } from '../sdl-shared/hover-card'
+import { selectLine } from '../sdl-shared/line-state'
+
 import { SdlViewer } from './sdl-viewer'
 
 // CodeMirror's DOM has no roles to query by.
@@ -471,7 +472,11 @@ describe('SdlViewer', () => {
       expect(tooltip.end).toBe(id.to)
 
       const shown = tooltip.create(view)
-      expect(card).toEqual({ dom: shown.dom, coordinate: 'User.id' })
+      expect(card).toEqual({
+        dom: shown.dom,
+        side: 'after',
+        coordinate: 'User.id',
+      })
       shown.destroy?.()
       expect(card).toBeNull()
 

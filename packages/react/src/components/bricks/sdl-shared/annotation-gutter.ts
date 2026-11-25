@@ -2,8 +2,8 @@ import { GutterMarker, gutter, type ViewUpdate } from '@codemirror/view'
 import { createElement } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 
-import { Icon, type IconNames } from '../../../primitives/icon/icon'
-import { pillClass } from '../../../primitives/pill/pill.css'
+import { Icon, type IconNames } from '../../primitives/icon/icon'
+import { pillClass } from '../../primitives/pill/pill.css'
 
 import {
   lineStateField,
@@ -12,7 +12,7 @@ import {
   type SdlAnnotation,
   type SdlTag,
 } from './line-state'
-import { sdlField } from './sdl-field'
+import { rowAtLine } from './sdl-rows'
 
 // Icons are React components, so each icon in the column is a small root,
 // unmounted with the marker that owns it.
@@ -115,9 +115,7 @@ export const annotationGutter = gutter({
   renderEmptyElements: true,
   lineMarker(view, line) {
     const number = view.state.doc.lineAt(line.from).number
-    const coordinate = view.state
-      .field(sdlField)
-      .index.coordinateAtLine.get(number)
+    const { coordinate } = rowAtLine(view.state, number)
     if (coordinate === undefined) return null
     const { data } = view.state.field(lineStateField)
     const annotation = data.annotations?.get(coordinate)

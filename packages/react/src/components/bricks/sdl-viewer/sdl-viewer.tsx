@@ -4,15 +4,16 @@ import { createPortal } from 'react-dom'
 import { Button } from '../../primitives/button/button'
 import { Editor } from '../editor/editor'
 import { FindBar } from '../sdl-shared/find-bar'
+import type { SdlAnnotation, SdlTag } from '../sdl-shared/line-state'
 import { LoadingShell } from '../sdl-shared/loading-shell'
 import { sdlFrameStyles as frameStyles } from '../sdl-shared/sdl-frame.css'
 import type { Coordinate } from '../sdl-shared/sdl-index'
+import type { TypeHref } from '../sdl-shared/type-links'
+import { useSdlExtensions } from '../sdl-shared/use-sdl-extensions'
 
-import type { SdlAnnotation, SdlTag } from './codemirror/line-state'
-import type { TypeHref } from './codemirror/type-links'
+import { sdlExtensions } from './codemirror/sdl-extensions'
 import { formatSdl } from './format-sdl'
 import { sdlViewerStyles as styles } from './sdl-viewer.css'
-import { useSdlExtensions, type RenderHover } from './use-sdl-extensions'
 
 export type SdlViewerProps = {
   /** The whole schema as SDL text. */
@@ -55,7 +56,7 @@ export type SdlViewerProps = {
    * coordinate. Return nothing for no card. Called on each hover to decide,
    * so keep it cheap.
    */
-  renderHover?: RenderHover
+  renderHover?: (coordinate: Coordinate) => ReactNode
   /**
    * Hides the annotation column, leaving a toggle in the find bar. Leave
    * unset for the viewer to keep this itself.
@@ -150,13 +151,14 @@ export const SdlViewer = ({
     setOwnCollapsed(!collapsed)
     onColumnCollapsedChange?.(!collapsed)
   }
-  const { extensions, findPanel, card } = useSdlExtensions({
-    annotations,
-    tags,
-    dimmed,
-    selected,
-    onSelect,
-    reveal,
+  const { extensions, findPanel, card } = useSdlExtensions(sdlExtensions, {
+    data: { annotations, tags, dimmed },
+    selected:
+      selected === undefined
+        ? undefined
+        : { side: 'after', coordinate: selected },
+    onSelect: ({ coordinate }) => onSelect?.(coordinate),
+    reveal: reveal && { side: 'after', ...reveal },
     typeHref,
     renderHover,
     columnCollapsed: collapsed,
