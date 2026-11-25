@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Icon } from '../../primitives/icon/icon'
 import { IconButton } from '../../primitives/icon-button/icon-button'
 
-import { findMatches, queryFor, type FindStore } from './codemirror/find'
+import { findMatches, queryFor, type FindStore } from './find'
 import { findBarStyles as styles } from './find-bar.css'
 
 // Above this many characters, counting waits for a pause in typing.
@@ -112,7 +112,7 @@ export type FindBarProps = {
 }
 
 /**
- * The SDL viewer's find bar: a search field with a match count, previous and
+ * The find bar over SDL: a search field with a match count, previous and
  * next, and the annotation column's heading. The query lives in CodeMirror's
  * search state, so Cmd/Ctrl-F and the match highlights stay in step with it.
  */

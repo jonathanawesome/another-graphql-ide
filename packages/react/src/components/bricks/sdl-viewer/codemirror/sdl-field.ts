@@ -1,7 +1,11 @@
 import { RangeSetBuilder, StateField } from '@codemirror/state'
 import { Decoration, EditorView, type DecorationSet } from '@codemirror/view'
 
-import { indexSdl, type SdlIndex, type SdlToken } from './sdl-index'
+import {
+  indexSdl,
+  type SdlIndex,
+  type SdlToken,
+} from '../../sdl-shared/sdl-index'
 
 type SdlState = { index: SdlIndex; marks: DecorationSet }
 

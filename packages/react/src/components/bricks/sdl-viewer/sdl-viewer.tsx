@@ -3,13 +3,14 @@ import { createPortal } from 'react-dom'
 
 import { Button } from '../../primitives/button/button'
 import { Editor } from '../editor/editor'
+import { FindBar } from '../sdl-shared/find-bar'
+import { LoadingShell } from '../sdl-shared/loading-shell'
+import { sdlFrameStyles as frameStyles } from '../sdl-shared/sdl-frame.css'
+import type { Coordinate } from '../sdl-shared/sdl-index'
 
 import type { SdlAnnotation, SdlTag } from './codemirror/line-state'
-import type { Coordinate } from './codemirror/sdl-index'
 import type { TypeHref } from './codemirror/type-links'
-import { FindBar } from './find-bar'
 import { formatSdl } from './format-sdl'
-import { LoadingShell } from './loading-shell'
 import { sdlViewerStyles as styles } from './sdl-viewer.css'
 import { useSdlExtensions, type RenderHover } from './use-sdl-extensions'
 
@@ -163,17 +164,17 @@ export const SdlViewer = ({
 
   return (
     <div
-      className={styles.root({ frame })}
+      className={frameStyles.root({ frame })}
       style={height !== undefined ? { height } : undefined}
       aria-busy={loading || undefined}
     >
-      <div className={styles.body}>
+      <div className={frameStyles.body}>
         {/* Stays mounted under the overlays, so its state never goes stale. */}
-        <div inert={loading || isEmpty} className={styles.editor}>
+        <div inert={loading || isEmpty} className={frameStyles.editor}>
           <Editor value={text} readOnly theme={theme} extensions={extensions} />
         </div>
         {loading && (
-          <div className={styles.overlay}>
+          <div className={frameStyles.overlay}>
             <LoadingShell
               label={collapsed ? undefined : annotationLabel}
               withColumn={
@@ -183,8 +184,8 @@ export const SdlViewer = ({
           </div>
         )}
         {isEmpty && (
-          <div className={styles.overlay}>
-            <div className={styles.empty}>{empty}</div>
+          <div className={frameStyles.overlay}>
+            <div className={frameStyles.empty}>{empty}</div>
           </div>
         )}
       </div>

@@ -15,9 +15,9 @@ import {
 } from '@codemirror/view'
 
 import type { IconNames } from '../../../primitives/icon/icon'
+import type { Coordinate } from '../../sdl-shared/sdl-index'
 
 import { sdlField } from './sdl-field'
-import type { Coordinate } from './sdl-index'
 
 /** A per-line value, an optional 0..1 ratio for its bar, and an error note. */
 export type SdlAnnotation = {

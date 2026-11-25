@@ -12,7 +12,7 @@ export type {
   SdlAnnotation,
   SdlTag,
 } from './bricks/sdl-viewer/codemirror/line-state'
-export type { Coordinate as SdlCoordinate } from './bricks/sdl-viewer/codemirror/sdl-index'
+export type { Coordinate as SdlCoordinate } from './bricks/sdl-shared/sdl-index'
 
 // Bricks. Each reads its configuration from the surrounding AGIProvider.
 export { ConnectionBar } from './bricks/connection-bar/connection-bar'

@@ -6,7 +6,7 @@ export const findBarStyles = {
     alignItems: 'center',
     gap: themeContract.px[8],
     height: '44px',
-    paddingInlineStart: themeContract.px[6],
+    paddingInline: themeContract.px[6],
     fontFamily: themeContract.fonts.sans,
     color: themeContract.text.secondary,
   }),
@@ -55,6 +55,8 @@ export const findBarStyles = {
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: themeContract.px[8],
+    // Over the annotation column, so out to the bar's edge.
+    marginInlineEnd: `calc(-1 * ${themeContract.px[6]})`,
     paddingInlineEnd: themeContract.px[14],
     ...textStyles.overline,
     color: themeContract.text.tertiary,

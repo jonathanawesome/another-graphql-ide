@@ -2,8 +2,9 @@ import type { Extension } from '@codemirror/state'
 import { hoverTooltip, type HoverTooltipSource } from '@codemirror/view'
 import type { ReactNode } from 'react'
 
+import type { Coordinate } from '../../sdl-shared/sdl-index'
+
 import { coordinateAtLine } from './line-state'
-import type { Coordinate } from './sdl-index'
 
 /** An open hover card, for the host's content to render into. */
 export type HoverCard = { dom: HTMLElement; coordinate: Coordinate }

@@ -3,8 +3,11 @@ import { Compartment, type Extension } from '@codemirror/state'
 import { EditorView, ViewPlugin } from '@codemirror/view'
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react'
 
+import { FindStore, findExtensions } from '../sdl-shared/find'
+import type { Coordinate } from '../sdl-shared/sdl-index'
+import { SDL_LINE_HEIGHT } from '../sdl-shared/sdl-theme'
+
 import { annotationGutter } from './codemirror/annotation-gutter'
-import { FindStore, findExtensions } from './codemirror/find'
 import { hoverCard, type HoverCard } from './codemirror/hover-card'
 import {
   coordinateAtLine,
@@ -16,9 +19,8 @@ import {
   syncSelected,
   type LineData,
 } from './codemirror/line-state'
-import { SDL_LINE_HEIGHT, sdlExtensions } from './codemirror/sdl-extensions'
+import { sdlExtensions } from './codemirror/sdl-extensions'
 import { sdlField } from './codemirror/sdl-field'
-import type { Coordinate } from './codemirror/sdl-index'
 import {
   setTypeHref,
   typeHrefField,

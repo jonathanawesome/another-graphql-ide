@@ -1,5 +1,5 @@
+import { indexSdl, type Coordinate } from '../../sdl-shared/sdl-index'
 import type { LineData, SdlAnnotation, SdlTag } from '../codemirror/line-state'
-import { indexSdl, type Coordinate } from '../codemirror/sdl-index'
 
 /** A small federation subgraph: extensions, @key, arguments, enums, inputs. */
 export const subgraphSdl = `"""

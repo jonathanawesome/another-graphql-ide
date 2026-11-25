@@ -17,6 +17,7 @@ import {
   Position,
 } from 'graphql-language-service'
 
+import { indexSdl } from '../../sdl-shared/sdl-index'
 import {
   makeLineData,
   makeSupergraph,
@@ -30,7 +31,6 @@ import {
   type LineData,
 } from '../../sdl-viewer/codemirror/line-state'
 import { sdlField } from '../../sdl-viewer/codemirror/sdl-field'
-import { indexSdl } from '../../sdl-viewer/codemirror/sdl-index'
 
 import { makeLargeDocument } from './__fixtures__/large-doc'
 import {

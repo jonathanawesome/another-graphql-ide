@@ -3,7 +3,7 @@ import { themeContract } from '@another-graphql-ide/style'
 import { Icon } from '../../primitives/icon/icon'
 
 import { findBarStyles } from './find-bar.css'
-import { skeletonStyles as styles } from './sdl-viewer.css'
+import { skeletonStyles as styles } from './loading-shell.css'
 
 // One block per type: its line, some fields, the closing brace, a blank line.
 // Code widths in percent; a field row also has an annotation placeholder.
