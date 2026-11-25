@@ -3,7 +3,9 @@ import { EditorState } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { goToDefinition, sdlExtensions } from './sdl-extensions'
+import { goToDefinition } from '../../sdl-shared/go-to-definition'
+
+import { sdlExtensions } from './sdl-extensions'
 import { sdlField } from './sdl-field'
 
 const sdl = `type Query {
@@ -66,6 +68,8 @@ describe('sdlExtensions', () => {
       changes: { from: 0, to: editor.state.doc.length, insert: 'scalar Date' },
     })
 
-    expect(editor.state.field(sdlField).index.definitions.get('Date')).toBe(7)
+    expect(
+      editor.state.field(sdlField).index.lineOfCoordinate.get('Date')
+    ).toBe(1)
   })
 })

@@ -12,7 +12,7 @@ import {
   type ViewUpdate,
 } from '@codemirror/view'
 
-import { sdlField } from './sdl-field'
+import { sdlRows } from './sdl-rows'
 
 export type TypeHref = (typeName: string) => string | undefined
 
@@ -41,19 +41,10 @@ const linkMark = (href: string) =>
 const buildLinks = (view: EditorView): DecorationSet => {
   const typeHref = view.state.field(typeHrefField)
   if (!typeHref) return Decoration.none
-  const { tokens } = view.state.field(sdlField).index
+  const { tokens } = view.state.facet(sdlRows)
   const builder = new RangeSetBuilder<Decoration>()
   for (const { from, to } of view.visibleRanges) {
-    let low = 0
-    let high = tokens.length
-    while (low < high) {
-      const middle = (low + high) >> 1
-      if ((tokens[middle]?.to ?? 0) <= from) low = middle + 1
-      else high = middle
-    }
-    for (let i = low; i < tokens.length; i++) {
-      const token = tokens[i]
-      if (!token || token.from >= to) break
+    for (const token of tokens(from, to)) {
       if (token.kind !== 'type') continue
       const href = typeHref(view.state.sliceDoc(token.from, token.to))
       if (href) builder.add(token.from, token.to, linkMark(href))
@@ -74,7 +65,9 @@ const typeLinksPlugin = ViewPlugin.fromClass(
       const hrefChanged =
         update.state.field(typeHrefField) !==
         update.startState.field(typeHrefField)
-      if (update.docChanged || update.viewportChanged || hrefChanged) {
+      const rowsChanged =
+        update.state.facet(sdlRows) !== update.startState.facet(sdlRows)
+      if (rowsChanged || update.viewportChanged || hrefChanged) {
         this.decorations = buildLinks(update.view)
       }
     }

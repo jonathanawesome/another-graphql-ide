@@ -35,8 +35,6 @@ export type SdlIndex = {
   tokens: SdlToken[]
   /** Fold range per 1-based line, from after `{` to before `}`. */
   folds: Map<number, { from: number; to: number }>
-  /** Offset of each type's or directive's name (`User`, `@key`). */
-  definitions: Map<string, number>
   /** The coordinate defined on each 1-based line. One per line, first wins. */
   coordinateAtLine: Map<number, Coordinate>
   /** The 1-based line each coordinate is defined on. */
@@ -62,7 +60,6 @@ const emptyIndex = (): SdlIndex => ({
   parsed: false,
   tokens: [],
   folds: new Map(),
-  definitions: new Map(),
   coordinateAtLine: new Map(),
   lineOfCoordinate: new Map(),
 })
@@ -244,9 +241,6 @@ const recordFold = (
 const indexDefinition = (definition: DefinitionNode, index: SdlIndex) => {
   if (definition.kind === Kind.DIRECTIVE_DEFINITION) {
     const coordinate = `@${definition.name.value}`
-    if (definition.name.loc) {
-      index.definitions.set(coordinate, definition.name.loc.start)
-    }
     record(index, coordinate, definition.name)
     recordArguments(index, coordinate, definition.arguments)
     return
@@ -259,10 +253,6 @@ const indexDefinition = (definition: DefinitionNode, index: SdlIndex) => {
 
   // A definition wins over an extension. An extension stands in only when the
   // document has no definition, e.g. a subgraph that extends a type it lacks.
-  const start = definition.name.loc?.start
-  if (start !== undefined && (!extension || !index.definitions.has(typeName))) {
-    index.definitions.set(typeName, start)
-  }
   record(index, typeName, definition.name, !extension)
 
   switch (definition.kind) {

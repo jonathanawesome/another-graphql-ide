@@ -18,19 +18,24 @@ import {
 } from 'graphql-language-service'
 
 import {
-  makeLineData,
-  makeSupergraph,
-  subgraphSdl,
-} from '../../sdl-viewer/__fixtures__/sdl'
+  editFields,
+  reorderDefinitions,
+} from '../../sdl-diff/__fixtures__/edits'
+import { runComparison } from '../../sdl-diff/compare/run-comparison'
 import {
   initialLineState,
   lineStateField,
   setHoverLine,
   setLineData,
   type LineData,
-} from '../../sdl-viewer/codemirror/line-state'
+} from '../../sdl-shared/line-state'
+import { indexSdl } from '../../sdl-shared/sdl-index'
+import {
+  makeLineData,
+  makeSupergraph,
+  subgraphSdl,
+} from '../../sdl-viewer/__fixtures__/sdl'
 import { sdlField } from '../../sdl-viewer/codemirror/sdl-field'
-import { indexSdl } from '../../sdl-viewer/codemirror/sdl-index'
 
 import { makeLargeDocument } from './__fixtures__/large-doc'
 import {
@@ -108,6 +113,9 @@ const introspectionOf = (schema: GraphQLSchema): IntrospectionQuery => {
 
 // Built once at import, like the large document above.
 const largeSupergraph = makeSupergraph(4000)
+
+const editedSupergraph = editFields(largeSupergraph, 3000).sdl
+const reorderedSupergraph = reorderDefinitions(editedSupergraph)
 
 // The SdlViewer's state, as the viewer installs it, without a DOM.
 const viewerState = (sdl: string, data: LineData) =>
@@ -233,6 +241,42 @@ export const stressMeasurementGroups: StressGroup[] = [
         variant: 'supergraph (4,000 types)',
         run: () => {
           indexSdl(largeSupergraph)
+        },
+      },
+    ],
+  },
+  {
+    group: 'sdl diff',
+    note: 'SdlDiff: supergraph (4,000 types) with 3,000 edits, in a worker',
+    cases: [
+      {
+        variant: 'edits',
+        run: () => {
+          runComparison({
+            before: largeSupergraph,
+            after: editedSupergraph,
+            context: 3,
+          })
+        },
+      },
+      {
+        variant: 'types moved',
+        run: () => {
+          runComparison({
+            before: largeSupergraph,
+            after: reorderedSupergraph,
+            context: 3,
+          })
+        },
+      },
+      {
+        variant: 'edits, with colors',
+        run: () => {
+          runComparison({
+            before: largeSupergraph,
+            after: editedSupergraph,
+            context: 3,
+          }).details?.()
         },
       },
     ],

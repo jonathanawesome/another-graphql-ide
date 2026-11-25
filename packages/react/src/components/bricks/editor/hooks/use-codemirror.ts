@@ -94,10 +94,21 @@ export const useCodemirror = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps would rebuild the view and lose caret, history and scroll
   }, [])
 
+  // The effects below each skip the mount pass: the view was created with
+  // these props, and re-applying them is slow on a large document.
+
   // Language / schema changes.
+  const mountedSchemaRef = useRef(schema)
   useEffect(() => {
     const view = viewRef.current
     if (!view) return
+    if (
+      prevLanguageRef.current === language &&
+      mountedSchemaRef.current === schema
+    ) {
+      return
+    }
+    mountedSchemaRef.current = schema
 
     if (prevLanguageRef.current === language && language === 'graphql') {
       updateSchema(view, schema)
@@ -108,12 +119,15 @@ export const useCodemirror = ({
   }, [language, schema])
 
   // Theme changes.
+  const mountedThemeRef = useRef(resolvedTheme)
   useEffect(() => {
     const view = viewRef.current
-    if (view) reconfigureTheme(view, resolvedTheme === 'dark')
+    if (!view || mountedThemeRef.current === resolvedTheme) return
+    mountedThemeRef.current = resolvedTheme
+    reconfigureTheme(view, resolvedTheme === 'dark')
   }, [resolvedTheme])
 
-  // Caller extensions. Skips the mount pass, which already installed them.
+  // Caller extensions.
   const mountedExtensionsRef = useRef(extensions)
   useEffect(() => {
     const view = viewRef.current
@@ -123,17 +137,23 @@ export const useCodemirror = ({
   }, [extensions])
 
   // Read-only changes.
+  const mountedReadOnlyRef = useRef(readOnly)
   useEffect(() => {
     const view = viewRef.current
-    if (view) reconfigureReadOnly(view, readOnly)
+    if (!view || mountedReadOnlyRef.current === readOnly) return
+    mountedReadOnlyRef.current = readOnly
+    reconfigureReadOnly(view, readOnly)
   }, [readOnly])
 
   // Controlled value: push external changes into the editor as a minimal-range
   // replace (common prefix/suffix diff) so the caret and undo history survive
   // programmatic setQuery, e.g. schema tree inserts.
+  const mountedValueRef = useRef(value)
   useEffect(() => {
     const view = viewRef.current
-    if (!view || value === undefined) return
+    if (!view || mountedValueRef.current === value) return
+    mountedValueRef.current = value
+    if (value === undefined) return
 
     const current = view.state.doc.toString()
     if (value === current) return

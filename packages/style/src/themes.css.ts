@@ -196,6 +196,10 @@ const semanticColors = {
       infoBg: palette.bluebell[100],
       infoEdge: palette.bluebell[150],
     },
+    diff: {
+      addedBg: themeContract.meadow.cloverTint,
+      removedBg: themeContract.meadow.propolisTint,
+    },
     syntax: {
       keyword: themeContract.meadow.borageText,
       string: palette.pollen[700],
@@ -291,6 +295,10 @@ const semanticColors = {
       info: themeContract.meadow.bluebellText,
       infoBg: palette.bluebell[850],
       infoEdge: palette.bluebell[800],
+    },
+    diff: {
+      addedBg: themeContract.meadow.cloverTint,
+      removedBg: themeContract.meadow.propolisTint,
     },
     syntax: {
       keyword: themeContract.meadow.borageText,

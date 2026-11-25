@@ -40,6 +40,7 @@ export default defineConfig({
         { label: 'Headers Editor' },
         { label: 'Schema Tree' },
         { label: 'Schema Tree Settings' },
+        { label: 'SDL Diff' },
         { label: 'SDL Viewer' },
         { label: 'Variables Editor' },
       ],

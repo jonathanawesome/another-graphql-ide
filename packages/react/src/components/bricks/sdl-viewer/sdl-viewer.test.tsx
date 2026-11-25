@@ -1,10 +1,12 @@
+import { foldAll, unfoldAll } from '@codemirror/language'
 import { EditorView } from '@codemirror/view'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { hoverCardSource, type HoverCard } from './codemirror/hover-card'
-import { selectLine } from './codemirror/line-state'
-import { goToDefinition } from './codemirror/sdl-extensions'
+import { goToDefinition } from '../sdl-shared/go-to-definition'
+import { hoverCardSource, type HoverCard } from '../sdl-shared/hover-card'
+import { selectLine } from '../sdl-shared/line-state'
+
 import { SdlViewer } from './sdl-viewer'
 
 // CodeMirror's DOM has no roles to query by.
@@ -17,6 +19,14 @@ const findAll = (root: HTMLElement, selector: string) =>
   root.querySelectorAll(selector)
 
 const text = (root: HTMLElement) => find(root, '.cm-content')?.textContent
+
+const viewOf = (root: HTMLElement) => {
+  const dom = find(root, '.cm-editor')
+  if (!(dom instanceof HTMLElement)) throw new Error('no editor')
+  const view = EditorView.findFromDOM(dom)
+  if (!view) throw new Error('no view')
+  return view
+}
 
 describe('SdlViewer', () => {
   it('shows SDL read-only, without AGIProvider', () => {
@@ -62,14 +72,6 @@ describe('SdlViewer', () => {
     const sdl =
       'type Query { user(id: ID!): User } type User { id: ID! name: String }'
     // Printed: 1 type Query {, 2 user(...), 3 }, 5 type User {, 6 id, 7 name
-
-    const viewOf = (root: HTMLElement) => {
-      const dom = find(root, '.cm-editor')
-      if (!(dom instanceof HTMLElement)) throw new Error('no editor')
-      const view = EditorView.findFromDOM(dom)
-      if (!view) throw new Error('no view')
-      return view
-    }
 
     // The column's hidden spacer row carries a marker too.
     const shown = (root: HTMLElement, selector: string) =>
@@ -261,6 +263,127 @@ describe('SdlViewer', () => {
         />
       )
       expect(shown(container, '.cm-sdl-value')).toHaveLength(0)
+    })
+  })
+
+  describe('messages', () => {
+    const sdl = 'type User {\n  id: ID!\n  name: String\n}'
+    const needsDescription = {
+      line: 2,
+      tone: 'warning',
+      text: 'User.id needs a description',
+      code: 'require-description',
+    } as const
+
+    // Lines and messages, in the order shown.
+    const rows = (root: HTMLElement) =>
+      [...findAll(root, '.cm-line, .cm-sdl-message')].map(
+        row => row.textContent
+      )
+
+    it('shows a message under its line', () => {
+      const { container } = render(
+        <SdlViewer sdl={sdl} messages={[needsDescription]} />
+      )
+
+      expect(rows(container)).toEqual([
+        'type User {',
+        '  id: ID!',
+        'User.id needs a descriptionrequire-description',
+        '  name: String',
+        '}',
+      ])
+      screen.getByRole('img', { name: 'Warning' })
+    })
+
+    it('takes messages in any order, and keeps it within a line', () => {
+      const { container } = render(
+        <SdlViewer
+          sdl={sdl}
+          messages={[
+            { line: 4, tone: 'warning', text: 'last' },
+            { line: 2, tone: 'danger', text: 'first' },
+            { line: 2, tone: 'warning', text: 'second' },
+          ]}
+        />
+      )
+
+      expect(
+        [...findAll(container, '.cm-sdl-message')].map(row => row.textContent)
+      ).toEqual(['first', 'second', 'last'])
+      screen.getByRole('img', { name: 'Error' })
+    })
+
+    it('ignores lines the document does not have', () => {
+      const { container } = render(
+        <SdlViewer
+          sdl={sdl}
+          messages={[0, 5].map(line => ({ ...needsDescription, line }))}
+        />
+      )
+
+      expect(find(container, '.cm-sdl-message')).toBeNull()
+    })
+
+    it('follows new messages and new SDL', () => {
+      const { container, rerender } = render(<SdlViewer sdl={sdl} />)
+      const messages = [needsDescription]
+      rerender(<SdlViewer sdl={sdl} messages={messages} />)
+      expect(rows(container)).toHaveLength(5)
+
+      // Still under line 2 of the new text.
+      rerender(<SdlViewer sdl={`scalar Date\n${sdl}`} messages={messages} />)
+      expect(rows(container).slice(0, 3)).toEqual([
+        'scalar Date',
+        'type User {',
+        'User.id needs a descriptionrequire-description',
+      ])
+
+      rerender(<SdlViewer sdl={sdl} />)
+      expect(rows(container)).toHaveLength(4)
+    })
+
+    it('keeps a folded row whole, and hides messages inside the fold', () => {
+      const { container } = render(
+        <SdlViewer
+          sdl={sdl}
+          messages={[
+            { line: 1, tone: 'warning', text: 'on the opening line' },
+            { line: 2, tone: 'warning', text: 'inside' },
+            { line: 4, tone: 'warning', text: 'on the closing line' },
+          ]}
+        />
+      )
+      const view = viewOf(container)
+      act(() => {
+        foldAll(view)
+      })
+
+      expect(rows(container)).toEqual([
+        'type User {…}',
+        'on the opening line',
+        'on the closing line',
+      ])
+
+      act(() => {
+        unfoldAll(view)
+      })
+      expect(rows(container)).toHaveLength(7)
+    })
+
+    it('does not reformat on its own, so lines stay as given', () => {
+      const { container } = render(
+        <SdlViewer
+          sdl={`\n\n${sdl}`}
+          annotations={new Map()}
+          messages={[{ ...needsDescription, line: 4 }]}
+        />
+      )
+
+      expect(rows(container).slice(3, 5)).toEqual([
+        '  id: ID!',
+        'User.id needs a descriptionrequire-description',
+      ])
     })
   })
 
@@ -471,7 +594,11 @@ describe('SdlViewer', () => {
       expect(tooltip.end).toBe(id.to)
 
       const shown = tooltip.create(view)
-      expect(card).toEqual({ dom: shown.dom, coordinate: 'User.id' })
+      expect(card).toEqual({
+        dom: shown.dom,
+        side: 'after',
+        coordinate: 'User.id',
+      })
       shown.destroy?.()
       expect(card).toBeNull()
 

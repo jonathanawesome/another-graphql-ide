@@ -2,11 +2,14 @@ import type { Extension } from '@codemirror/state'
 import { hoverTooltip, type HoverTooltipSource } from '@codemirror/view'
 import type { ReactNode } from 'react'
 
-import { coordinateAtLine } from './line-state'
+import { lineStateField, type SdlLocation } from './line-state'
 import type { Coordinate } from './sdl-index'
+import { rowAtLine, type SdlSide } from './sdl-rows'
 
 /** An open hover card, for the host's content to render into. */
-export type HoverCard = { dom: HTMLElement; coordinate: Coordinate }
+export type HoverCard = SdlLocation & { dom: HTMLElement }
+
+export type RenderHover = (coordinate: Coordinate, side: SdlSide) => ReactNode
 
 const isBlank = (node: ReactNode) =>
   node === null ||
@@ -19,14 +22,13 @@ type SetCard = (update: (card: HoverCard | null) => HoverCard | null) => void
 
 /** The tooltip for the line at `pos`, if the host has content for it. */
 export const hoverCardSource =
-  (
-    render: (coordinate: Coordinate) => ReactNode,
-    setCard: SetCard
-  ): HoverTooltipSource =>
+  (render: RenderHover, setCard: SetCard): HoverTooltipSource =>
   (view, pos) => {
     const line = view.state.doc.lineAt(pos)
-    const coordinate = coordinateAtLine(view.state, line.number)
-    if (coordinate === undefined || isBlank(render(coordinate))) return null
+    const { side, coordinate } = rowAtLine(view.state, line.number)
+    if (coordinate === undefined || isBlank(render(coordinate, side))) {
+      return null
+    }
     const indent = /^\s*/.exec(line.text)?.[0].length ?? 0
     return {
       pos: line.from + indent,
@@ -35,7 +37,7 @@ export const hoverCardSource =
       create: () => {
         const dom = document.createElement('div')
         dom.className = 'cm-sdl-card'
-        setCard(() => ({ dom, coordinate }))
+        setCard(() => ({ dom, side, coordinate }))
         return {
           dom,
           destroy: () => setCard(card => (card?.dom === dom ? null : card)),
@@ -50,8 +52,14 @@ export const hoverCardSource =
  * along the line or into the card. The card is an empty element; the host's
  * content is portaled into it.
  */
-export const hoverCard = (
-  render: (coordinate: Coordinate) => ReactNode,
-  setCard: SetCard
-): Extension =>
-  hoverTooltip(hoverCardSource(render, setCard), { hideOnChange: true })
+export const hoverCard = (render: RenderHover, setCard: SetCard): Extension => {
+  const source = hoverCardSource(render, setCard)
+  return hoverTooltip(
+    // CodeMirror reports a widget's line too, but only a row has a card.
+    (view, pos, side) =>
+      view.state.field(lineStateField).hover === null
+        ? null
+        : source(view, pos, side),
+    { hideOnChange: true }
+  )
+}

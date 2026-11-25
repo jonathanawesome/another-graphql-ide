@@ -3,15 +3,18 @@ import { createPortal } from 'react-dom'
 
 import { Button } from '../../primitives/button/button'
 import { Editor } from '../editor/editor'
+import { FindBar } from '../sdl-shared/find-bar'
+import type { SdlAnnotation, SdlTag } from '../sdl-shared/line-state'
+import { LoadingShell } from '../sdl-shared/loading-shell'
+import type { SdlMessages } from '../sdl-shared/message-rows'
+import { sdlFrameStyles as frameStyles } from '../sdl-shared/sdl-frame.css'
+import type { Coordinate } from '../sdl-shared/sdl-index'
+import type { TypeHref } from '../sdl-shared/type-links'
+import { useSdlExtensions } from '../sdl-shared/use-sdl-extensions'
 
-import type { SdlAnnotation, SdlTag } from './codemirror/line-state'
-import type { Coordinate } from './codemirror/sdl-index'
-import type { TypeHref } from './codemirror/type-links'
-import { FindBar } from './find-bar'
+import { sdlExtensions } from './codemirror/sdl-extensions'
 import { formatSdl } from './format-sdl'
-import { LoadingShell } from './loading-shell'
 import { sdlViewerStyles as styles } from './sdl-viewer.css'
-import { useSdlExtensions, type RenderHover } from './use-sdl-extensions'
 
 export type SdlViewerProps = {
   /** The whole schema as SDL text. */
@@ -19,7 +22,7 @@ export type SdlViewerProps = {
   /**
    * Pretty-print before showing. Text that does not parse is shown as is.
    * On by default when annotations or tags are given, since they need one
-   * coordinate per line.
+   * coordinate per line, but not with messages, since those are by line.
    */
   format?: boolean
   /** Placeholder lines, and "Loading schema…" in the footer. */
@@ -34,6 +37,8 @@ export type SdlViewerProps = {
   tags?: ReadonlyMap<Coordinate, SdlTag>
   /** Lines to render dimmed, e.g. filtered out by the host. */
   dimmed?: ReadonlySet<Coordinate>
+  /** Rows under lines, by line of `sdl`, e.g. lint results. */
+  messages?: SdlMessages
   /** Moves the selected row to this coordinate when it changes. */
   selected?: Coordinate
   /** Called when the user selects a row, with its coordinate if it has one. */
@@ -54,7 +59,7 @@ export type SdlViewerProps = {
    * coordinate. Return nothing for no card. Called on each hover to decide,
    * so keep it cheap.
    */
-  renderHover?: RenderHover
+  renderHover?: (coordinate: Coordinate) => ReactNode
   /**
    * Hides the annotation column, leaving a toggle in the find bar. Leave
    * unset for the viewer to keep this itself.
@@ -114,9 +119,9 @@ const CopyButton = ({
 
 /**
  * A read-only view of a schema as SDL, with colors, folding, a find bar,
- * modifier-click go-to-definition, row selection, type links, hover cards and a per-line
- * annotation column keyed by schema coordinate. Prop-driven; needs no
- * AGIProvider.
+ * modifier-click go-to-definition, row selection, type links, hover cards,
+ * messages under lines and a per-line annotation column keyed by schema
+ * coordinate. Prop-driven; needs no AGIProvider.
  */
 export const SdlViewer = ({
   sdl,
@@ -127,6 +132,7 @@ export const SdlViewer = ({
   annotationLabel,
   tags,
   dimmed,
+  messages,
   selected,
   onSelect,
   reveal,
@@ -140,7 +146,7 @@ export const SdlViewer = ({
   height,
 }: SdlViewerProps) => {
   const withColumn = annotations !== undefined || tags !== undefined
-  const pretty = format ?? withColumn
+  const pretty = format ?? (withColumn && messages === undefined)
   const text = useMemo(() => (pretty ? formatSdl(sdl) : sdl), [pretty, sdl])
   const isEmpty = !loading && sdl.trim() === ''
   const [ownCollapsed, setOwnCollapsed] = useState(false)
@@ -149,13 +155,15 @@ export const SdlViewer = ({
     setOwnCollapsed(!collapsed)
     onColumnCollapsedChange?.(!collapsed)
   }
-  const { extensions, findPanel, card } = useSdlExtensions({
-    annotations,
-    tags,
-    dimmed,
-    selected,
-    onSelect,
-    reveal,
+  const { extensions, findPanel, card } = useSdlExtensions(sdlExtensions, {
+    data: { annotations, tags, dimmed },
+    messages,
+    selected:
+      selected === undefined
+        ? undefined
+        : { side: 'after', coordinate: selected },
+    onSelect: ({ coordinate }) => onSelect?.(coordinate),
+    reveal: reveal && { side: 'after', ...reveal },
     typeHref,
     renderHover,
     columnCollapsed: collapsed,
@@ -163,17 +171,17 @@ export const SdlViewer = ({
 
   return (
     <div
-      className={styles.root({ frame })}
+      className={frameStyles.root({ frame })}
       style={height !== undefined ? { height } : undefined}
       aria-busy={loading || undefined}
     >
-      <div className={styles.body}>
+      <div className={frameStyles.body}>
         {/* Stays mounted under the overlays, so its state never goes stale. */}
-        <div inert={loading || isEmpty} className={styles.editor}>
+        <div inert={loading || isEmpty} className={frameStyles.editor}>
           <Editor value={text} readOnly theme={theme} extensions={extensions} />
         </div>
         {loading && (
-          <div className={styles.overlay}>
+          <div className={frameStyles.overlay}>
             <LoadingShell
               label={collapsed ? undefined : annotationLabel}
               withColumn={
@@ -183,8 +191,8 @@ export const SdlViewer = ({
           </div>
         )}
         {isEmpty && (
-          <div className={styles.overlay}>
-            <div className={styles.empty}>{empty}</div>
+          <div className={frameStyles.overlay}>
+            <div className={frameStyles.empty}>{empty}</div>
           </div>
         )}
       </div>

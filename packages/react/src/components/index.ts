@@ -8,11 +8,14 @@ export type { UseOperationExtensionsParams } from './bricks/editor/hooks/use-ope
 // A read-only schema viewer, prop-driven like Editor.
 export { SdlViewer } from './bricks/sdl-viewer/sdl-viewer'
 export type { SdlViewerProps } from './bricks/sdl-viewer/sdl-viewer'
-export type {
-  SdlAnnotation,
-  SdlTag,
-} from './bricks/sdl-viewer/codemirror/line-state'
-export type { Coordinate as SdlCoordinate } from './bricks/sdl-viewer/codemirror/sdl-index'
+export type { SdlAnnotation, SdlTag } from './bricks/sdl-shared/line-state'
+export type { SdlMessage } from './bricks/sdl-shared/message-rows'
+export type { Coordinate as SdlCoordinate } from './bricks/sdl-shared/sdl-index'
+
+// What changed between two SDL documents, prop-driven like Editor.
+export { SdlDiff } from './bricks/sdl-diff/sdl-diff'
+export type { SdlDiffProps, SdlDiffResult } from './bricks/sdl-diff/sdl-diff'
+export type { SdlRow, SdlSide } from './bricks/sdl-shared/sdl-rows'
 
 // Bricks. Each reads its configuration from the surrounding AGIProvider.
 export { ConnectionBar } from './bricks/connection-bar/connection-bar'

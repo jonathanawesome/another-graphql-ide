@@ -1,13 +1,12 @@
 import { themeContract } from '@another-graphql-ide/style'
 import { Compartment, type Extension } from '@codemirror/state'
 import { EditorView, ViewPlugin } from '@codemirror/view'
-import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
-import { annotationGutter } from './codemirror/annotation-gutter'
-import { FindStore, findExtensions } from './codemirror/find'
-import { hoverCard, type HoverCard } from './codemirror/hover-card'
+import { annotationGutter } from './annotation-gutter'
+import { FindStore, findExtensions } from './find'
+import { hoverCard, type HoverCard, type RenderHover } from './hover-card'
 import {
-  coordinateAtLine,
   initialLineState,
   linePointer,
   lineStateField,
@@ -15,41 +14,49 @@ import {
   setLineData,
   syncSelected,
   type LineData,
-} from './codemirror/line-state'
-import { SDL_LINE_HEIGHT, sdlExtensions } from './codemirror/sdl-extensions'
-import { sdlField } from './codemirror/sdl-field'
-import type { Coordinate } from './codemirror/sdl-index'
+  type SdlLocation,
+} from './line-state'
+import {
+  NO_MESSAGES,
+  initMessageRows,
+  messageRows,
+  setMessages,
+  type SdlMessages,
+} from './message-rows'
+import { rowAtLine, sdlRows, type SdlRow } from './sdl-rows'
+import { SDL_LINE_HEIGHT } from './sdl-theme'
 import {
   setTypeHref,
   typeHrefField,
   typeLinks,
   type TypeHref,
-} from './codemirror/type-links'
+} from './type-links'
 
-export type UseSdlExtensionsParams = LineData & {
-  selected?: Coordinate
-  onSelect?: (coordinate: Coordinate | undefined) => void
-  reveal?: { coordinate: Coordinate; nonce: number }
+export type UseSdlExtensionsParams = {
+  /** Dimming, and the annotation column. Without any there is no column. */
+  data?: LineData
+  /** Rows under lines. */
+  messages?: SdlMessages
+  selected?: SdlLocation
+  onSelect?: (row: SdlRow) => void
+  reveal?: SdlLocation & { nonce: number }
   typeHref?: TypeHref
   renderHover?: RenderHover
   /** Hides the annotation column while true. */
   columnCollapsed?: boolean
 }
 
-export type RenderHover = (coordinate: Coordinate) => ReactNode
+const NO_DATA: LineData = {}
 
-const showsColumn = ({
-  annotations,
-  tags,
-  columnCollapsed,
-}: UseSdlExtensionsParams) =>
-  (annotations !== undefined || tags !== undefined) && !columnCollapsed
+const showsColumn = ({ data, columnCollapsed }: UseSdlExtensionsParams) =>
+  (data?.annotations !== undefined || data?.tags !== undefined) &&
+  !columnCollapsed
 
 /** Latest callback and the live view, held outside React's render data. */
 class Handlers {
   view: EditorView | null = null
   slide?: Animation
-  onSelect?: (coordinate: Coordinate | undefined) => void
+  onSelect?: (row: SdlRow) => void
   renderHover?: RenderHover
 
   update({ onSelect, renderHover }: UseSdlExtensionsParams) {
@@ -109,6 +116,7 @@ const slideColumn = (
 export type FindPanel = { view: EditorView; dom: HTMLElement; store: FindStore }
 
 const createHandlers = (
+  base: Extension,
   params: UseSdlExtensionsParams,
   setPanel: (panel: FindPanel | null) => void,
   setCard: (update: (card: HoverCard | null) => HoverCard | null) => void
@@ -117,26 +125,28 @@ const createHandlers = (
   handlers.update(params)
   const column = new Compartment()
   const store = new FindStore()
-  const { annotations, tags, dimmed, selected } = params
+  const { data = NO_DATA, selected } = params
 
   const extensions: Extension = [
-    sdlExtensions,
-    lineStateField.init(state =>
-      initialLineState(state, { annotations, tags, dimmed }, selected)
-    ),
+    base,
+    lineStateField.init(state => initialLineState(state, data, selected)),
+    initMessageRows(params.messages),
     linePointer,
     typeLinks(params.typeHref),
     column.of(showsColumn(params) ? annotationGutter : []),
     findExtensions(store, panel =>
       setPanel(panel ? { ...panel, store } : null)
     ),
-    hoverCard(coordinate => handlers.renderHover?.(coordinate), setCard),
+    hoverCard(
+      (coordinate, side) => handlers.renderHover?.(coordinate, side),
+      setCard
+    ),
     // Only user selections are reported; host ones arrive as syncSelected.
     EditorView.updateListener.of(update => {
       for (const tr of update.transactions) {
         for (const effect of tr.effects) {
-          if (effect.is(selectLine)) {
-            handlers.onSelect?.(coordinateAtLine(tr.state, effect.value))
+          if (effect.is(selectLine) && effect.value !== null) {
+            handlers.onSelect?.(rowAtLine(tr.state, effect.value))
           }
         }
       }
@@ -156,11 +166,13 @@ const createHandlers = (
 }
 
 /**
- * The SDL viewer's extensions: colors, folding, go-to-definition, row states,
- * the annotation column, search and the hover card, kept in step with the host's props. The
- * extensions are stable across renders; `findPanel` is set once the panel opens.
+ * What every SDL view has: row states, type links, the annotation column,
+ * search and the hover card, kept in step with the host's props. `base` is the
+ * view's own, and must set `sdlRows`. The extensions are stable across
+ * renders; `findPanel` is set once the panel opens.
  */
 export const useSdlExtensions = (
+  base: Extension,
   params: UseSdlExtensionsParams
 ): {
   extensions: Extension
@@ -170,9 +182,10 @@ export const useSdlExtensions = (
   const [findPanel, setFindPanel] = useState<FindPanel | null>(null)
   const [card, setCard] = useState<HoverCard | null>(null)
   const [{ handlers, column, extensions }] = useState(() =>
-    createHandlers(params, setFindPanel, setCard)
+    createHandlers(base, params, setFindPanel, setCard)
   )
-  const { annotations, tags, dimmed, selected, reveal, typeHref } = params
+  const { data = NO_DATA, messages = NO_MESSAGES, reveal, typeHref } = params
+  const { side, coordinate } = params.selected ?? {}
   const withColumn = showsColumn(params)
 
   useEffect(() => {
@@ -183,16 +196,22 @@ export const useSdlExtensions = (
   useEffect(() => {
     const view = handlers.view
     if (!view) return
-    const { data } = view.state.field(lineStateField)
+    const { data: last } = view.state.field(lineStateField)
     if (
-      data.annotations === annotations &&
-      data.tags === tags &&
-      data.dimmed === dimmed
+      last.annotations === data.annotations &&
+      last.tags === data.tags &&
+      last.dimmed === data.dimmed
     ) {
       return
     }
-    view.dispatch({ effects: setLineData.of({ annotations, tags, dimmed }) })
-  }, [handlers, annotations, tags, dimmed])
+    view.dispatch({ effects: setLineData.of(data) })
+  })
+
+  useEffect(() => {
+    const view = handlers.view
+    if (!view || view.state.field(messageRows).messages === messages) return
+    view.dispatch({ effects: setMessages.of(messages) })
+  }, [handlers, messages])
 
   // A layout effect, so the find bar's passive effects see the new column.
   useLayoutEffect(() => {
@@ -207,9 +226,15 @@ export const useSdlExtensions = (
     const view = handlers.view
     if (!view) return
     const line = view.state.field(lineStateField).selected
-    if (coordinateAtLine(view.state, line) === selected) return
-    view.dispatch({ effects: syncSelected.of(selected) })
-  }, [handlers, selected])
+    const shown =
+      line === null ? undefined : rowAtLine(view.state, line).coordinate
+    if (shown === coordinate) return
+    view.dispatch({
+      effects: syncSelected.of(
+        side && coordinate !== undefined ? { side, coordinate } : undefined
+      ),
+    })
+  }, [handlers, side, coordinate])
 
   useEffect(() => {
     const view = handlers.view
@@ -222,8 +247,8 @@ export const useSdlExtensions = (
     const view = handlers.view
     if (!view || !reveal) return
     const line = view.state
-      .field(sdlField)
-      .index.lineOfCoordinate.get(reveal.coordinate)
+      .facet(sdlRows)
+      .lineOf(reveal.side, reveal.coordinate)
     if (line === undefined) return
     view.dispatch({
       effects: EditorView.scrollIntoView(view.state.doc.line(line).from, {
