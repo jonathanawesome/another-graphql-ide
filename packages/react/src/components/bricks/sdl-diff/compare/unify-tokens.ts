@@ -1,8 +1,4 @@
-import {
-  indexSdl,
-  type SdlToken,
-  type SdlTokenKind,
-} from '../../sdl-shared/sdl-index'
+import type { SdlToken, SdlTokenKind } from '../../sdl-shared/sdl-index'
 
 import { REMOVED, type Comparison } from './compare-sdl'
 import { lineEnd, lineStart, type Lines } from './lines'
@@ -39,14 +35,19 @@ const firstTokens = (lines: Lines, tokens: SdlToken[]) => {
   return first
 }
 
-/** Indexes both documents and moves their tokens onto the diff's rows. */
-export const unifyTokens = ({ rows, before, after }: Comparison): Tokens => {
-  const side = (lines: Lines) => {
-    const { tokens } = indexSdl(lines.text)
-    return { lines, tokens, first: firstTokens(lines, tokens) }
-  }
-  const newer = side(after)
-  const older = before.text === after.text ? newer : side(before)
+/** Both documents' tokens, moved onto the diff's rows. */
+export const unifyTokens = (
+  { rows, before, after }: Comparison,
+  beforeTokens: SdlToken[],
+  afterTokens: SdlToken[]
+): Tokens => {
+  const side = (lines: Lines, tokens: SdlToken[]) => ({
+    lines,
+    tokens,
+    first: firstTokens(lines, tokens),
+  })
+  const older = side(before, beforeTokens)
+  const newer = side(after, afterTokens)
 
   // A token over several lines, such as a description, is split per row.
   const most =

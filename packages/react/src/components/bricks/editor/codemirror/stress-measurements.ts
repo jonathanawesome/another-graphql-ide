@@ -276,7 +276,7 @@ export const stressMeasurementGroups: StressGroup[] = [
             before: largeSupergraph,
             after: editedSupergraph,
             context: 3,
-          }).tokens?.()
+          }).details?.()
         },
       },
     ],

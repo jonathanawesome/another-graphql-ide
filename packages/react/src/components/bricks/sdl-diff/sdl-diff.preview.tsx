@@ -56,6 +56,40 @@ export const Subgraph = createPreview({
   ),
 })
 
+// Type links go nowhere real; the hash shows in the status bar on hover.
+const typeHref = (name: string) =>
+  /^[A-Z]/.test(name) &&
+  !['String', 'Int', 'Float', 'Boolean', 'ID'].includes(name)
+    ? `#types/${name}`
+    : undefined
+
+const Interactive = ({ before, after }: { before: string; after: string }) => {
+  const [selected, setSelected] = useState('none')
+  return (
+    <div style={{ display: 'grid', gap: 8, width: '100%' }}>
+      <code>selected: {selected}</code>
+      <Framed
+        before={before}
+        after={after}
+        onSelect={({ side, coordinate }) =>
+          setSelected(coordinate ? `${coordinate} (${side})` : 'none')
+        }
+        typeHref={typeHref}
+        renderHover={(coordinate, side) => (
+          <span>
+            <code>{coordinate}</code>, from the {side} schema.
+          </span>
+        )}
+      />
+    </div>
+  )
+}
+
+export const SelectingAndLinks = createPreview({
+  label: 'Selecting and links',
+  render: () => <Interactive before={subgraphSdl} after={subgraphAfter} />,
+})
+
 export const Unchanged = createPreview({
   label: 'Unchanged',
   render: () => <Framed before={subgraphSdl} after={subgraphSdl} />,
@@ -80,6 +114,11 @@ const supergraphAfter = editFields(supergraph, 3000).sdl
 export const LargeSupergraph = createPreview({
   label: 'Large supergraph',
   render: () => <Framed before={supergraph} after={supergraphAfter} />,
+})
+
+export const LargeSupergraphLinks = createPreview({
+  label: 'Large supergraph, selecting and links',
+  render: () => <Interactive before={supergraph} after={supergraphAfter} />,
 })
 
 export const TooLarge = createPreview({

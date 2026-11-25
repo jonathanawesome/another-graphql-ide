@@ -1,7 +1,10 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 
+import type { RenderHover } from '../sdl-shared/hover-card'
 import { LoadingShell } from '../sdl-shared/loading-shell'
 import { sdlFrameStyles as frameStyles } from '../sdl-shared/sdl-frame.css'
+import type { SdlRow } from '../sdl-shared/sdl-rows'
+import type { TypeHref } from '../sdl-shared/type-links'
 
 import type { SdlDiffKind } from './compare/compare-sdl'
 import { DiffEditor } from './diff-editor'
@@ -28,6 +31,15 @@ export type SdlDiffProps = {
   loading?: boolean
   /** Shown instead of the diff when the documents are too large to compare. */
   tooLarge?: ReactNode
+  /** Called when the user selects a row. */
+  onSelect?: (row: SdlRow) => void
+  /** Type names become links to the host's page for each type. */
+  typeHref?: TypeHref
+  /**
+   * Content for a card under a row after a short hover. Return nothing for no
+   * card. Called on each hover to decide, so keep it cheap.
+   */
+  renderHover?: RenderHover
   /** Called with what each comparison found. */
   onResult?: (result: SdlDiffResult) => void
   /** Overrides the surrounding ThemeProvider. Light when neither is set. */
@@ -40,9 +52,10 @@ export type SdlDiffProps = {
 
 /**
  * A read-only view of what changed between two SDL documents: added, removed
- * and unchanged lines in one column, long unchanged runs folded, with colors
- * and a find bar. Documents with no changes show `after` in full. Compares line
- * by line in a worker, so pass both documents sorted to ignore order.
+ * and unchanged lines in one column, long unchanged runs folded, with colors,
+ * a find bar, row selection, type links and hover cards. Documents with no
+ * changes show `after` in full. Compares line by line in a worker, so pass both
+ * documents sorted to ignore order.
  * Prop-driven; needs no AGIProvider.
  */
 export const SdlDiff = ({
@@ -51,12 +64,15 @@ export const SdlDiff = ({
   context = 3,
   loading = false,
   tooLarge = 'This diff is too large to show.',
+  onSelect,
+  typeHref,
+  renderHover,
   onResult,
   theme,
   frame,
   height,
 }: SdlDiffProps) => {
-  const { id, result, tokens } = useSdlComparison(
+  const { id, result, details } = useSdlComparison(
     { before, after, context },
     !loading
   )
@@ -92,7 +108,15 @@ export const SdlDiff = ({
         )}
         {result && result.kind !== 'too-large' && (
           <div className={frameStyles.editor}>
-            <DiffEditor key={id} diff={result} tokens={tokens} theme={theme} />
+            <DiffEditor
+              key={id}
+              diff={result}
+              details={details}
+              onSelect={onSelect}
+              typeHref={typeHref}
+              renderHover={renderHover}
+              theme={theme}
+            />
           </div>
         )}
       </div>

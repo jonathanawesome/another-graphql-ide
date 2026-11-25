@@ -5,7 +5,7 @@ import {
   type Rows,
   type SdlDiffKind,
 } from './compare-sdl'
-import { unifyTokens, type Tokens } from './unify-tokens'
+import { diffDetails, type DiffDetails } from './diff-details'
 
 export type ComparisonRequest = {
   before: string
@@ -36,7 +36,7 @@ const TOO_LARGE = 40_000_000
 
 /**
  * A comparison in two steps, so a diff can be shown before it is colored:
- * colors need a parse of both documents, which is most of the time.
+ * colors and coordinates need a parse of both, which is most of the time.
  */
 export const runComparison = ({
   before,
@@ -44,7 +44,7 @@ export const runComparison = ({
   context,
 }: ComparisonRequest): {
   result: ComparisonResult
-  tokens?: () => Tokens
+  details?: () => DiffDetails
 } => {
   if (before.length + after.length > TOO_LARGE) {
     return { result: { kind: 'too-large' } }
@@ -65,7 +65,7 @@ export const runComparison = ({
       removed,
       added,
     },
-    tokens: () => unifyTokens(comparison),
+    details: () => diffDetails(comparison),
   }
 }
 

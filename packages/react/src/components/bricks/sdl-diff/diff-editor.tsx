@@ -3,61 +3,72 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { Editor } from '../editor/editor'
-import { FindStore, findExtensions } from '../sdl-shared/find'
 import { FindBar } from '../sdl-shared/find-bar'
+import { definitionClick } from '../sdl-shared/go-to-definition'
+import type { RenderHover } from '../sdl-shared/hover-card'
+import type { SdlRow } from '../sdl-shared/sdl-rows'
 import { sdlTheme } from '../sdl-shared/sdl-theme'
+import type { TypeHref } from '../sdl-shared/type-links'
+import { useSdlExtensions } from '../sdl-shared/use-sdl-extensions'
 
+import { diffDetailsExtension, setDetails } from './codemirror/diff-details'
 import { diffFolds } from './codemirror/diff-folds'
 import { diffRows } from './codemirror/diff-rows'
 import { diffTheme } from './codemirror/diff-theme'
-import { diffTokens, setTokens } from './codemirror/diff-tokens'
+import type { DiffDetails } from './compare/diff-details'
 import type { DiffView } from './compare/run-comparison'
-import type { Tokens } from './compare/unify-tokens'
 
-type Panel = { view: EditorView; dom: HTMLElement }
+const createBase = ({ rows, folds, lines }: DiffView) => {
+  const handle: { view: EditorView | null } = { view: null }
+  const extensions = [
+    diffRows(rows, lines),
+    diffFolds(folds),
+    diffDetailsExtension(rows),
+    definitionClick,
+    sdlTheme,
+    diffTheme,
+    ViewPlugin.define(view => {
+      handle.view = view
+      return {
+        destroy: () => {
+          handle.view = null
+        },
+      }
+    }),
+  ]
+  return { handle, extensions }
+}
 
-const createExtensions = (
-  { rows, folds, lines }: DiffView,
-  store: FindStore,
-  setPanel: (panel: Panel | null) => void,
-  setView: (view: EditorView | null) => void
-) => [
-  diffRows(rows, lines),
-  diffFolds(folds),
-  diffTokens,
-  sdlTheme,
-  diffTheme,
-  findExtensions(store, setPanel),
-  ViewPlugin.define(view => {
-    setView(view)
-    return { destroy: () => setView(null) }
-  }),
-]
+export type DiffEditorProps = {
+  diff: DiffView
+  details?: DiffDetails
+  onSelect?: (row: SdlRow) => void
+  typeHref?: TypeHref
+  renderHover?: RenderHover
+  theme?: 'light' | 'dark'
+}
 
 /** One diff in an editor. Mount another for the next diff. */
 export const DiffEditor = ({
   diff,
-  tokens,
+  details,
+  onSelect,
+  typeHref,
+  renderHover,
   theme,
-}: {
-  diff: DiffView
-  tokens?: Tokens
-  theme?: 'light' | 'dark'
-}) => {
-  const [panel, setPanel] = useState<Panel | null>(null)
-  const [{ handle, store, extensions }] = useState(() => {
-    const handle: { view: EditorView | null } = { view: null }
-    const store = new FindStore()
-    const extensions = createExtensions(diff, store, setPanel, view => {
-      handle.view = view
-    })
-    return { handle, store, extensions }
-  })
+}: DiffEditorProps) => {
+  const [{ handle, extensions: base }] = useState(() => createBase(diff))
 
   // Runs after Editor's own effect, so the view exists.
   useEffect(() => {
-    if (tokens) handle.view?.dispatch({ effects: setTokens.of(tokens) })
-  }, [handle, tokens])
+    if (details) handle.view?.dispatch({ effects: setDetails.of(details) })
+  }, [handle, details])
+
+  const { extensions, findPanel, card } = useSdlExtensions(base, {
+    onSelect,
+    typeHref,
+    renderHover,
+  })
 
   return (
     <>
@@ -67,10 +78,21 @@ export const DiffEditor = ({
         theme={theme}
         extensions={extensions}
       />
-      {panel &&
+      {findPanel &&
         createPortal(
-          <FindBar view={panel.view} store={store} withColumn={false} />,
-          panel.dom
+          <FindBar
+            view={findPanel.view}
+            store={findPanel.store}
+            withColumn={false}
+          />,
+          findPanel.dom
+        )}
+      {card &&
+        renderHover &&
+        createPortal(
+          renderHover(card.coordinate, card.side),
+          card.dom,
+          `${card.side} ${card.coordinate}`
         )}
     </>
   )

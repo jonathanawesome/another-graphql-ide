@@ -23,9 +23,9 @@ class FakeWorker {
 
 const start = () => {
   const onResult = vi.fn()
-  const onTokens = vi.fn()
-  const cancel = startComparison(request, { onResult, onTokens })
-  return { onResult, onTokens, cancel, worker: FakeWorker.all.at(-1) }
+  const onDetails = vi.fn()
+  const cancel = startComparison(request, { onResult, onDetails })
+  return { onResult, onDetails, cancel, worker: FakeWorker.all.at(-1) }
 }
 
 afterEach(() => {
@@ -37,41 +37,41 @@ afterEach(() => {
 describe('startComparison', () => {
   it('runs here without workers, showing the result before the colors', () => {
     vi.useFakeTimers()
-    const { onResult, onTokens } = start()
+    const { onResult, onDetails } = start()
 
     vi.advanceTimersToNextTimer()
     expect(onResult).toHaveBeenCalledWith(
       expect.objectContaining({ kind: 'diff', removed: 1, added: 1 })
     )
-    expect(onTokens).not.toHaveBeenCalled()
+    expect(onDetails).not.toHaveBeenCalled()
 
     vi.advanceTimersToNextTimer()
-    expect(onTokens).toHaveBeenCalledOnce()
+    expect(onDetails).toHaveBeenCalledOnce()
   })
 
   it('stops between steps when cancelled', () => {
     vi.useFakeTimers()
-    const { onResult, onTokens, cancel } = start()
+    const { onResult, onDetails, cancel } = start()
 
     vi.advanceTimersToNextTimer()
     cancel()
     vi.runAllTimers()
 
     expect(onResult).toHaveBeenCalledOnce()
-    expect(onTokens).not.toHaveBeenCalled()
+    expect(onDetails).not.toHaveBeenCalled()
   })
 
   it('relays a worker, and ends it after the colors', () => {
     vi.stubGlobal('Worker', FakeWorker)
-    const { onResult, onTokens, worker } = start()
+    const { onResult, onDetails, worker } = start()
 
     expect(worker?.postMessage).toHaveBeenCalledWith(request)
     worker?.onmessage?.({ data: { result: { kind: 'diff' } } })
     expect(onResult).toHaveBeenCalledWith({ kind: 'diff' })
     expect(worker?.terminate).not.toHaveBeenCalled()
 
-    worker?.onmessage?.({ data: { tokens: {} } })
-    expect(onTokens).toHaveBeenCalledOnce()
+    worker?.onmessage?.({ data: { details: {} } })
+    expect(onDetails).toHaveBeenCalledOnce()
     expect(worker?.terminate).toHaveBeenCalledOnce()
   })
 
@@ -98,14 +98,14 @@ describe('startComparison', () => {
   it('refuses documents too large to compare', () => {
     vi.useFakeTimers()
     const onResult = vi.fn()
-    const onTokens = vi.fn()
+    const onDetails = vi.fn()
     startComparison(
       { ...request, before: ' '.repeat(40_000_001) },
-      { onResult, onTokens }
+      { onResult, onDetails }
     )
     vi.runAllTimers()
 
     expect(onResult).toHaveBeenCalledWith({ kind: 'too-large' })
-    expect(onTokens).not.toHaveBeenCalled()
+    expect(onDetails).not.toHaveBeenCalled()
   })
 })

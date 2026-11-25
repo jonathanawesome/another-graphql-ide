@@ -1,21 +1,21 @@
+import { transferables, type DiffDetails } from './diff-details'
 import {
   runComparison,
   type ComparisonRequest,
   type ComparisonResult,
 } from './run-comparison'
-import type { Tokens } from './unify-tokens'
 
-export type WorkerReply = { result: ComparisonResult } | { tokens: Tokens }
+export type WorkerReply =
+  { result: ComparisonResult } | { details: DiffDetails }
 
-const reply = (message: WorkerReply) => postMessage(message)
+const reply = (message: WorkerReply, transfer: Transferable[] = []) =>
+  postMessage(message, { transfer })
 
 addEventListener('message', (event: MessageEvent<ComparisonRequest>) => {
-  const { result, tokens } = runComparison(event.data)
+  const { result, details: makeDetails } = runComparison(event.data)
   reply({ result })
-  if (!tokens) return
-  const { from, to, kinds } = tokens()
+  if (!makeDetails) return
+  const details = makeDetails()
   // Transferred, as these run to millions of entries.
-  postMessage({ tokens: { from, to, kinds } } satisfies WorkerReply, {
-    transfer: [from.buffer, to.buffer, kinds.buffer],
-  })
+  reply({ details }, transferables(details))
 })

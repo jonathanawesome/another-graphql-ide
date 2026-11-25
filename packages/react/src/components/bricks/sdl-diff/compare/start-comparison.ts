@@ -1,26 +1,26 @@
 import type { WorkerReply } from './comparison.worker'
+import type { DiffDetails } from './diff-details'
 import {
   runComparison,
   type ComparisonRequest,
   type ComparisonResult,
 } from './run-comparison'
-import type { Tokens } from './unify-tokens'
 
 export type ComparisonHandlers = {
   onResult: (result: ComparisonResult) => void
-  /** The colors, after the result. Not called if they could not be made. */
-  onTokens: (tokens: Tokens) => void
+  /** Colors and coordinates, later. Not called if they could not be made. */
+  onDetails: (details: DiffDetails) => void
 }
 
 /** The same work on the main thread, a step per task. */
 const runHere = (
   request: ComparisonRequest,
-  { onResult, onTokens }: ComparisonHandlers
+  { onResult, onDetails }: ComparisonHandlers
 ) => {
   let timer = setTimeout(() => {
-    const { result, tokens } = runComparison(request)
+    const { result, details } = runComparison(request)
     timer = setTimeout(() => {
-      if (tokens) onTokens(tokens())
+      if (details) onDetails(details())
     })
     onResult(result)
   })
@@ -53,7 +53,7 @@ export const startComparison = (
 
   let shown = false
   let cancelFallback: (() => void) | undefined
-  const { onResult, onTokens } = handlers
+  const { onResult, onDetails } = handlers
 
   worker.onmessage = ({ data }: MessageEvent<WorkerReply>) => {
     if ('result' in data) {
@@ -61,7 +61,7 @@ export const startComparison = (
       onResult(data.result)
       if (data.result.kind === 'too-large') worker.terminate()
     } else {
-      onTokens(data.tokens)
+      onDetails(data.details)
       worker.terminate()
     }
   }

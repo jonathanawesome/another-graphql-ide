@@ -1,12 +1,18 @@
 import { describe, expect, it } from 'vitest'
 
+import { indexSdl } from '../../sdl-shared/sdl-index'
+
 import { compareSdl, unifiedText } from './compare-sdl'
 import { TOKEN_KINDS, unifyTokens } from './unify-tokens'
 
 const colored = (before: string, after: string) => {
   const comparison = compareSdl(before, after)
   const { text } = unifiedText(comparison)
-  const { from, to, kinds } = unifyTokens(comparison)
+  const { from, to, kinds } = unifyTokens(
+    comparison,
+    indexSdl(comparison.before.text).tokens,
+    indexSdl(comparison.after.text).tokens
+  )
   return Array.from(
     kinds,
     (kind, i) => `${TOKEN_KINDS[kind] ?? '?'}:${text.slice(from[i], to[i])}`

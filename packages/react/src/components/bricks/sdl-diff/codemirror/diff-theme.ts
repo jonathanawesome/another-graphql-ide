@@ -12,8 +12,13 @@ const theme = EditorView.theme({
 
   '.cm-activeLineGutter': { color: 'inherit' },
 
-  '.cm-sdl-added': { backgroundColor: themeContract.diff.addedBg },
-  '.cm-sdl-removed': { backgroundColor: themeContract.diff.removedBg },
+  // A selected row keeps its sign, and shows as selected.
+  '.cm-sdl-added:not(.cm-sdl-selected)': {
+    backgroundColor: themeContract.diff.addedBg,
+  },
+  '.cm-sdl-removed:not(.cm-sdl-selected)': {
+    backgroundColor: themeContract.diff.removedBg,
+  },
   // CodeMirror draws the selection under the rows, so a tint would hide it.
   '.cm-line.cm-sdl-added, .cm-line.cm-sdl-removed': {
     '& ::selection, &::selection': {

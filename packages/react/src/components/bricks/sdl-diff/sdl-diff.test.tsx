@@ -2,6 +2,10 @@ import { EditorView } from '@codemirror/view'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { goToDefinition } from '../sdl-shared/go-to-definition'
+import { hoverCardSource } from '../sdl-shared/hover-card'
+import { selectLine } from '../sdl-shared/line-state'
+
 import { SdlDiff, type SdlDiffProps } from './sdl-diff'
 
 // CodeMirror's DOM has no roles to query by.
@@ -169,5 +173,108 @@ describe('SdlDiff', () => {
     expect(lines(container)).toContain('  f2: Int')
     const { from, to } = editorOf(container).state.selection.main
     expect(editorOf(container).state.sliceDoc(from, to)).toBe('f2:')
+  })
+
+  describe('rows', () => {
+    const older = [
+      'type Query {',
+      '  user: User',
+      '  old: Int',
+      '}',
+      'type User {',
+      '  id: ID',
+      '}',
+    ].join('\n')
+    const newer = older.replace('  old: Int', '  new: User')
+    // Rows: 1 Query, 2 user, 3 old (removed), 4 new (added), 5 }, 6 User, 7 id
+
+    const select = (root: HTMLElement, line: number) =>
+      act(() => {
+        editorOf(root).dispatch({ effects: selectLine.of(line) })
+      })
+
+    it('reports a selected row with its side', () => {
+      const onSelect = vi.fn()
+      const { container } = setup({ before: older, after: newer, onSelect })
+
+      select(container, 3)
+      expect(onSelect).toHaveBeenLastCalledWith({
+        side: 'before',
+        coordinate: 'Query.old',
+      })
+      select(container, 4)
+      expect(onSelect).toHaveBeenLastCalledWith({
+        side: 'after',
+        coordinate: 'Query.new',
+      })
+      select(container, 5)
+      expect(onSelect).toHaveBeenLastCalledWith({
+        side: 'after',
+        coordinate: undefined,
+      })
+      expect(lines(container, '.cm-sdl-selected')).toEqual(['}'])
+    })
+
+    it('links type names on every row', () => {
+      const { container } = setup({
+        before: older,
+        after: newer,
+        typeHref: name => (name === 'Int' ? undefined : `#${name}`),
+      })
+
+      expect(
+        findAll(container, 'a.cm-sdl-link').map(link =>
+          link.getAttribute('href')
+        )
+      ).toEqual(['#Query', '#User', '#User', '#User', '#ID'])
+    })
+
+    it('goes to the definition on the same side', () => {
+      const { container } = setup({ before: older, after: newer })
+      const view = editorOf(container)
+      const text = view.state.doc.toString()
+
+      act(() => {
+        goToDefinition(view, text.indexOf('User'))
+      })
+      expect(view.state.selection.main.from).toBe(text.indexOf('User {'))
+      expect(lines(container, '.cm-sdl-selected')).toEqual(['type User {'])
+    })
+
+    it('opens the run a definition is in', () => {
+      const typed = long.replace('f15: Int', 'f15: User')
+      const user = ['', 'type User {', ...fields(10), '}'].join('\n')
+      const { container } = setup({
+        before: `${long}${user}`,
+        after: `${typed}${user}`,
+      })
+      expect(lines(container)).not.toContain('type User {')
+      const view = editorOf(container)
+
+      act(() => {
+        goToDefinition(view, view.state.doc.toString().indexOf('User'))
+      })
+      expect(lines(container)).toContain('type User {')
+    })
+
+    it('offers a hover card per side', () => {
+      const renderHover = vi.fn((coordinate: string, side: string) =>
+        coordinate === 'Query.user' ? null : `${coordinate} ${side}`
+      )
+      const { container } = setup({ before: older, after: newer, renderHover })
+      const view = editorOf(container)
+      const card = (line: number) =>
+        hoverCardSource(renderHover, () => undefined)(
+          view,
+          view.state.doc.line(line).from,
+          1
+        )
+
+      expect(card(2)).toBeNull()
+      expect(card(3)).not.toBeNull()
+      expect(renderHover).toHaveBeenLastCalledWith('Query.old', 'before')
+      expect(card(4)).not.toBeNull()
+      expect(renderHover).toHaveBeenLastCalledWith('Query.new', 'after')
+    })
   })
 })
