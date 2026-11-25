@@ -14,6 +14,10 @@ export type {
 } from './bricks/sdl-viewer/codemirror/line-state'
 export type { Coordinate as SdlCoordinate } from './bricks/sdl-shared/sdl-index'
 
+// What changed between two SDL documents, prop-driven like Editor.
+export { SdlDiff } from './bricks/sdl-diff/sdl-diff'
+export type { SdlDiffProps, SdlDiffResult } from './bricks/sdl-diff/sdl-diff'
+
 // Bricks. Each reads its configuration from the surrounding AGIProvider.
 export { ConnectionBar } from './bricks/connection-bar/connection-bar'
 export { EditorGroup } from './bricks/editor-group/editor-group'

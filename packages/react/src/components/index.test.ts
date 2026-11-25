@@ -21,6 +21,7 @@ describe('public exports', () => {
       'ResponsePane',
       'RunControl',
       'SchemaTree',
+      'SdlDiff',
       'SdlViewer',
       'VariablesEditor',
       'useOperationExtensions',

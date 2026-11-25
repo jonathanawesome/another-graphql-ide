@@ -107,6 +107,11 @@ export const themeContract = createGlobalThemeContract(
       infoEdge: null,
     },
 
+    diff: {
+      addedBg: null,
+      removedBg: null,
+    },
+
     syntax: {
       keyword: null,
       string: null,
