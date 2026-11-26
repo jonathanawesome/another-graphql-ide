@@ -12,6 +12,8 @@ import {
   type Token,
 } from 'graphql'
 
+import { scanSdl } from './scan-sdl'
+
 /** A schema coordinate: `User`, `User.name`, `Query.user(id:)`, `@key`. */
 export type Coordinate = string
 
@@ -29,7 +31,7 @@ export type SdlTokenKind =
 export type SdlToken = { from: number; to: number; kind: SdlTokenKind }
 
 export type SdlIndex = {
-  /** False when graphql-js rejected the SDL. Tokens are still filled in. */
+  /** False when graphql-js rejected the SDL. Tokens and folds are still filled in. */
   parsed: boolean
   /** color classes in document order. */
   tokens: SdlToken[]
@@ -64,48 +66,28 @@ const emptyIndex = (): SdlIndex => ({
   lineOfCoordinate: new Map(),
 })
 
-// Only used to color SDL the parser rejected.
-const KEYWORDS = new Set([
-  'schema',
-  'scalar',
-  'type',
-  'interface',
-  'union',
-  'enum',
-  'input',
-  'directive',
-  'extend',
-  'implements',
-  'repeatable',
-  'on',
-  'query',
-  'mutation',
-  'subscription',
-])
-
 /**
- * One graphql-js parse of an SDL document: token colors, fold ranges,
- * definition offsets and the line to coordinate maps both ways. Never throws.
+ * One graphql-js parse of an SDL document: token colors, fold ranges and the
+ * line to coordinate maps both ways. SDL the parser rejects gets colors and
+ * folds by position, and no coordinates. Never throws.
  */
 export const indexSdl = (sdl: string): SdlIndex => {
   const index = emptyIndex()
 
-  let ast: DocumentNode | undefined
+  let ast: DocumentNode
   try {
     ast = parse(sdl)
   } catch {
-    ast = undefined
+    const { tokens, folds } = scanSdl(sdl)
+    return { ...index, tokens, folds }
   }
 
   // A typed array beats a Map here: a large supergraph has ~700k names.
-  const roles = new Uint8Array(ast ? sdl.length : 0)
-  if (ast) {
-    index.parsed = true
-    classifyNames(ast, roles)
-    for (const definition of ast.definitions) indexDefinition(definition, index)
-  }
-
-  index.tokens = color(sdl, roles, Boolean(ast))
+  const roles = new Uint8Array(sdl.length)
+  index.parsed = true
+  classifyNames(ast, roles)
+  for (const definition of ast.definitions) indexDefinition(definition, index)
+  index.tokens = color(sdl, roles)
   return index
 }
 
@@ -150,8 +132,6 @@ const TOKEN_ROLE: Partial<Record<string, SdlTokenKind>> = {
   [TokenKind.COMMENT]: 'comment',
 }
 const NAME_TOKEN: string = TokenKind.NAME
-const AT_TOKEN: string = TokenKind.AT
-const COMMENT_TOKEN: string = TokenKind.COMMENT
 
 type Walkable = {
   kind?: string
@@ -284,42 +264,29 @@ const indexDefinition = (definition: DefinitionNode, index: SdlIndex) => {
   }
 }
 
-/**
- * colors from the lexer, so text the parser rejects still gets them. Walks the
- * token list rather than `advance()`, which skips comments.
- */
-const color = (sdl: string, roles: Uint8Array, parsed: boolean): SdlToken[] => {
+/** Colors from the lexer. Walks the token list, as `advance()` skips comments. */
+const color = (sdl: string, roles: Uint8Array): SdlToken[] => {
   const lexer = new Lexer(new Source(sdl))
   const first = lexer.token
-  try {
-    while (lexer.advance().kind !== TokenKind.EOF) {
-      // Builds the linked list read below.
-    }
-  } catch {
-    // An unterminated string or a stray character: keep what was read.
+  while (lexer.advance().kind !== TokenKind.EOF) {
+    // Builds the linked list read below.
   }
 
   const tokens: SdlToken[] = []
-  let previous: Token | undefined
   for (let token = first.next; token; token = token.next) {
-    const kind = tokenKind(token, previous, roles, parsed)
+    const kind = tokenKind(token, roles)
     if (kind) tokens.push({ from: token.start, to: token.end, kind })
-    if ((token.kind as string) !== COMMENT_TOKEN) previous = token
   }
   return tokens
 }
 
 const tokenKind = (
   token: Token,
-  previous: Token | undefined,
-  roles: Uint8Array,
-  parsed: boolean
+  roles: Uint8Array
 ): SdlTokenKind | undefined => {
   const kind: string = token.kind
   if (kind !== NAME_TOKEN) {
     return roles[token.start] === ROLE.comment ? 'comment' : TOKEN_ROLE[kind]
   }
-  if (parsed) return ROLES[(roles[token.start] ?? 1) - 1] ?? 'keyword'
-  if ((previous?.kind as string | undefined) === AT_TOKEN) return 'directive'
-  return KEYWORDS.has(token.value) ? 'keyword' : undefined
+  return ROLES[(roles[token.start] ?? 1) - 1] ?? 'keyword'
 }

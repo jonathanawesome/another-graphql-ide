@@ -9,9 +9,11 @@ export const SDL_LINE_HEIGHT = 26
 
 const row = `${SDL_LINE_HEIGHT}px`
 
-/** Colors, rows, the find panel and the annotation column. */
-const theme = EditorView.theme({
+const lines = EditorView.theme({
   '.cm-line, .cm-gutterElement': { lineHeight: row },
+})
+
+const colors = EditorView.theme({
   // Punctuation is the only text without a token class.
   '.cm-line': { color: themeContract.syntax.punctuation },
   '.cm-sdl-keyword': { color: themeContract.syntax.keyword },
@@ -23,28 +25,10 @@ const theme = EditorView.theme({
   '.cm-sdl-string': { color: themeContract.syntax.string },
   '.cm-sdl-number': { color: themeContract.syntax.number },
   '.cm-sdl-comment': { color: themeContract.syntax.comment },
+})
 
-  // Read-only: text can be selected and copied, but there is no caret.
-  '.cm-cursorLayer': { display: 'none' },
-
-  // Rows. The selected row replaces CodeMirror's active line.
-  '.cm-activeLine, .cm-activeLineGutter': { backgroundColor: 'transparent' },
-  '.cm-sdl-hover': { backgroundColor: themeContract.bg.hover },
-  '.cm-sdl-selected': { backgroundColor: themeContract.bg.selected },
-  '.cm-gutterElement.cm-sdl-selected': { color: themeContract.text.primary },
-  '.cm-sdl-dimmed': { opacity: 0.35 },
-  // A click places a selection, which would outline brackets in a read-only view.
-  '.cm-matchingBracket, &.cm-focused .cm-matchingBracket': { outline: 'none' },
-
-  // Fold markers show on the hovered row, and always once folded.
-  '.cm-foldGutter .cm-gutterElement:not(.cm-sdl-hover) span[title="Fold line"]':
-    { visibility: 'hidden' },
-
-  // Type links keep the type's color and underline on hover.
-  '.cm-sdl-link': { color: 'inherit', textDecoration: 'none' },
-  '.cm-sdl-link:hover': { textDecoration: 'underline' },
-
-  // Message rows, tinted through the gutters.
+/** Message rows, tinted through the gutters. */
+const messages = EditorView.theme({
   '.cm-sdl-message-warning': {
     backgroundColor: themeContract.status.warningBg,
   },
@@ -87,6 +71,29 @@ const theme = EditorView.theme({
     ...textStyles.codeSmall,
     color: themeContract.text.secondary,
   },
+})
+
+/** Rows, the find panel and the annotation column, for read-only views. */
+const viewer = EditorView.theme({
+  // Read-only: text can be selected and copied, but there is no caret.
+  '.cm-cursorLayer': { display: 'none' },
+
+  // Rows. The selected row replaces CodeMirror's active line.
+  '.cm-activeLine, .cm-activeLineGutter': { backgroundColor: 'transparent' },
+  '.cm-sdl-hover': { backgroundColor: themeContract.bg.hover },
+  '.cm-sdl-selected': { backgroundColor: themeContract.bg.selected },
+  '.cm-gutterElement.cm-sdl-selected': { color: themeContract.text.primary },
+  '.cm-sdl-dimmed': { opacity: 0.35 },
+  // A click places a selection, which would outline brackets in a read-only view.
+  '.cm-matchingBracket, &.cm-focused .cm-matchingBracket': { outline: 'none' },
+
+  // Fold markers show on the hovered row, and always once folded.
+  '.cm-foldGutter .cm-gutterElement:not(.cm-sdl-hover) span[title="Fold line"]':
+    { visibility: 'hidden' },
+
+  // Type links keep the type's color and underline on hover.
+  '.cm-sdl-link': { color: 'inherit', textDecoration: 'none' },
+  '.cm-sdl-link:hover': { textDecoration: 'underline' },
 
   // Hover card: the popover's surface around the host's content.
   '.cm-tooltip.cm-tooltip-hover': {
@@ -184,5 +191,13 @@ const theme = EditorView.theme({
   },
 })
 
-// The Editor's theme comes first, so without this it wins ties.
-export const sdlTheme: Extension = Prec.high(theme)
+// The Editor's theme comes first, so without Prec.high it wins ties.
+
+/** Line height and message rows, for any language. */
+export const rowTheme: Extension = Prec.high([lines, messages])
+
+/** SDL's colors. */
+export const sdlColors: Extension = Prec.high(colors)
+
+/** Everything a read-only SDL view needs. */
+export const sdlTheme: Extension = [rowTheme, sdlColors, Prec.high(viewer)]

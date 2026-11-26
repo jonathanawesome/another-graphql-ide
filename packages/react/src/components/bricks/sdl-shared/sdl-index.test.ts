@@ -142,7 +142,7 @@ describe('indexSdl', () => {
     expect(kinds).toEqual(['keyword', 'type', 'field', 'type', 'field', 'type'])
   })
 
-  it('returns an empty index for unparseable SDL without throwing', () => {
+  it('has no coordinates for unparseable SDL', () => {
     const index = indexSdl('type User {\n  name: String\n')
 
     expect(index.parsed).toBe(false)
@@ -151,11 +151,17 @@ describe('indexSdl', () => {
     expect(index.coordinateAtLine.size).toBe(0)
   })
 
-  it('still colors unparseable SDL from the lexer', () => {
+  it('still colors unparseable SDL, by position', () => {
     const kinds = indexSdl(
       'type User @deprecated {\n  name: "unterminated'
     ).tokens.map(token => token.kind)
 
-    expect(kinds).toEqual(['keyword', 'directive', 'directive'])
+    expect(kinds).toEqual([
+      'keyword',
+      'type',
+      'directive',
+      'directive',
+      'field',
+    ])
   })
 })

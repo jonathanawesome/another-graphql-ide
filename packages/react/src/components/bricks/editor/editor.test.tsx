@@ -47,6 +47,32 @@ describe('Editor', () => {
 
     expect(find(container, '.cm-agi-dimmed')).toBeNull()
   })
+
+  it('keeps typed text when the host echoes it back', () => {
+    const onChange = vi.fn<(value: string) => void>()
+    const { container, rerender } = render(
+      <Editor value="a" onChange={onChange} />
+    )
+    const view = EditorView.findFromDOM(container)
+    view?.dispatch({ changes: { from: 1, insert: 'b' } })
+    rerender(<Editor value={onChange.mock.lastCall?.[0]} onChange={onChange} />)
+
+    expect(view?.state.doc.toString()).toBe('ab')
+    expect(onChange).toHaveBeenCalledTimes(1)
+  })
+
+  it('restores typed text the host set away and back', () => {
+    const onChange = vi.fn()
+    const { container, rerender } = render(
+      <Editor value="a" onChange={onChange} />
+    )
+    const view = EditorView.findFromDOM(container)
+    view?.dispatch({ changes: { from: 1, insert: 'b' } })
+    rerender(<Editor value="reset" onChange={onChange} />)
+    rerender(<Editor value="ab" onChange={onChange} />)
+
+    expect(view?.state.doc.toString()).toBe('ab')
+  })
 })
 
 describe('useOperationExtensions', () => {

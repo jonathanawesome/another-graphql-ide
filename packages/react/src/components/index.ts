@@ -17,6 +17,14 @@ export { SdlDiff } from './bricks/sdl-diff/sdl-diff'
 export type { SdlDiffProps, SdlDiffResult } from './bricks/sdl-diff/sdl-diff'
 export type { SdlRow, SdlSide } from './bricks/sdl-shared/sdl-rows'
 
+// Editable SDL and JSON with problems under their lines, reported to the host.
+export { SdlEditor } from './bricks/sdl-editor/sdl-editor'
+export type { SdlEditorProps } from './bricks/sdl-editor/sdl-editor'
+export { JsonEditor } from './bricks/json-editor/json-editor'
+export type { JsonEditorProps } from './bricks/json-editor/json-editor'
+export type { JsonSchema } from './bricks/json-editor/diagnose-json'
+export type { EditorDiagnostic } from './bricks/sdl-shared/diagnostics'
+
 // Bricks. Each reads its configuration from the surrounding AGIProvider.
 export { ConnectionBar } from './bricks/connection-bar/connection-bar'
 export { EditorGroup } from './bricks/editor-group/editor-group'

@@ -63,6 +63,9 @@ export const useCodemirror = ({
   })
 
   const isSyncingRef = useRef(false)
+  // The editor's text as last given to onChange or synced from `value`, so
+  // an echo of it skips copying and comparing the whole document.
+  const emittedRef = useRef<string | undefined>(undefined)
 
   // Track the previous language so a schema-only change can use the cheaper
   // updateSchema path instead of a full language reconfigure.
@@ -81,7 +84,9 @@ export const useCodemirror = ({
       dark: resolvedTheme === 'dark',
       extensions,
       onChange: next => {
-        if (!isSyncingRef.current) onChangeRef.current?.(next)
+        if (isSyncingRef.current) return
+        emittedRef.current = next
+        onChangeRef.current?.(next)
       },
     })
     viewRef.current = view
@@ -153,7 +158,7 @@ export const useCodemirror = ({
     const view = viewRef.current
     if (!view || mountedValueRef.current === value) return
     mountedValueRef.current = value
-    if (value === undefined) return
+    if (value === undefined || value === emittedRef.current) return
 
     const current = view.state.doc.toString()
     if (value === current) return
@@ -177,6 +182,7 @@ export const useCodemirror = ({
       changes: { from: start, to: endCur, insert: value.slice(start, endNew) },
     })
     isSyncingRef.current = false
+    emittedRef.current = value
   }, [value])
 
   return containerRef
