@@ -13,7 +13,7 @@ import {
   type ViewUpdate,
 } from '@codemirror/view'
 
-import { checkDelay } from '../../sdl-shared/diagnostics'
+import { checkDelay } from '../../sdl-shared/check-delay'
 import { indexSdl, type SdlIndex } from '../../sdl-shared/sdl-index'
 import { sdlMarks } from '../../sdl-shared/sdl-marks'
 

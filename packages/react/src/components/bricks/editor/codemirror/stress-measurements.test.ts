@@ -5,6 +5,10 @@ import {
 } from 'graphql-language-service'
 import { describe, expect, it } from 'vitest'
 
+import { indexContext } from '../../sdl-editor/check/context-index'
+import { diagnoseSdl } from '../../sdl-editor/check/diagnose-sdl'
+import { makeSupergraph, subgraphSdl } from '../../sdl-viewer/__fixtures__/sdl'
+
 import { schemaCases } from './stress-measurements'
 
 /** The identifier the caret sits inside. */
@@ -42,3 +46,15 @@ describe.each(schemaCases.map(c => [c.variant, c] as const))(
     })
   }
 )
+
+// A supergraph with problems would time the message path, not a clean check.
+describe('stress fixtures: sdl editor', () => {
+  it('checks the supergraph clean', () => {
+    expect(diagnoseSdl(makeSupergraph(4000))).toEqual([])
+  })
+
+  it('checks the subgraph clean against the supergraph', () => {
+    const context = indexContext(makeSupergraph(4000))
+    expect(diagnoseSdl(subgraphSdl, context)).toEqual([])
+  })
+})

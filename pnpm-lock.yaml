@@ -67,8 +67,8 @@ catalogs:
       specifier: 19.2.7
       version: 19.2.7
     react-foundry:
-      specifier: 0.0.18
-      version: 0.0.18
+      specifier: 0.0.19
+      version: 0.0.19
     typescript:
       specifier: 5.9.3
       version: 5.9.3
@@ -142,7 +142,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       react-foundry:
         specifier: 'catalog:'
-        version: 0.0.18(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))
+        version: 0.0.19(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))
     devDependencies:
       '@another-graphql-ide/eslint-config':
         specifier: workspace:*
@@ -340,7 +340,7 @@ importers:
         version: 29.1.1
       react-foundry:
         specifier: 'catalog:'
-        version: 0.0.18(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))
+        version: 0.0.19(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2529,8 +2529,8 @@ packages:
     peerDependencies:
       react: ^19.2.7
 
-  react-foundry@0.0.18:
-    resolution: {integrity: sha512-wmMimc77xfW+XU+4+nce7F1LTVkXzdHPj50VRJDPPA8OvZPvY3j5tyyHq6qvAQTHgctqErzF6A36Uar3nHWRxA==}
+  react-foundry@0.0.19:
+    resolution: {integrity: sha512-UpqJFhwrNMtS0E8bkSHr8qXmsGWxeQwQ8mbBMMpx+O/m8Tsuh62zQ3jwY5txz+ox2FQLxa8w6TMuCC7epssvNA==}
     engines: {node: '>=22'}
     hasBin: true
     peerDependencies:
@@ -5276,7 +5276,7 @@ snapshots:
       react: 19.2.7
       scheduler: 0.27.0
 
-  react-foundry@0.0.18(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)):
+  react-foundry@0.0.19(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)):
     dependencies:
       '@vitejs/plugin-react': 6.1.2(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))
       axe-core: 4.11.0

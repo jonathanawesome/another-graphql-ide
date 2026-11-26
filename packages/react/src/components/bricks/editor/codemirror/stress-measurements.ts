@@ -22,6 +22,9 @@ import {
   reorderDefinitions,
 } from '../../sdl-diff/__fixtures__/edits'
 import { runComparison } from '../../sdl-diff/compare/run-comparison'
+import { indexContext } from '../../sdl-editor/check/context-index'
+import { diagnoseSdl } from '../../sdl-editor/check/diagnose-sdl'
+import { editField } from '../../sdl-editor/codemirror/edit-field'
 import {
   initialLineState,
   lineStateField,
@@ -141,6 +144,20 @@ const viewer = () => {
   }
   return supergraphViewer
 }
+
+// SdlEditor's colors, before and after its index gets too slow to run per key.
+let editorStates: { small: EditorState; large: EditorState } | undefined
+const editorState = (size: 'small' | 'large') => {
+  editorStates ??= {
+    small: EditorState.create({ doc: subgraphSdl, extensions: editField }),
+    large: EditorState.create({ doc: largeSupergraph, extensions: editField }),
+  }
+  return editorStates[size]
+}
+const typeKey = (state: EditorState) =>
+  state.update({ changes: { from: state.doc.length >> 1, insert: 'a' } }).state
+
+let supergraphContext: ReturnType<typeof indexContext> | undefined
 
 export const stressMeasurementGroups: StressGroup[] = [
   {
@@ -277,6 +294,43 @@ export const stressMeasurementGroups: StressGroup[] = [
             after: editedSupergraph,
             context: 3,
           }).details?.()
+        },
+      },
+    ],
+  },
+  {
+    group: 'sdl editor',
+    note: 'SdlEditor: a keystroke, and a check after a pause',
+    cases: [
+      {
+        variant: 'keystroke, subgraph (reindexes)',
+        run: () => {
+          typeKey(editorState('small'))
+        },
+      },
+      {
+        variant: 'keystroke, supergraph (maps colors)',
+        run: () => {
+          typeKey(editorState('large'))
+        },
+      },
+      {
+        variant: 'check, subgraph',
+        run: () => {
+          diagnoseSdl(subgraphSdl)
+        },
+      },
+      {
+        variant: 'check, subgraph against the supergraph',
+        run: () => {
+          supergraphContext ??= indexContext(largeSupergraph)
+          diagnoseSdl(subgraphSdl, supergraphContext)
+        },
+      },
+      {
+        variant: 'check, supergraph (4,000 types)',
+        run: () => {
+          diagnoseSdl(largeSupergraph)
         },
       },
     ],

@@ -17,6 +17,7 @@ import {
   type ViewUpdate,
 } from '@codemirror/view'
 
+import { checkDelay } from './check-delay'
 import { initMessageRows, setMessages, type SdlMessages } from './message-rows'
 
 /** A problem in the text, and the range it underlines. */
@@ -42,13 +43,6 @@ export type Report = (
 
 /** What the check depends on changed, so run it again. */
 export const recheck = StateEffect.define()
-
-const MIN_DELAY = 150
-const MAX_DELAY = 1500
-
-/** Waits longer where checks are slow, so typing is not held up by them. */
-export const checkDelay = (cost: number) =>
-  Math.min(Math.max(cost * 3, MIN_DELAY), MAX_DELAY)
 
 const setProblems = StateEffect.define<readonly Problem[]>()
 

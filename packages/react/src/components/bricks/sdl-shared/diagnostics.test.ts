@@ -5,7 +5,8 @@ import { EditorView } from '@codemirror/view'
 import { basicSetup } from 'codemirror'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { checkDelay, diagnostics, recheck, type Check } from './diagnostics'
+import { checkDelay } from './check-delay'
+import { diagnostics, recheck, type Check } from './diagnostics'
 import { messageRows } from './message-rows'
 
 /** Every `bad` is an error, and every `odd` a warning. */
