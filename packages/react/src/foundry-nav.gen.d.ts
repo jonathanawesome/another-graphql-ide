@@ -28,6 +28,7 @@ declare module "react-foundry" {
       | "Bricks/Editor"
       | "Bricks/Editor Group"
       | "Bricks/Headers Editor"
+      | "Bricks/JSON Editor"
       | "Bricks/Schema Tree"
       | "Bricks/Schema Tree Settings"
       | "Bricks/SDL Diff"

@@ -186,11 +186,19 @@ describe('diagnostics', () => {
     expect(report.mock.lastCall?.[0]).toMatchObject([{ from: 1, to: 2 }])
   })
 
-  it('has nothing to show in an empty document', async () => {
+  it('reports a problem in an empty document, with no underline', async () => {
     mount('', () => [{ severity: 'error', message: 'x', from: 0, to: 0 }])
     await settle()
 
-    expect(report).toHaveBeenCalledWith([], '')
+    expect(report).toHaveBeenCalledExactlyOnceWith(
+      [{ line: 1, severity: 'error', message: 'x', from: 0, to: 0 }],
+      ''
+    )
+    expect(rowLines()).toEqual([1])
+    expect(diagnosticCount(view.state)).toBe(0)
+
+    view.dispatch({ changes: { from: 0, insert: 'a' } })
+    expect(rowLines()).toEqual([])
   })
 
   const folded = () => {

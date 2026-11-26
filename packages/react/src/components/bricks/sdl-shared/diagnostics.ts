@@ -96,7 +96,7 @@ const moveMessages = EditorState.transactionExtender.of(tr => {
   }
 })
 
-/** Keeps problems inside the document, and never empty. */
+/** Keeps problems inside the document, and never empty unless it is. */
 const clamp = (problem: Problem, length: number): Problem => {
   const from = Math.max(0, Math.min(problem.from, length - 1))
   const to = Math.min(Math.max(problem.to, from + 1), length)
@@ -130,7 +130,11 @@ const show = (view: EditorView, problems: readonly Problem[]) => {
         ...unfoldNewErrors(state, problems),
       ],
     },
-    setDiagnostics(state, problems)
+    // Nothing to underline in an empty document.
+    setDiagnostics(
+      state,
+      problems.filter(({ from, to }) => from < to)
+    )
   )
 }
 
@@ -187,9 +191,7 @@ const checker = (check: Check, report: Report) =>
         if (this.destroyed || id !== this.latest) return
         this.cost = performance.now() - start
 
-        const shown = doc.length
-          ? problems.map(problem => clamp(problem, doc.length))
-          : []
+        const shown = problems.map(problem => clamp(problem, doc.length))
         if (shown.length || this.view.state.field(problemsField).length) {
           show(this.view, shown)
         }

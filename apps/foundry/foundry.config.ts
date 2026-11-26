@@ -38,6 +38,7 @@ export default defineConfig({
         { label: 'Editor' },
         { label: 'Editor Group' },
         { label: 'Headers Editor' },
+        { label: 'JSON Editor' },
         { label: 'Schema Tree' },
         { label: 'Schema Tree Settings' },
         { label: 'SDL Diff' },
